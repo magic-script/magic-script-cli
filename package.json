@@ -1,0 +1,35 @@
+{
+  "name": "magic-script-cli",
+  "description": "Magic Script Toolkit",
+  "version": "0.1.1",
+  "author": "Magic Leap",
+  "bin": {
+    "magic-script": "./bin/magic-script.js"
+  },
+  "scripts": {
+    "test": "node ./test/test.js"
+  },
+  "publishConfig": {
+    "registry": "https://nexus.magicleap.blue/repository/npm-internal/"
+  },
+  "bugs": "https://github.com/magic-script/magic-script-cli/issues",
+  "dependencies": {
+    "chromedriver": "^2.45.0",
+    "opn": "^5.4.0",
+    "selenium-webdriver": "^4.0.0-alpha.1",
+    "xml2json": "^0.11.2",
+    "yargs": "^12.0.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin"
+  ],
+  "homepage": "https://github.com/magic-script/magic-script-cli",
+  "keywords": [
+    "magic-script"
+  ],
+  "repository": "magic-script/magic-script-toolkit"
+}
