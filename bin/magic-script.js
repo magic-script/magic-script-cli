@@ -3,12 +3,20 @@
 
 require('yargs') // eslint-disable-line
   .command('setup', 'Setup the MagicLeap SDK', argv => require('../commands/setup')(argv.argv))
-  .command('init <package-name>', 'Create a new project', yargs => {
-    yargs.positional('package-name', {
+  .command('init <projectName> <packageName> [visibleName]', 'Create a new project', yargs => {
+    yargs.positional('projectName', {
       describe: 'Local folder to create project in.',
       type: 'string'
     })
-  }, argv => require('../commands/init')(argv.argv))
+    yargs.positional('packageName', {
+      describe: 'The package identifier.',
+      type: 'string'
+    })
+    yargs.positional('visibleName', {
+      describe: 'The visible name of the project.',
+      type: 'string'
+    })
+  }, argv => require('../commands/init')(argv))
   .command('run', 'Compile and run project', argv => require('../commands/run')(argv.argv))
   .option('verbose', {
     alias: 'v',
