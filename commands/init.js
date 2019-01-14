@@ -33,10 +33,12 @@ function copyFiles(srcPath, destPath) {
       const stats = fs.statSync(origFilePath)
     if (stats.isFile()) {
       var contents = fs.readFileSync(origFilePath, 'utf8')
-      const writePath = `${destPath}/${file}`
       if (file === 'manifest.xml') {
         contents = updateManifest(contents)
+      } else if (file.indexOf ("diagonal") > -1) {
+        file = file.replace("diagonal", visibleName)
       }
+      const writePath = `${destPath}/${file}`
       fs.writeFileSync(writePath, contents, 'utf8')
     } else if (stats.isDirectory()) {
       let newDestPath = `${destPath}/${file}`

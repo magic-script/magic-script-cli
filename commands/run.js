@@ -1,10 +1,7 @@
-const { exec, spawn } = require('child_process')
-const fs = require('fs')
-const util = require('util')
-const parser = require('xml2json')
-const ChromeLauncher = require('../lib/chromeLaunch')
+let { exec, spawn } = require('child_process')
+let ChromeLauncher = require('../lib/chromeLaunch')
+let util = require('../lib/util')
 
-const readFile = util.promisify(fs.readFile)
 let packageName
 
 function isRunning(callback) {
@@ -94,27 +91,19 @@ function launchCallback(pid) {
 
 module.exports = argv => {
   async function parseManifest() {
-    let manifestPath ="manifest.xml"
-    if (!fs.existsSync(manifestPath)) {
-      if (argv._.length > 1) {
-        packageName = argv._[1]
-      } else {
-        console.error("manifest.xml doesn't exist in current directory")
-        return -1
-      }
+    if (argv._.length > 1) {
+      packageName = argv._[1]
     } else {
-      let manifest = await readFile(manifestPath)
-      if (manifest) {
-        let manifestJSON = JSON.parse(parser.toJson(manifest))
-        if (manifestJSON && manifestJSON["manifest"]) {
-          let innerManifest = manifestJSON["manifest"]
-          if (innerManifest["ml:package"]) {
-            packageName = innerManifest["ml:package"]
-          }
-        }
-      }
+      packageName = util.findPackageName()
     }
     if (packageName) {
+      function installedCallback(installed) {
+        if (installed) {
+          isRunning(runningCallback)
+        } else {
+          console.warn(`Package: ${packageName} is not installed.  Please install it.`)
+        }
+      }
       function runningCallback(pid) {
         if (pid == -1) {
           launchFunction(launchCallback)
@@ -125,7 +114,7 @@ module.exports = argv => {
           terminateFunction(launchMe)
         }
       }
-      isRunning(runningCallback)
+      util.isInstalled(packageName, installedCallback)
     }
   }
   parseManifest()

@@ -17,6 +17,17 @@ require('yargs') // eslint-disable-line
       type: 'string'
     })
   }, argv => require('../commands/init')(argv))
+  .command('build [certsPath]', 'Compile project', yargs => {
+    yargs.positional('certsPath', {
+      describe: 'Path to signing certificates.',
+      type: 'string'
+    })
+    yargs.option('install', {
+      alias: 'i',
+      boolean: true,
+      default: false
+    })
+  }, argv => require('../commands/build')(argv))
   .command('run', 'Compile and run project', argv => require('../commands/run')(argv.argv))
   .option('verbose', {
     alias: 'v',
