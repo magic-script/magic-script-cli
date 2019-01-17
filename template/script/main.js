@@ -1,20 +1,27 @@
 #!/system/bin/script/mxs
 
-import { LandscapeApp } from 'lumin'
+import { LandscapeApp, ui } from "lumin";
 
 class App extends LandscapeApp {
-    init() {
-        let prism = this.requestNewPrism([1, 1, 1])
-        let node = prism.createLineNode()
-        node.addPoints([0, 0, 0])
-        node.addPoints([1, 1, 1])
-        prism.getRootNode().addChild(node)
-        return 0
-    }
-    updateLoop(delta) {
-        return true
-    }
+  init() {
+    let prism = this.requestNewPrism([0.5, 0.5, 0.5]);
+    let text = ui.UiText.CreateEclipseLabel(
+      prism,
+      "Hello\nMagicScript!",
+      ui.EclipseLabelType.kT7
+    );
+    text.setAlignment(ui.Alignment.CENTER_CENTER);
+    text.setTextAlignment(ui.HorizontalAlignment.kCenter);
+    prism.getRootNode().addChild(text);
+    return 0;
+  }
+  updateLoop(delta) {
+    return true;
+  }
+  eventListener(event) {
+    return true;
+  }
 }
 
-let app = new App(0.016)
-app.run()
+let app = new App(0.016);
+app.run();
