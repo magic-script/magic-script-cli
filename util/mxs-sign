@@ -118,11 +118,7 @@ check_unsigned_digest() {
   if ! [[ -f $DIGEST ]]; then
     die "missing digest file: $DIGEST"
   fi
-  echo "checking digest header..." >&2
-  local header="$(head -n1 "$DIGEST")"
-  if [[ $header != $DIGEST_HEADER ]]; then
-    die "bad or missing digest header"
-  fi
+  # TODO: check $DIGEST_HEADER when the platform will be ready to accept it.
   echo "checking digest content..." >&2
   headz "$DIGEST" | exec_with_debug sha512sum -c -
 }
