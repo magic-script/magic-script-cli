@@ -3,6 +3,7 @@ let ChromeLauncher = require('../lib/chromeLaunch')
 let util = require('../lib/util')
 
 let packageName
+let debug
 
 function isRunning(callback) {
   exec("mldb ps", (err, stdout, stderr) =>{
@@ -27,7 +28,8 @@ function isRunning(callback) {
 }
 
 function launchFunction(callback) {
-  let launchCommand = "mldb launch --auto-net-privs " + packageName
+  let autoPrivilege = debug ? "--auto-net-privs" : ""
+  let launchCommand = `mldb launch  ${autoPrivilege} ${packageName}`
   console.info("Launching:", packageName)
   exec(launchCommand, (err, stdout, stderr) => {
     if (err) {
@@ -55,6 +57,9 @@ function launchCallback(pid) {
   if (pid == -1) {
     console.error("Failed to launch:", packageName)
     return -1
+  }
+  if (!debug) {
+    return 0
   }
   const mldbCommand = spawn('mldb', ['log'])
   mldbCommand.stdout.on('data', (data) => {
@@ -90,9 +95,12 @@ function launchCallback(pid) {
 }
 
 module.exports = argv => {
+  let arguments = argv._
+  debug = argv.debug
+  console.log(argv)
   async function parseManifest() {
-    if (argv._.length > 1) {
-      packageName = argv._[1]
+    if (arguments.length > 1) {
+      packageName = arguments[1]
     } else {
       packageName = util.findPackageName()
     }
