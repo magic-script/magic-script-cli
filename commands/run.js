@@ -7,23 +7,25 @@ let debug
 
 function isRunning(callback) {
   exec("mldb ps", (err, stdout, stderr) =>{
-    var running = -1
+    var running = null
     if (err) {
       console.error(`exec error: ${err}`)
       callback(running)
       return
     }
-    let searcher = /(\d+)\s+\d+.+/g
+    const searcher = /(\d+)\s+\d+.+/g
     let matches = stdout.match(searcher)
-    for (var i = 0; i < matches.length; ++i) {
-      let match = matches[i]
-      if (match.includes(packageName)) {
-        var pid = match.substring(0,match.indexOf(" "))
-        running = pid
-        break
+    if (matches) {
+      for (var i = 0; i < matches.length; ++i) {
+        let match = matches[i]
+        if (match.includes(packageName)) {
+          var pid = match.substring(0,match.indexOf(" "))
+          running = pid
+          break
+        }
       }
     }
-    callback(pid)
+    callback(running)
   })
 }
 
@@ -34,7 +36,7 @@ function launchFunction(callback) {
   exec(launchCommand, (err, stdout, stderr) => {
     if (err) {
       console.error(`exec error: ${err}`)
-      callback(-1)
+      callback(null)
       return
     }
     if (stdout.includes("Success")) {
@@ -54,12 +56,12 @@ function terminateFunction(callback) {
   })
 }
 function launchCallback(pid) {
-  if (pid == -1) {
+  if (pid == null) {
     console.error("Failed to launch:", packageName)
-    return -1
+    return
   }
   if (!debug) {
-    return 0
+    return
   }
   const mldbCommand = spawn('mldb', ['log'])
   mldbCommand.stdout.on('data', (data) => {
@@ -95,35 +97,31 @@ function launchCallback(pid) {
 }
 
 module.exports = argv => {
-  let arguments = argv._
+  let localArguments = argv._
   debug = argv.debug
-  console.log(argv)
-  async function parseManifest() {
-    if (arguments.length > 1) {
-      packageName = arguments[1]
-    } else {
-      packageName = util.findPackageName()
-    }
-    if (packageName) {
-      function installedCallback(installed) {
-        if (installed) {
-          isRunning(runningCallback)
-        } else {
-          console.warn(`Package: ${packageName} is not installed.  Please install it.`)
-        }
-      }
-      function runningCallback(pid) {
-        if (pid == -1) {
-          launchFunction(launchCallback)
-        } else {
-          function launchMe() {
-            launchFunction(launchCallback)
-          }
-          terminateFunction(launchMe)
-        }
-      }
-      util.isInstalled(packageName, installedCallback)
-    }
+  if (localArguments.length > 1) {
+    packageName = localArguments[1]
+  } else {
+    packageName = util.findPackageName()
   }
-  parseManifest()
+  if (packageName) {
+    function installedCallback(installed) {
+      if (installed) {
+        isRunning(runningCallback)
+      } else {
+        console.warn(`Package: ${packageName} is not installed.  Please install it.`)
+      }
+    }
+    function runningCallback(pid) {
+      if (pid == null) {
+        launchFunction(launchCallback)
+      } else {
+        function launchMe() {
+          launchFunction(launchCallback)
+        }
+        terminateFunction(launchMe)
+      }
+    }
+    util.isInstalled(packageName, installedCallback)
+  }
 }

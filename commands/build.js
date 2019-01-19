@@ -16,7 +16,6 @@ function getPackageName() {
 
 module.exports = argv => {
   var packageName = getPackageName()
-  // console.log(packageName)
   var buildCommand = `mabu -t device ${packageName}.package`
   if (argv.certsPath && fs.existsSync(argv.certsPath)) {
     buildCommand = `mabu -s ${argv.certsPath} -t device ${packageName}.package`

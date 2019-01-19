@@ -48,11 +48,13 @@ function copyFiles(srcPath, destPath) {
 }
 
 module.exports = argv => {
-  if (!/^([A-Za-z\-\_\d])+$/.test(argv.projectName)) {
+  let nameRegex = /^([A-Za-z\-\_\d])+$/;
+  let idRegex = /^[a-z0-9_]+(\.[a-z0-9_]+)*(-[a-zA-Z0-9]*)?$/i;
+  if (!nameRegex.test(argv.projectName)) {
     console.error("Invalid project name")
     return -1
-  } else if (!/^(?!:\/\/)[a-zA-Z]{2,6}\.([a-zA-Z0-9-]+\.)?[a-zA-Z0-9]+$/i.test(argv.packageName)) {
-    console.error("Bad Package name:",argv.packageName)
+  } else if (!idRegex.test(argv.packageName)) {
+    console.error("Bad package name:",argv.packageName)
     return -1
   }
   packageName = argv.packageName
