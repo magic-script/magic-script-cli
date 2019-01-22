@@ -29,6 +29,7 @@ require('yargs') // eslint-disable-line
     })
   }, argv => require('../commands/build')(argv))
   .command('run', 'Compile and run project', argv => require('../commands/run')(argv.argv))
+  .command('remove', 'Remove project from device', argv => require('../commands/remove')(argv.argv))
   .option('verbose', {
     alias: 'v',
     default: false
