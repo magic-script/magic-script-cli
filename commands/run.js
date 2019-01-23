@@ -30,8 +30,8 @@ function isRunning(callback) {
 }
 
 function launchFunction(callback) {
-  let autoPrivilege = debug ? "--auto-net-privs" : ""
-  let launchCommand = `mldb launch  ${autoPrivilege} ${packageName}`
+  let autoPrivilege = debug ? " --auto-net-privs" : ""
+  let launchCommand = `mldb launch${autoPrivilege} ${packageName}`
   console.info("Launching:", packageName)
   exec(launchCommand, (err, stdout, stderr) => {
     if (err) {
