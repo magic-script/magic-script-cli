@@ -1,5 +1,5 @@
 const { exec } = require("child_process");
-const util = require("util");
+const util = require("../lib/util");
 
 module.exports = argv => {
   let packageName = util.findPackageName();

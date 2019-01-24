@@ -8,6 +8,7 @@ const util = require('../lib/util')
 const chrome = require('selenium-webdriver/chrome')
 const ChromeLauncher = require('../lib/chromeLaunch')
 const run = require('../commands/run')
+const remove = require('../commands/remove')
 const parser = require('xml2json')
 parser.toJson = jest.fn()
 
@@ -446,5 +447,38 @@ describe('Test Run', () => {
         run({"_":["run", "com.abc"], "debug": true})
         expect(mockIsInstalled).toBeCalled()
         expect(child_process.exec).toBeCalled()
+    })
+})
+describe('Test Remove', () => {
+    test('error', () => {
+        jest.spyOn(console, 'log').mockImplementationOnce((data)=>{
+            expect(data).toBe("mldb uninstall com.abc")
+        })
+        jest.spyOn(console, 'error').mockImplementationOnce((data)=>{
+            expect(data).toBe("Error:")
+        })
+        const mockFindPackageName = jest.spyOn(util, 'findPackageName').mockReturnValue("com.abc")
+        child_process.exec.mockImplementationOnce((command, callback) =>{
+            expect(command).toBe("mldb uninstall com.abc")
+            callback("error")
+        })
+        remove({"_":["remove", "com.abc"]})
+        expect(mockFindPackageName).toBeCalled()
+    })
+
+    test('no error', () => {
+        jest.spyOn(console, 'log').mockImplementationOnce((data)=>{
+            expect(data).toBe("mldb uninstall com.abc")
+        })
+        jest.spyOn(console, 'error').mockImplementationOnce((data)=>{
+            expect(data).toBe("Error:")
+        })
+        const mockFindPackageName = jest.spyOn(util, 'findPackageName').mockReturnValue("com.abc")
+        child_process.exec.mockImplementationOnce((command, callback) =>{
+            expect(command).toBe("mldb uninstall com.abc")
+            callback(null)
+        })
+        remove({"_":["remove", "com.abc"]})
+        expect(mockFindPackageName).toBeCalled()
     })
 })
