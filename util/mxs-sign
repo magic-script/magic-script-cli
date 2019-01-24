@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 ###############################################################################
 # Documents
@@ -19,11 +19,10 @@ PROGRAM_DIR="${0%/*}"
 # The digest file
 DIGEST="digest.sha512.signed"
 
-# The digest file header
-DIGEST_HEADER="#!/usr/bin/env sha512sum -c"
-
-# The MagicScript security profile
-PROFILE="MSCR"
+# The digest file header (magic number and command)
+DIGEST_MAGIC="\\x23\\xC2\\xA1\\x7F"
+DIGEST_COMMAND="sha512sum -c"
+DIGEST_HEADER="$(printf "%b%b" "$DIGEST_MAGIC" "$DIGEST_COMMAND")"
 
 ###############################################################################
 # User options
@@ -59,14 +58,15 @@ die() {
 
 # Head-zero
 headz() {
-  # Like head, but stop before the first '\0' character.
+  # Like "head -n1 -z": stop immediately after the first '\0' character.
+  # Work around the lack of "head -z" on older systems.
   # Avoid using non-portable and unreliable solutions such as "cut -d '' -f1";
   # an inline Perl script is the best solution. (No, really!)
   local headz_perl_impl='
     binmode STDIN;
     binmode STDOUT;
     while (my $line = <>) {
-      if ($line =~ /^([^\0]*)\0/) {
+      if ($line =~ /^([^\0]*\0)/) {
         print $1;
         last;
       } else {
@@ -100,23 +100,28 @@ check_paths() {
   fi
   # Perform crude checks against "/file", "./file", "dir/../file", etc.
   for path in "$@"; do
-    if (echo "$path" | grep -e '^[/\\.-]' -e '\.\.' --quiet); then
+    if (echo "$path" | grep -e '^[/\\.]' -e '/\./' -e '/\.\./' --quiet); then
       die "bad path: $path"
     fi
   done
 }
 
-# Create unsigned digest
+# Create unsigned digest, terminated by '\0'
 create_unsigned_digest() {
-  # TODO: prepend $DIGEST_HEADER when the platform will be ready to accept it.
-  exec_with_debug sha512sum "$@" > "$DIGEST"
-  printf "\\0" >> "$DIGEST"
+  printf "%s\\n" "$DIGEST_HEADER" > "$DIGEST"
+  exec_with_debug sha512sum "$@" >> "$DIGEST"
+  printf "#\\0" >> "$DIGEST"
 }
 
-# Check unsigned digest
+# Check unsigned digest, stopping at '\0'
 check_unsigned_digest() {
   if ! [[ -f $DIGEST ]]; then
     die "missing digest file: $DIGEST"
+  fi
+  echo "checking digest header..." >&2
+  local header="$(head -n1 "$DIGEST")"
+  if [[ $header != $DIGEST_HEADER ]]; then
+    die "bad or missing digest header"
   fi
   # TODO: check $DIGEST_HEADER when the platform will be ready to accept it.
   echo "checking digest content..." >&2
@@ -131,8 +136,7 @@ sign_digest() {
     [[ -x $SIGN_FILE ]] || die "can't find \$SIGN_FILE: $SIGN_FILE"
   else
     # Find sign-file in MLSDK.
-    MABU="$(command -v mabu)"
-    [[ -x $MABU ]] || die "can't find mabu in MLSDK"
+    MABU="$(command -v mabu)" || die "can't find mabu in MLSDK"
     MLSDK_ROOT="${MABU%/*}"
     [[ -d $MLSDK_ROOT/tools ]] || die "can't find root dir of MLSDK"
     SIGN_FILE="$MLSDK_ROOT/tools/signer/sign-file"
@@ -141,8 +145,7 @@ sign_digest() {
 
   # Execute sign-file depending on whether it is in the Nova tree or in MLSDK.
   if [[ -d $ANDROID_BUILD_TOP ]] &&
-      [[ -d $OUT ]] &&
-      [[ $SIGN_FILE -ef $OUT/host/linux-x86/bin/sign-file ]]; then
+      [[ $SIGN_FILE -ef $ANDROID_BUILD_TOP/out/host/linux-x86/bin/sign-file ]]; then
     # Use sign-file, privkey and cert from the Nova tree.
     exec_with_debug "$SIGN_FILE" \
         -f sha512 \
@@ -182,7 +185,7 @@ main() {
       OPT_QUIET=1;;
     -- )
       break;;
-    * )
+    -* )
       usage;;
     esac
   done
