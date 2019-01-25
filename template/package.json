@@ -1,8 +1,7 @@
 {
   "main": "script/main.js",
   "scripts": {
-    "start": "magic-script run",
-    "install": "magic-script build -i"
+    "start": "magic-script run"
   },
   "private": true
 }
