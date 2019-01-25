@@ -100,16 +100,28 @@ check_paths() {
   fi
   # Perform crude checks against "/file", "./file", "dir/../file", etc.
   for path in "$@"; do
-    if (echo "$path" | grep -e '^[/\\.]' -e '/\./' -e '/\.\./' --quiet); then
-      die "bad path: $path"
+    if (echo "$path" |
+        grep -E -e '^[/\\]' -e '^\.\.?[/\\]' -e '[/\\]\.\.?[/\\]' -q); then
+      die "module path must be relative and normalized: $path"
     fi
   done
 }
 
 # Create unsigned digest, terminated by '\0'
 create_unsigned_digest() {
+  local path
+  local files
   printf "%s\\n" "$DIGEST_HEADER" > "$DIGEST"
-  exec_with_debug sha512sum "$@" >> "$DIGEST"
+  for path in "$@"; do
+    # Find "*.js" at $path and (if applicable) in all subdirectories of $path.
+    # Remove all redundant directory separator characters that may be
+    # produced by the "find" command.
+    files="$(find "$path" -name "*.js" | sed 's:[/\\][/\\]*:/:g')"
+    if [[ -z $files ]]; then
+      die "can't find JavaScript modules at $path"
+    fi
+    exec_with_debug sha512sum $files >> "$DIGEST"
+  done
   printf "#\\0" >> "$DIGEST"
 }
 
