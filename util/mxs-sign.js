@@ -121,9 +121,10 @@ function signDigest() {
   // it is a useful validation for the location of the ML SDK root.
   const mabuPath = which.sync("mabu");
   const mlsdkRoot = path.dirname(mabuPath);
-  const mldbPath = path.resolve(mlsdkRoot, "tools/mldb/mldb");
+  let exe = process.platform === "win32" ? ".exe" : "";
+  const mldbPath = path.resolve(mlsdkRoot, "tools/mldb/mldb" + exe);
   fs.accessSync(mldbPath, fs.constants.X_OK);
-  const signFilePath = path.resolve(mlsdkRoot, "tools/signer/sign-file");
+  const signFilePath = path.resolve(mlsdkRoot, "tools/signer/sign-file" + exe);
   fs.accessSync(signFilePath, fs.constants.X_OK);
 
   // Find the certification file and the private key file.
