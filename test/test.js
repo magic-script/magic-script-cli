@@ -3,6 +3,7 @@ jest.spyOn(fs, "existsSync");
 jest.spyOn(fs, "readFileSync");
 const child_process = require("child_process");
 jest.spyOn(child_process, "exec");
+jest.spyOn(child_process, "execFile");
 jest.spyOn(child_process, "spawn");
 const util = require("../lib/util");
 const chrome = require("selenium-webdriver/chrome");
@@ -142,8 +143,8 @@ describe("Test Util", () => {
     jest.spyOn(console, "error").mockImplementationOnce((data)=>{
       expect(data).toBe("error getting installed packages:");
     });
-    child_process.exec.mockImplementationOnce((command, cb)=>{
-      expect(command.includes("mxs-sign script/")).toBeTruthy();
+    child_process.execFile.mockImplementationOnce((node, command, cb)=>{
+      expect(command[0].endsWith("mxs-sign.js")).toBeTruthy();
       cb("err");
     });
     util.createDigest();
@@ -154,8 +155,8 @@ describe("Test Util", () => {
     jest.spyOn(console, "log").mockImplementationOnce((data)=>{
       expect(data).toBe("no error");
     });
-    child_process.exec.mockImplementationOnce((command, cb)=>{
-      expect(command.includes("mxs-sign script/")).toBeTruthy();
+    child_process.execFile.mockImplementationOnce((node, command, cb)=>{
+      expect(command[0].endsWith("mxs-sign.js")).toBeTruthy();
       cb(null, "no error");
     });
     util.createDigest();
