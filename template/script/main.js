@@ -2,6 +2,8 @@
 
 import { LandscapeApp, ui } from "lumin";
 
+import { setTimeout, setInterval, fetch } from "./builtins.js";
+
 class App extends LandscapeApp {
   init() {
     let prism = this.requestNewPrism([0.5, 0.5, 0.5]);
