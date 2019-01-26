@@ -1,51 +1,51 @@
-const { exec } = require('child_process')
-const fs = require('fs')
-const util = require('../lib/util')
+const { exec } = require("child_process");
+const fs = require("fs");
+const util = require("../lib/util");
 
 function getPackageName() {
-  var name = ""
-  let currentDir = fs.readdirSync(process.cwd())
+  var name = "";
+  let currentDir = fs.readdirSync(process.cwd());
   for (let file of currentDir) {
     if (file.indexOf(".package") > 0) {
-      name = file.substring(0, file.indexOf("."))
-      break
+      name = file.substring(0, file.indexOf("."));
+      break;
     }
   }
   return name;
 }
 
 module.exports = argv => {
-  var packageName = getPackageName()
-  var buildCommand = `mabu -t device ${packageName}.package`
+  var packageName = getPackageName();
+  var buildCommand = `mabu -t device ${packageName}.package`;
   if (argv.certsPath && fs.existsSync(argv.certsPath)) {
-    buildCommand = `mabu -s ${argv.certsPath} -t device ${packageName}.package`
+    buildCommand = `mabu -s ${argv.certsPath} -t device ${packageName}.package`;
   }
-  util.createDigest()
+  util.createDigest();
   exec(buildCommand, (err, stdout, stderr) =>{
     if (err) {
-      console.error("Error:", err)
+      console.error("Error:", err);
     }
     let mpkFile;
-    let outLines = stdout.split("\n")
+    let outLines = stdout.split("\n");
     for (let line of outLines) {
       if (line.indexOf("mpk") > 0) {
-        mpkFile = line.substring(line.indexOf("'")+1,line.lastIndexOf("'"))
-        break
+        mpkFile = line.substring(line.indexOf("'")+1,line.lastIndexOf("'"));
+        break;
       }
     }
     if (argv.install) {
       function isInstalledCallback(installed) {
-        let installCommand = `mldb install ${installed? "-u":""} ${mpkFile}`
-        console.log(installCommand)
+        let installCommand = `mldb install ${installed? "-u":""} ${mpkFile}`;
+        console.log(installCommand);
         exec(installCommand, (err, stdout, stderr) =>{
           if (err) {
-            console.error("Error:", err)
+            console.error("Error:", err);
           }
-          console.log(stdout)
-        })
+          console.log(stdout);
+        });
       }
-      let packageName = util.findPackageName()
-      util.isInstalled(packageName, isInstalledCallback)
+      let packageName = util.findPackageName();
+      util.isInstalled(packageName, isInstalledCallback);
     }
-  })
-}
+  });
+};
