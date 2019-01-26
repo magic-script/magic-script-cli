@@ -12,8 +12,18 @@ const remove = require("../commands/remove");
 const parser = require("xml2json");
 parser.toJson = jest.fn();
 
+const consoleLog = console.log;
+const consoleError = console.error;
+const consoleWarn = console.warn;
+
 beforeEach(() => {
   fs.existsSync = jest.fn();
+});
+
+afterEach(() => {
+  console.log = consoleLog;
+  console.error = consoleError;
+  console.warn = consoleWarn;
 });
 
 describe("Test Util", () => {
