@@ -6,7 +6,7 @@ let packageName;
 let debug;
 
 function isRunning(callback) {
-  exec("mldb ps", (err, stdout, stderr) =>{
+  exec("mldb ps", (err, stdout, stderr) => {
     var running = null;
     if (err) {
       console.error(`exec error: ${err}`);
@@ -19,7 +19,7 @@ function isRunning(callback) {
       for (var i = 0; i < matches.length; ++i) {
         let match = matches[i];
         if (match.includes(packageName)) {
-          var pid = match.substring(0,match.indexOf(" "));
+          var pid = match.substring(0, match.indexOf(" "));
           running = pid;
           break;
         }
@@ -40,7 +40,7 @@ function launchFunction(callback) {
       return;
     }
     if (stdout.includes("Success")) {
-      function cb(result){
+      function cb(result) {
         callback(result);
       }
       isRunning(cb);
@@ -76,7 +76,7 @@ function launchCallback(pid) {
         exec(forwardCommand, (err, stdout, stderr) => {
           if (!err && stdout.length == 0 && stderr.length == 0) {
             console.info("Success: port forwarded", port);
-            console.info("Opening:",matches[0]);
+            console.info("Opening:", matches[0]);
             const launcher = new ChromeLauncher();
             launcher.open(matches[0]);
           }

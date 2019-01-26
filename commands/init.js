@@ -24,7 +24,7 @@ function copyFiles(srcPath, destPath) {
       var contents = fs.readFileSync(origFilePath, "utf8");
       if (file === "manifest.xml") {
         contents = updateManifest(contents);
-      } else if (file.indexOf ("hello") > -1) {
+      } else if (file.indexOf("hello") > -1) {
         file = file.replace("hello", visibleName);
       }
       const writePath = `${destPath}/${file}`;
@@ -43,7 +43,7 @@ module.exports = argv => {
     console.error("Invalid project name");
     return -1;
   } else if (!idRegex.test(argv.packageName)) {
-    console.error("Bad package name:",argv.packageName);
+    console.error("Bad package name:", argv.packageName);
     return -1;
   }
   packageName = argv.packageName;

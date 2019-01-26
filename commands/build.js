@@ -21,7 +21,7 @@ module.exports = argv => {
     buildCommand = `mabu -s ${argv.certsPath} -t device ${packageName}.package`;
   }
   util.createDigest();
-  exec(buildCommand, (err, stdout, stderr) =>{
+  exec(buildCommand, (err, stdout, stderr) => {
     if (err) {
       console.error("Error:", err);
     }
@@ -29,16 +29,16 @@ module.exports = argv => {
     let outLines = stdout.split("\n");
     for (let line of outLines) {
       if (line.indexOf("mpk") > 0) {
-        mpkFile = line.substring(line.indexOf("'")+1,line.lastIndexOf("'"));
+        mpkFile = line.substring(line.indexOf("'") + 1, line.lastIndexOf("'"));
         break;
       }
     }
     console.log("built package: " + mpkFile);
     if (argv.install) {
       function isInstalledCallback(installed) {
-        let installCommand = `mldb install ${installed? "-u":""} ${mpkFile}`;
+        let installCommand = `mldb install ${installed ? "-u" : ""} ${mpkFile}`;
         console.log(installCommand);
-        exec(installCommand, (err, stdout, stderr) =>{
+        exec(installCommand, (err, stdout, stderr) => {
           if (err) {
             console.error("Error:", err);
           }

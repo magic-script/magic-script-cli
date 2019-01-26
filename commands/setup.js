@@ -5,7 +5,7 @@ const homedir = require("os").homedir();
 
 const readFile = util.promisify(fs.readFile);
 
-async function findSdk () {
+async function findSdk() {
   // First find `.ml_pm.json` to get the various roots.
   let roots;
   try {
