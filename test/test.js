@@ -10,7 +10,7 @@ const chrome = require("selenium-webdriver/chrome");
 const ChromeLauncher = require("../lib/chromeLaunch");
 const run = require("../commands/run");
 const remove = require("../commands/remove");
-const parser = require("xml2json");
+const parser = {};
 parser.toJson = jest.fn();
 
 const consoleLog = console.log;
@@ -107,11 +107,11 @@ describe("Test Util", () => {
 
   test("findPackageName manifest com.abc", () => {
     fs.existsSync.mockReturnValue(true);
-    fs.readFileSync.mockImplementationOnce((path)=>{
+    fs.readFileSync.mockImplementationOnce((path, encoding)=>{
       expect(path).toBe("manifest.xml");
-      return [];
+      expect(encoding).toBe("utf8");
+      return "ml:package=\"com.abc\"";
     });
-    parser.toJson.mockReturnValue("{\"manifest\":{\"ml:package\":\"com.abc\"}}");
     let name = util.findPackageName();
     expect(fs.existsSync).toHaveBeenCalled();
     expect(fs.readFileSync).toHaveBeenCalled();

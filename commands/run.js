@@ -76,12 +76,6 @@ function launchCallback(pid) {
         exec(forwardCommand, (err, stdout, stderr) => {
           if (!err && stdout.length == 0 && stderr.length == 0) {
             console.info("Success: port forwarded", port);
-            var appName = "google-chrome";
-            if (process.platform === "win32") {
-              appName = "chrome";
-            } else if (process.platform == "darwin") {
-              appName = "google chrome";
-            }
             console.info("Opening:",matches[0]);
             const launcher = new ChromeLauncher();
             launcher.open(matches[0]);

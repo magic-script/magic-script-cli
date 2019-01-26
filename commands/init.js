@@ -1,26 +1,15 @@
 let process = require("process");
 let fs = require("fs");
 let templatePath = `${__dirname}/../template`;
-let XMLParser = require("xml2json");
 
 var packageName;
 var visibleName;
 var projectName;
 
 function updateManifest(contents) {
-  var manifestJson = JSON.parse(XMLParser.toJson(contents));
-  if (manifestJson && manifestJson["manifest"]) {
-    var innerManifest = manifestJson["manifest"];
-    if (innerManifest["ml:package"]) {
-      innerManifest["ml:package"] = packageName;
-    }
-    var applicationJson = innerManifest["application"];
-    applicationJson["ml:visible_name"] = visibleName;
-    componentJson = applicationJson["component"];
-    componentJson["ml:visible_name"] = visibleName;
-    contents = XMLParser.toXml(manifestJson);
-  }
-  return contents;
+  return contents
+    .replace("com.magicleap.magicscript.hello-sample", packageName)
+    .replace("MagicScript Hello Sample", visibleName);
 }
 
 function copyFiles(srcPath, destPath) {
@@ -35,8 +24,8 @@ function copyFiles(srcPath, destPath) {
       var contents = fs.readFileSync(origFilePath, "utf8");
       if (file === "manifest.xml") {
         contents = updateManifest(contents);
-      } else if (file.indexOf ("diagonal") > -1) {
-        file = file.replace("diagonal", visibleName);
+      } else if (file.indexOf ("hello") > -1) {
+        file = file.replace("hello", visibleName);
       }
       const writePath = `${destPath}/${file}`;
       fs.writeFileSync(writePath, contents, "utf8");

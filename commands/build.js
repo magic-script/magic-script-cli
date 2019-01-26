@@ -33,6 +33,7 @@ module.exports = argv => {
         break;
       }
     }
+    console.log("built package: " + mpkFile);
     if (argv.install) {
       function isInstalledCallback(installed) {
         let installCommand = `mldb install ${installed? "-u":""} ${mpkFile}`;
