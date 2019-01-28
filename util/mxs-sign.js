@@ -88,11 +88,11 @@ function createUnsignedDigest(modulePaths) {
 
   // Write the digest content, as if it were output by the sha512sum command.
   trace("writing digest content");
-  const sha512Func = crypto.createHash("sha512");
   for (let modulePath of modulePaths) {
+    let sha512Func = crypto.createHash("sha512");
     let moduleBuffer = fs.readFileSync(modulePath);
     let moduleHash = sha512Func.update(moduleBuffer).digest("hex");
-    fs.writeSync(fd, "".concat(moduleHash, "  ", modulePath, "\n"));
+    fs.writeSync(fd, `${moduleHash}  ${modulePath}\n`);
   }
 
   // Write the digest content separator and close the file descriptor.
@@ -121,10 +121,10 @@ function signDigest() {
   // it is a useful validation for the location of the ML SDK root.
   const mabuPath = which.sync("mabu");
   const mlsdkRoot = path.dirname(mabuPath);
-  let exe = process.platform === "win32" ? ".exe" : "";
-  const mldbPath = path.resolve(mlsdkRoot, "tools/mldb/mldb" + exe);
+  const exeExt = process.platform === "win32" ? ".exe" : "";
+  const mldbPath = path.resolve(mlsdkRoot, "tools/mldb/mldb" + exeExt);
   fs.accessSync(mldbPath, fs.constants.X_OK);
-  const signFilePath = path.resolve(mlsdkRoot, "tools/signer/sign-file" + exe);
+  const signFilePath = path.resolve(mlsdkRoot, "tools/signer/sign-file" + exeExt);
   fs.accessSync(signFilePath, fs.constants.X_OK);
 
   // Find the certification file and the private key file.
@@ -151,6 +151,9 @@ function signDigest() {
     }
   );
 }
+
+//////////////////////////////////////////////////////////////////////////////
+// Main
 
 try {
   if (argv.check) {
