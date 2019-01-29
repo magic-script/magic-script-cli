@@ -20,7 +20,7 @@ module.exports = argv => {
   if (argv.certsPath && fs.existsSync(argv.certsPath)) {
     buildCommand = `mabu -s ${argv.certsPath} -t device ${packageName}.package`;
   }
-  util.createDigest();
+  util.createDigest(argv.debug);
   exec(buildCommand, (err, stdout, stderr) => {
     if (err) {
       console.error("Error:", err);

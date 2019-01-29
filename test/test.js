@@ -135,7 +135,7 @@ describe("Test Util", () => {
     jest.spyOn(console, "error").mockImplementationOnce((data) => {
       expect(data).toBe("Signing Script not available");
     });
-    util.createDigest();
+    util.createDigest(false);
   });
 
   test("createDigest error signing", () => {
@@ -147,7 +147,7 @@ describe("Test Util", () => {
       expect(command[0].endsWith("mxs-sign.js")).toBeTruthy();
       cb("err");
     });
-    util.createDigest();
+    util.createDigest(false);
   });
 
   test("createDigest signing no error", () => {
@@ -159,7 +159,7 @@ describe("Test Util", () => {
       expect(command[0].endsWith("mxs-sign.js")).toBeTruthy();
       cb(null, "no error");
     });
-    util.createDigest();
+    util.createDigest(false);
   });
 });
 

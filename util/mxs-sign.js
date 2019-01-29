@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const which = require("which");
 const yargs = require("yargs");
-const { execFile } = require("child_process");
+const { execFile, exec } = require("child_process");
 
 //////////////////////////////////////////////////////////////////////////////
 // User options
@@ -22,6 +22,10 @@ const argv = yargs
   .option("trace", {
     describe: "Run in trace mode",
     type: "boolean"
+  })
+  .option("debug", {
+    describe: "Add debugging tail data",
+    type: "boolean",
   })
   .alias("h", "help")
   .alias("v", "version")
@@ -138,18 +142,35 @@ function signDigest() {
     path.basename(mlCertPath, ".cert") + ".privkey"
   );
   fs.accessSync(mlPrivKeyPath, fs.constants.F_OK);
-
-  // Sign DIGEST_PATH.
-  trace("signing digest file");
-  execFile(
-    signFilePath,
-    ["-f", "sha512", mlPrivKeyPath, mlCertPath, DIGEST_PATH],
-    (error, stdout, stderr) => {
-      if (error) {
-        throw error;
+  function signFile() {
+    // Sign DIGEST_PATH.
+    trace("signing digest file");
+    execFile(
+      signFilePath,
+      ["-f", "sha512", mlPrivKeyPath, mlCertPath, DIGEST_PATH],
+      (error, stdout, stderr) => {
+        if (error) {
+          throw error;
+        }
       }
+    );
+  }
+  if (!argv.debug) {
+    signFile()
+    return;
+  }
+  let tailDataCommand = `${mlsdkRoot}/tools/python3/bin/python3.5 ${mlsdkRoot}/tools/mabu/src/taildata_v3.py --sbox USER --debuggable ${DIGEST_PATH}`;
+  console.info("Adding tail data");
+  exec(tailDataCommand, (err, stdout, stderr) => {
+    console.log(stdout);
+    if (err) {
+      console.error("Error Adding tail data:", err);
     }
-  );
+    if (stderr) {
+      console.error("Error Adding tail data:", err);
+    }
+    signFile()
+  });
 }
 
 //////////////////////////////////////////////////////////////////////////////
