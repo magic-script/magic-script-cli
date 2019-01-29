@@ -6,9 +6,9 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: "coverage",
   collectCoverageFrom: [
-    "**/commands/*.js",
-    "**/lib/*.js",
-    "**/bin/*.js",
+    "commands/*.js",
+    "lib/*.js",
+    "bin/*.js",
   ],
   testEnvironment: "node",
 };

@@ -20,33 +20,39 @@ module.exports = argv => {
   if (argv.certsPath && fs.existsSync(argv.certsPath)) {
     buildCommand = `mabu -s ${argv.certsPath} -t device ${packageName}.package`;
   }
-  util.createDigest(argv.debug);
-  exec(buildCommand, (err, stdout, stderr) => {
+  exec("npm run build", (err, stdout, stderr) => {
     if (err) {
       console.error("Error:", err);
+      return;
     }
-    let mpkFile;
-    let outLines = stdout.split("\n");
-    for (let line of outLines) {
-      if (line.indexOf("mpk") > 0) {
-        mpkFile = line.substring(line.indexOf("'") + 1, line.lastIndexOf("'"));
-        break;
+    util.createDigest(argv.debug);
+    exec(buildCommand, (err, stdout, stderr) => {
+      if (err) {
+        console.error("Error:", err);
       }
-    }
-    console.log("built package: " + mpkFile);
-    if (argv.install) {
-      function isInstalledCallback(installed) {
-        let installCommand = `mldb install ${installed ? "-u" : ""} ${mpkFile}`;
-        console.log(installCommand);
-        exec(installCommand, (err, stdout, stderr) => {
-          if (err) {
-            console.error("Error:", err);
-          }
-          console.log(stdout);
+      let mpkFile;
+      let outLines = stdout.split("\n");
+      for (let line of outLines) {
+        if (line.indexOf("mpk") > 0) {
+          mpkFile = line.substring(line.indexOf("'") + 1, line.lastIndexOf("'"));
+          break;
+        }
+      }
+      console.log("built package: " + mpkFile);
+      if (argv.install) {
+
+        let packageName = util.findPackageName();
+        util.isInstalled(packageName, (installed) => {
+          let installCommand = `mldb install ${installed ? "-u" : ""} ${mpkFile}`;
+          console.log(installCommand);
+          exec(installCommand, (err, stdout, stderr) => {
+            if (err) {
+              console.error("Error:", err);
+            }
+            console.log(stdout);
+          });
         });
       }
-      let packageName = util.findPackageName();
-      util.isInstalled(packageName, isInstalledCallback);
-    }
+    });
   });
 };

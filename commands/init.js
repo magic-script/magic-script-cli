@@ -25,7 +25,7 @@ function copyFiles(srcPath, destPath) {
       if (file === "manifest.xml") {
         contents = updateManifest(contents);
       } else if (file.indexOf("hello") > -1) {
-        file = file.replace("hello", visibleName);
+        file = file.replace("hello", projectName);
       }
       const writePath = `${destPath}/${file}`;
       fs.writeFileSync(writePath, contents, "utf8");
