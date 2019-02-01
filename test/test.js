@@ -6,8 +6,6 @@ jest.spyOn(child_process, "exec");
 jest.spyOn(child_process, "execFile");
 jest.spyOn(child_process, "spawn");
 const util = require("../lib/util");
-const chrome = require("selenium-webdriver/chrome");
-const ChromeLauncher = require("../lib/chromeLaunch");
 const run = require("../commands/run");
 const remove = require("../commands/remove");
 const parser = {};
@@ -163,29 +161,6 @@ describe("Test Util", () => {
   });
 });
 
-describe("Test chromeLaunch", () => {
-  test("chromeLaunch open", () => {
-    let thisService = { "thisService": 1 };
-    let buildFunction = {
-      "build": function () {
-        return thisService;
-      }
-    };
-    chrome.ServiceBuilder = jest.fn().mockImplementationOnce((path) => {
-      expect(typeof path).toBe("string");
-      return buildFunction;
-    });
-    chrome.Driver.createSession = jest.fn().mockImplementationOnce((options, service) => {
-      expect(service).toBe(thisService);
-      let get = function (url) {
-        expect(url).toBe("myURL");
-      };
-      return { "get": get };
-    });
-    const launcher = new ChromeLauncher();
-    launcher.open("myURL");
-  });
-});
 describe("Test Run", () => {
 
   test("not installed \"com.abc\"", () => {

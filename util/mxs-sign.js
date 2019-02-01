@@ -156,7 +156,7 @@ function signDigest() {
     );
   }
   if (!argv.debug) {
-    signFile()
+    signFile();
     return;
   }
   let tailDataCommand = `${mlsdkRoot}/tools/python3/bin/python3.5 ${mlsdkRoot}/tools/mabu/src/taildata_v3.py --sbox USER --debuggable ${DIGEST_PATH}`;
@@ -169,7 +169,7 @@ function signDigest() {
     if (stderr) {
       console.error("Error Adding tail data:", err);
     }
-    signFile()
+    signFile();
   });
 }
 

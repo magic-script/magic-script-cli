@@ -1,5 +1,4 @@
 let { exec, spawn } = require("child_process");
-let ChromeLauncher = require("../lib/chromeLaunch");
 let util = require("../lib/util");
 
 let packageName;
@@ -76,9 +75,7 @@ function launchCallback(pid) {
         exec(forwardCommand, (err, stdout, stderr) => {
           if (!err && stdout.length == 0 && stderr.length == 0) {
             console.info("Success: port forwarded", port);
-            console.info("Opening:", matches[0]);
-            const launcher = new ChromeLauncher();
-            launcher.open(matches[0]);
+            console.log("Please open in chrome:", matches[0]);
           }
         });
       }
