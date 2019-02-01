@@ -159,7 +159,13 @@ function signDigest() {
     signFile();
     return;
   }
-  let tailDataCommand = `${mlsdkRoot}/tools/python3/bin/python3.5 ${mlsdkRoot}/tools/mabu/src/taildata_v3.py --sbox USER --debuggable ${DIGEST_PATH}`;
+  let python = path.join(mlsdkRoot,
+    process.platform === 'win32'
+      ? "/tools/python3/python.exe"
+      : "/tools/python3/bin/python3.5"
+  );
+  let script = path.join(mlsdkRoot, "/tools/mabu/src/taildata_v3.py");
+  let tailDataCommand = `${python} ${script} --sbox USER --debuggable ${DIGEST_PATH}`;
   console.info("Adding tail data");
   exec(tailDataCommand, (err, stdout, stderr) => {
     console.log(stdout);
