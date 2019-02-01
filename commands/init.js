@@ -9,7 +9,7 @@ var projectName;
 function updateManifest(contents) {
   return contents
     .replace("com.magicleap.magicscript.hello-sample", packageName)
-    .replace("MagicScript Hello Sample", visibleName);
+    .replace(new RegExp("MagicScript Hello Sample", 'g'), visibleName);
 }
 
 function copyFiles(srcPath, destPath) {
