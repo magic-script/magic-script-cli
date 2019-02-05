@@ -5,11 +5,19 @@ let templatePath = `${__dirname}/../template`;
 var packageName;
 var visibleName;
 var projectName;
+var immersive;
 
 function updateManifest(contents) {
-  return contents
+  let replaced = contents
     .replace("com.magicleap.magicscript.hello-sample", packageName)
-    .replace(new RegExp("MagicScript Hello Sample", 'g'), visibleName);
+    .replace(new RegExp("MagicScript Hello Sample", "g"), visibleName);
+  if (immersive) {
+    replaced = replaced.replace("universe", "fullscreen")
+      .replace("Universe", "Fullscreen")
+      .replace("<uses-privilege ml:name=\"MagicScript\"/>",
+        "<uses-privilege ml:name=\"MagicScript\"/>\n    <uses-privilege ml:name=\"LowLatencyLightwear\"/>");
+  }
+  return replaced;
 }
 
 function copyFiles(srcPath, destPath) {
@@ -24,6 +32,8 @@ function copyFiles(srcPath, destPath) {
       var contents = fs.readFileSync(origFilePath, "utf8");
       if (file === "manifest.xml") {
         contents = updateManifest(contents);
+      } else if ( immersive && file === "main.js") {
+        contents = contents.replace(new RegExp("LandscapeApp", "g"), "ImmersiveApp");
       }
       const writePath = `${destPath}/${file}`;
       fs.writeFileSync(writePath, contents, "utf8");
@@ -37,6 +47,7 @@ function copyFiles(srcPath, destPath) {
 module.exports = argv => {
   let nameRegex = /^([A-Za-z\-\_\d])+$/;
   let idRegex = /^[a-z0-9_]+(\.[a-z0-9_]+)*(-[a-zA-Z0-9]*)?$/i;
+  immersive = argv.immersive;
   if (!nameRegex.test(argv.projectName)) {
     console.error("Invalid project name");
     return -1;

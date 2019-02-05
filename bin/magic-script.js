@@ -16,6 +16,12 @@ require('yargs') // eslint-disable-line
       describe: "The visible name of the project.",
       type: "string"
     });
+    yargs.option("immersive", {
+      alias: "i",
+      describe: "Generate Immersive app Template",
+      boolean: true,
+      default: false
+    });
   }, argv => require("../commands/init")(argv))
   .command("build [certsPath]", "Compile project", yargs => {
     yargs.positional("certsPath", {

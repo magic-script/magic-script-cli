@@ -160,7 +160,7 @@ function signDigest() {
     return;
   }
   let python = path.join(mlsdkRoot,
-    process.platform === 'win32'
+    process.platform === "win32"
       ? "/tools/python3/python.exe"
       : "/tools/python3/bin/python3.5"
   );
