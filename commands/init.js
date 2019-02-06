@@ -15,7 +15,7 @@ function updateManifest(contents) {
     replaced = replaced.replace("universe", "fullscreen")
       .replace("Universe", "Fullscreen")
       .replace("<uses-privilege ml:name=\"MagicScript\"/>",
-        "<uses-privilege ml:name=\"MagicScript\"/>\n    <uses-privilege ml:name=\"LowLatencyLightwear\"/>");
+        "<uses-privilege ml:name=\"LowLatencyLightwear\"/>\n    <uses-privilege ml:name=\"MagicScript\"/>");
   }
   return replaced;
 }
