@@ -13,7 +13,7 @@ require('yargs') // eslint-disable-line
       type: "string"
     });
     yargs.positional("visibleName", {
-      describe: "The visible name of the project.",
+      describe: "The visible name of the project (optional)",
       type: "string"
     });
     yargs.option("immersive", {
@@ -23,11 +23,7 @@ require('yargs') // eslint-disable-line
       default: false
     });
   }, argv => require("../commands/init")(argv))
-  .command("build [certsPath]", "Compile project", yargs => {
-    yargs.positional("certsPath", {
-      describe: "Path to signing certificates.",
-      type: "string"
-    });
+  .command("build", "Compile project", yargs => {
     yargs.option("install", {
       alias: "i",
       boolean: true,

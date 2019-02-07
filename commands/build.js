@@ -2,18 +2,6 @@ const { exec } = require("child_process");
 const fs = require("fs");
 const util = require("../lib/util");
 
-function getPackageName() {
-  var name = "";
-  let currentDir = fs.readdirSync(process.cwd());
-  for (let file of currentDir) {
-    if (file.indexOf(".package") > 0) {
-      name = file.substring(0, file.indexOf("."));
-      break;
-    }
-  }
-  return name;
-}
-
 function npmInstallIfNeeded(callback) {
   if (fs.existsSync("node_modules")) {
     callback();
@@ -31,11 +19,8 @@ function npmInstallIfNeeded(callback) {
 
 module.exports = argv => {
   npmInstallIfNeeded(() => {
-    var packageName = getPackageName();
-    var buildCommand = `mabu -t device ${packageName}.package`;
-    if (argv.certsPath && fs.existsSync(argv.certsPath)) {
-      buildCommand = `mabu -s ${argv.certsPath} -t device ${packageName}.package`;
-    }
+    var packageName = util.findPackageName();
+    var buildCommand = "mabu -t device app.package";
     exec("npm run build", (err, stdout, stderr) => {
       if (err) {
         console.error("Error:", err);

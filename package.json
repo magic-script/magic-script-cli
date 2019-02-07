@@ -1,7 +1,7 @@
 {
   "name": "magic-script-cli",
   "description": "Magic Script Toolkit",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "author": "Magic Leap",
   "bin": {
     "magic-script": "./bin/magic-script.js"
