@@ -8,7 +8,6 @@ module.exports = {
   collectCoverageFrom: [
     "commands/*.js",
     "lib/*.js",
-    "bin/*.js",
   ],
   testEnvironment: "node",
 };

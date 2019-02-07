@@ -1,7 +1,7 @@
 jest.mock('fs');
 jest.mock('glob');
 
-const mockedFs = require('fs')
+const mockedFs = require('fs');
 jest.spyOn(mockedFs, "existsSync");
 jest.spyOn(mockedFs, "readFileSync");
 const child_process = require("child_process");
@@ -12,6 +12,8 @@ const util = require("../lib/util");
 const run = require("../commands/run");
 const remove = require("../commands/remove");
 const init = require("../commands/init");
+const build = require("../commands/build");
+const setup = require("../commands/setup");
 const parser = {};
 parser.toJson = jest.fn();
 
@@ -495,11 +497,11 @@ describe("Test Init", () => {
     jest.spyOn(mockedFs, "writeFileSync").mockImplementationOnce((path, contents, type)=>{
       expect(type).toBe("utf8");
       expect(contents).toBe("test1");
-      expect(path.endsWith("file1")).toBeTruthy()
+      expect(path.endsWith("file1")).toBeTruthy();
     }).mockImplementationOnce((path, contents, type)=>{
       expect(type).toBe("utf8");
       expect(contents).toBe("test2");
-      expect(path.endsWith("file2")).toBeTruthy()
+      expect(path.endsWith("file2")).toBeTruthy();
     });
     init({ "_": ["init"] });
   });
@@ -523,11 +525,11 @@ describe("Test Init", () => {
     jest.spyOn(mockedFs, "writeFileSync").mockImplementationOnce((path, contents, type)=>{
       expect(type).toBe("utf8");
       expect(contents).toBe("test1");
-      expect(path.endsWith("file1")).toBeTruthy()
+      expect(path.endsWith("file1")).toBeTruthy();
     }).mockImplementationOnce((path, contents, type)=>{
       expect(type).toBe("utf8");
       expect(contents).toBe("test2");
-      expect(path.endsWith("main.js")).toBeTruthy()
+      expect(path.endsWith("main.js")).toBeTruthy();
     });
     init({ "_": ["init"], "immersive": true });
   });
@@ -551,11 +553,11 @@ describe("Test Init", () => {
     jest.spyOn(mockedFs, "writeFileSync").mockImplementationOnce((path, contents, type)=>{
       expect(type).toBe("utf8");
       expect(contents).toBe("test1");
-      expect(path.endsWith("manifest.xml")).toBeTruthy()
+      expect(path.endsWith("manifest.xml")).toBeTruthy();
     }).mockImplementationOnce((path, contents, type)=>{
       expect(type).toBe("utf8");
       expect(contents).toBe("test2");
-      expect(path.endsWith("file2")).toBeTruthy()
+      expect(path.endsWith("file2")).toBeTruthy();
     });
     init({ "_": ["init"] });
   });
@@ -579,11 +581,11 @@ describe("Test Init", () => {
     jest.spyOn(mockedFs, "writeFileSync").mockImplementationOnce((path, contents, type)=>{
       expect(type).toBe("utf8");
       expect(contents).toBe("test1");
-      expect(path.endsWith("manifest.xml")).toBeTruthy()
+      expect(path.endsWith("manifest.xml")).toBeTruthy();
     }).mockImplementationOnce((path, contents, type)=>{
       expect(type).toBe("utf8");
       expect(contents).toBe("test2");
-      expect(path.endsWith("file2")).toBeTruthy()
+      expect(path.endsWith("file2")).toBeTruthy();
     });
     init({ "_": ["init"], "immersive": true });
   });
@@ -607,14 +609,14 @@ describe("Test Init", () => {
     jest.spyOn(mockedFs, "writeFileSync").mockImplementationOnce((path, contents, type)=>{
       expect(type).toBe("utf8");
       expect(contents).toBe("test1");
-      expect(path.endsWith("manifest.xml")).toBeTruthy()
+      expect(path.endsWith("manifest.xml")).toBeTruthy();
     }).mockImplementationOnce((path, contents, type)=>{
       expect(type).toBe("utf8");
       expect(contents).toBe("test2");
-      expect(path.endsWith("file2")).toBeTruthy()
+      expect(path.endsWith("file2")).toBeTruthy();
     });
     init({ "_": ["init"]});
-    expect(mockedFs.mkdirSync).toBeCalled()
+    expect(mockedFs.mkdirSync).toBeCalled();
   });
 
   test("bad project name", () => {
@@ -636,7 +638,7 @@ describe("Test Init", () => {
     });
     jest.spyOn(mockedFs, "statSync").mockImplementation((path)=>{
       var statObject = {};
-      console.log(path)
+      console.log(path);
       statObject.isFile = function(){
         if(path.endsWith("folder")) {
           return false;
@@ -655,13 +657,119 @@ describe("Test Init", () => {
     jest.spyOn(mockedFs, "writeFileSync").mockImplementationOnce((path, contents, type)=>{
       expect(type).toBe("utf8");
       expect(contents).toBe("test1");
-      expect(path.endsWith("manifest.xml")).toBeTruthy()
+      expect(path.endsWith("manifest.xml")).toBeTruthy();
     }).mockImplementationOnce((path, contents, type)=>{
       expect(type).toBe("utf8");
       expect(contents).toBe("test2");
-      expect(path.endsWith("file1")).toBeTruthy()
+      expect(path.endsWith("file1")).toBeTruthy();
     });
     init({ "_": ["init"]});
-    expect(mockedFs.mkdirSync).toBeCalled()
+    expect(mockedFs.mkdirSync).toBeCalled();
+  });
+});
+
+describe("Test build", () => {
+  test("error npm run", () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe("npm run build");
+      callback("error");
+    });
+    build({ "_": ["build"], "install": false });
+  });
+
+  test("error mabu", () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    util.createDigest = jest.fn().mockReturnValue(false);
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe("npm run build");
+      child_process.exec.mockImplementationOnce((command, callback) => {
+        expect(command).toBe("mabu -t device app.package");
+        callback("error");
+      });
+      callback(null);
+    });
+    build({ "_": ["build"], "install": false });
+  });
+
+  test("no error no install", () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    util.createDigest = jest.fn().mockReturnValue(false);
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe("npm run build");
+      child_process.exec.mockImplementationOnce((command, callback) => {
+        expect(command).toBe("mabu -t device app.package");
+        callback(null,"out.mpk");
+      });
+      callback(null);
+    });
+    build({ "_": ["build"], "install": false });
+  });
+
+  test("no error mldb install", () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    util.createDigest = jest.fn().mockReturnValue(false);
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe("npm run build");
+      child_process.exec.mockImplementationOnce((command, callback) => {
+        expect(command).toBe("mabu -t device app.package");
+        util.isInstalled = jest.fn().mockImplementationOnce((packageName, callback) => {
+          expect(packageName).toBe("com.abc");
+          callback();
+        });
+        child_process.exec.mockImplementationOnce((command, callback) => {
+          expect(command).toBe("mldb install  ");
+          callback(null);
+        });
+        callback(null,"out.mpk");
+      });
+      callback(null);
+    });
+    build({ "_": ["build"], "install": true });
+  });
+
+  test("error mldb install", () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    util.createDigest = jest.fn().mockReturnValue(false);
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe("npm run build");
+      child_process.exec.mockImplementationOnce((command, callback) => {
+        expect(command).toBe("mabu -t device app.package");
+        util.isInstalled = jest.fn().mockImplementationOnce((packageName, callback) => {
+          expect(packageName).toBe("com.abc");
+          callback();
+        });
+        child_process.exec.mockImplementationOnce((command, callback) => {
+          expect(command).toBe("mldb install  ");
+          callback("error");
+        });
+        callback(null,"out.mpk");
+      });
+      callback(null);
+    });
+    build({ "_": ["build"], "install": true });
+  });
+
+  test("error npm install", () => {
+    mockedFs.existsSync.mockReturnValue(false);
+    util.createDigest = jest.fn().mockReturnValue(false);
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe("npm install");
+      callback("error");
+    });
+    build({ "_": ["build"], "install": true });
+  });
+
+  test("no error npm install", () => {
+    mockedFs.existsSync.mockReturnValue(false);
+    util.createDigest = jest.fn().mockReturnValue(false);
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe("npm install");
+      child_process.exec.mockImplementationOnce((command, callback) => {
+        expect(command).toBe("npm run build");
+      });
+      callback(null);
+    });
+    build({ "_": ["build"], "install": true });
   });
 });
