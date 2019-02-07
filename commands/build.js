@@ -19,7 +19,6 @@ function npmInstallIfNeeded(callback) {
 
 module.exports = argv => {
   npmInstallIfNeeded(() => {
-    var packageName = util.findPackageName();
     var buildCommand = "mabu -t device app.package";
     exec("npm run build", (err, stdout, stderr) => {
       if (err) {
@@ -30,6 +29,7 @@ module.exports = argv => {
       exec(buildCommand, (err, stdout, stderr) => {
         if (err) {
           console.error("Error:", err);
+          return;
         }
         let mpkFile;
         let outLines = stdout.split("\n");
@@ -41,7 +41,6 @@ module.exports = argv => {
         }
         console.log("built package: " + mpkFile);
         if (argv.install) {
-  
           let packageName = util.findPackageName();
           util.isInstalled(packageName, (installed) => {
             let installCommand = `mldb install ${installed ? "-u" : ""} ${mpkFile}`;
