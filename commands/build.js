@@ -8,6 +8,8 @@ function npmInstallIfNeeded(callback) {
   } else {
     exec("npm install", (err, stdout, stderr) => {
       if (err) {
+        process.stdout.write(stdout);
+        process.stderr.write(stderr);
         console.error("Error running npm install");
         return;
       }
@@ -19,16 +21,19 @@ function npmInstallIfNeeded(callback) {
 
 module.exports = argv => {
   npmInstallIfNeeded(() => {
-    var packageName = util.findPackageName();
     var buildCommand = "mabu -t device app.package";
     exec("npm run build", (err, stdout, stderr) => {
       if (err) {
+        process.stdout.write(stdout);
+        process.stderr.write(stderr);
         console.error("Error:", err);
         return;
       }
       util.createDigest(argv.debug);
       exec(buildCommand, (err, stdout, stderr) => {
         if (err) {
+          process.stdout.write(stdout);
+          process.stderr.write(stderr);
           console.error("Error:", err);
         }
         let mpkFile;
@@ -48,6 +53,8 @@ module.exports = argv => {
             console.log(installCommand);
             exec(installCommand, (err, stdout, stderr) => {
               if (err) {
+                process.stdout.write(stdout);
+                process.stderr.write(stderr);
                 console.error("Error:", err);
               }
               console.log(stdout);
