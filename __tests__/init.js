@@ -1,6 +1,6 @@
-jest.mock('fs');
+jest.mock("fs");
 
-const mockedFs = require('fs');
+const mockedFs = require("fs");
 jest.spyOn(mockedFs, "existsSync");
 jest.spyOn(mockedFs, "readFileSync");
 const init = require("../commands/init");
@@ -148,17 +148,17 @@ describe("Test Init", () => {
       expect(path.endsWith("file2")).toBeTruthy();
     });
     init({ "_": ["init"]});
-    expect(mockedFs.mkdirSync).toBeCalled();
+    expect(mockedFs.mkdirSync).toHaveBeenCalled();
   });
 
   test("bad project name", () => {
     init({ "_": ["init"], "projectName": "$A"});
-    expect(mockedFs.existsSync).not.toBeCalled();
+    expect(mockedFs.existsSync).not.toHaveBeenCalled();
   });
 
   test("bad package name", () => {
     init({ "_": ["init"], "packageName": "$A"});
-    expect(mockedFs.existsSync).not.toBeCalled();
+    expect(mockedFs.existsSync).not.toHaveBeenCalled();
   });
 
   test("no project exists with subdir", () => {
@@ -195,6 +195,6 @@ describe("Test Init", () => {
       expect(path.endsWith("file1")).toBeTruthy();
     });
     init({ "_": ["init"]});
-    expect(mockedFs.mkdirSync).toBeCalled();
+    expect(mockedFs.mkdirSync).toHaveBeenCalled();
   });
 });

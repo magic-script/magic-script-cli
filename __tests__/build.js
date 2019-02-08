@@ -1,7 +1,7 @@
-jest.mock('fs');
-jest.mock('glob');
+jest.mock("fs");
+jest.mock("glob");
 
-const mockedFs = require('fs');
+const mockedFs = require("fs");
 jest.spyOn(mockedFs, "existsSync");
 jest.spyOn(mockedFs, "readFileSync");
 const child_process = require("child_process");
@@ -15,7 +15,7 @@ beforeEach(() => {
 
 afterEach(() => {
   if (util.isInstalled.mock) {
-      util.isInstalled.mockRestore();
+    util.isInstalled.mockRestore();
   }
 });
 

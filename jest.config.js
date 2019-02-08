@@ -10,4 +10,6 @@ module.exports = {
     "lib/*.js",
   ],
   testEnvironment: "node",
+  testMatch: ["**/__tests__/*.js"],
+  testPathIgnorePatterns: ["/node_modules/", ".eslintrc.js"],
 };

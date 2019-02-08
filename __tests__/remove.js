@@ -1,4 +1,4 @@
-jest.mock('glob');
+jest.mock("glob");
 
 const child_process = require("child_process");
 jest.spyOn(child_process, "exec");
