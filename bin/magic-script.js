@@ -2,7 +2,6 @@
 "use strict";
 
 require('yargs') // eslint-disable-line
-  .command("setup", "Setup the MagicLeap SDK", argv => require("../commands/setup")(argv.argv))
   .command("init <projectName> <packageName> [visibleName]", "Create a new project", yargs => {
     yargs.positional("projectName", {
       describe: "Local folder to create project in.",
@@ -47,6 +46,7 @@ require('yargs') // eslint-disable-line
     alias: "v",
     default: false
   })
+  .wrap(null)
   .demandCommand()
   .help()
   .argv;
