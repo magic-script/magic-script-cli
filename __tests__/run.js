@@ -1,3 +1,5 @@
+// Copyright 2019 Magic Leap Inc.
+// Distributed under MIT License. See LICENSE file in the project root for full license information.
 const child_process = require("child_process");
 jest.spyOn(child_process, "exec");
 jest.spyOn(child_process, "spawn");

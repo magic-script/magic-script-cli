@@ -1,3 +1,5 @@
+// Copyright 2019 Magic Leap Inc.
+// Distributed under MIT License. See LICENSE file in the project root for full license information.
 // For a detailed explanation regarding each configuration property, visit:
 // https://jestjs.io/docs/en/configuration.html
 
@@ -8,6 +10,7 @@ module.exports = {
   collectCoverageFrom: [
     "commands/*.js",
     "lib/*.js",
+    "util/*.js",
   ],
   testEnvironment: "node",
   testMatch: ["**/__tests__/*.js"],

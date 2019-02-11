@@ -1,3 +1,5 @@
+// Copyright 2019 Magic Leap Inc.
+// Distributed under MIT License. See LICENSE file in the project root for full license information.
 jest.mock("glob");
 
 const child_process = require("child_process");
