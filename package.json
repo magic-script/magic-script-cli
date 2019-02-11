@@ -3,6 +3,7 @@
   "description": "Magic Script Toolkit",
   "version": "0.9.8",
   "author": "Magic Leap",
+  "license": "MIT",
   "bin": {
     "magic-script": "./bin/magic-script.js"
   },

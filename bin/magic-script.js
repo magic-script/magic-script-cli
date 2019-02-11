@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+// Copyright Magic Leap Inc. 2019
+// Distributed under MIT License. See LICENSE file in the project root for full license information.
 "use strict";
 
 require('yargs') // eslint-disable-line

@@ -1,3 +1,5 @@
+// Copyright 2019 Magic Leap Inc.
+// Distributed under MIT License. See LICENSE file in the project root for full license information.
 let process = require("process");
 let fs = require("fs");
 let templatePath = `${__dirname}/../template`;
