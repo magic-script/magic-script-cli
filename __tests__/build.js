@@ -4,6 +4,7 @@ jest.mock("glob");
 const mockedFs = require("fs");
 jest.spyOn(mockedFs, "existsSync");
 jest.spyOn(mockedFs, "readFileSync");
+jest.spyOn(mockedFs, "readdirSync");
 const child_process = require("child_process");
 jest.spyOn(child_process, "exec");
 const util = require("../lib/util");
@@ -11,6 +12,7 @@ const build = require("../commands/build");
 
 beforeEach(() => {
   mockedFs.existsSync = jest.fn();
+  mockedFs.readdirSync = jest.fn();
 });
 
 afterEach(() => {
@@ -30,13 +32,12 @@ describe("Test build", () => {
   });
 
   test("error mabu", () => {
-    jest.spyOn(util, "findPackageName").mockReturnValueOnce("com.abc");
     mockedFs.existsSync.mockReturnValue(true);
     util.createDigest = jest.fn().mockReturnValue(false);
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe("npm run build");
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe("mabu -t device com.abc.package");
+        expect(command).toBe("mabu -t device app.package");
         callback("error");
       });
       callback(null);
@@ -45,13 +46,12 @@ describe("Test build", () => {
   });
 
   test("no error no install", () => {
-    jest.spyOn(util, "findPackageName").mockReturnValueOnce("com.abc");
     mockedFs.existsSync.mockReturnValue(true);
     util.createDigest = jest.fn().mockReturnValue(false);
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe("npm run build");
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe("mabu -t device com.abc.package");
+        expect(command).toBe("mabu -t device app.package");
         callback(null,"out.mpk");
       });
       callback(null);
@@ -60,13 +60,13 @@ describe("Test build", () => {
   });
 
   test("no error mldb install", () => {
-    jest.spyOn(util, "findPackageName").mockReturnValueOnce("com.abc");
     mockedFs.existsSync.mockReturnValue(true);
     util.createDigest = jest.fn().mockReturnValue(false);
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe("npm run build");
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe("mabu -t device com.abc.package");
+        expect(command).toBe("mabu -t device app.package");
+        jest.spyOn(util, "findPackageName").mockReturnValueOnce("com.abc");
         util.isInstalled = jest.fn().mockImplementationOnce((packageName, callback) => {
           expect(packageName).toBe("com.abc");
           callback(false);
@@ -83,13 +83,13 @@ describe("Test build", () => {
   });
 
   test("error mldb install", () => {
-    jest.spyOn(util, "findPackageName").mockReturnValueOnce("com.abc");
     mockedFs.existsSync.mockReturnValue(true);
     util.createDigest = jest.fn().mockReturnValue(false);
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe("npm run build");
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe("mabu -t device com.abc.package");
+        expect(command).toBe("mabu -t device app.package");
+        jest.spyOn(util, "findPackageName").mockReturnValueOnce("com.abc");
         util.isInstalled = jest.fn().mockImplementationOnce((packageName, callback) => {
           expect(packageName).toBe("com.abc");
           callback(false);
