@@ -4,6 +4,7 @@ jest.mock("glob");
 const mockedFs = require("fs");
 jest.spyOn(mockedFs, "existsSync");
 jest.spyOn(mockedFs, "readFileSync");
+jest.spyOn(mockedFs, "readdirSync");
 const child_process = require("child_process");
 jest.spyOn(child_process, "exec");
 const util = require("../lib/util");
@@ -11,6 +12,7 @@ const build = require("../commands/build");
 
 beforeEach(() => {
   mockedFs.existsSync = jest.fn();
+  mockedFs.readdirSync = jest.fn();
 });
 
 afterEach(() => {

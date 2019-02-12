@@ -21,7 +21,16 @@ function npmInstallIfNeeded(callback) {
 
 module.exports = argv => {
   npmInstallIfNeeded(() => {
-    var buildCommand = "mabu -t device app.package";
+    let packagePath = "app.package";
+    try {
+      for (let name of fs.readdirSync(".")) {
+        let m = name.match(/([^/]+)\.package$/);
+        if (!m) continue;
+        let [, base] = m;
+        packagePath = `${base}.package`;
+      }
+    } catch (err) {}
+    var buildCommand = `mabu -t device ${packagePath}`;
     exec("npm run build", (err, stdout, stderr) => {
       if (err) {
         process.stdout.write(stdout);
