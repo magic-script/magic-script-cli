@@ -32,6 +32,8 @@ function copyFiles(srcPath, destPath) {
       var contents = fs.readFileSync(origFilePath, "utf8");
       if (file === "manifest.xml") {
         contents = updateManifest(contents);
+      } else if (file.indexOf("app") > -1) {
+        file = file.replace("app", packageName);
       } else if ( immersive && file === "main.js") {
         contents = contents.replace(new RegExp("LandscapeApp", "g"), "ImmersiveApp");
       }
