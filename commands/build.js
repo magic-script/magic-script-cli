@@ -33,6 +33,10 @@ module.exports = argv => {
       }
     } catch (err) {}
     var buildCommand = `mabu -t device ${packagePath}`;
+    // create bin/index.js if needed
+    if (!fs.existsSync("bin/index.js")) {
+      fs.writeFileSync("bin/index.js", "#!/system/bin/script/mxs\nimport './src/main.js';\n", { mode: 0o755 });
+    }
     exec("npm run build", (err, stdout, stderr) => {
       if (err) {
         process.stdout.write(stdout);
