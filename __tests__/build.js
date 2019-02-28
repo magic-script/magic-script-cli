@@ -28,7 +28,7 @@ describe("Test build", () => {
     mockedFs.existsSync.mockReturnValue(true);
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe("npm run build");
-      callback("error");
+      expect(() => callback("error")).toThrow();
     });
     build({ "_": ["build"], "install": false });
   });
@@ -40,7 +40,7 @@ describe("Test build", () => {
       expect(command).toBe("npm run build");
       child_process.exec.mockImplementationOnce((command, callback) => {
         expect(command).toBe("mabu -t device app.package");
-        callback("error");
+        expect(() => callback("error")).toThrow();
       });
       callback(null);
     });
@@ -54,7 +54,7 @@ describe("Test build", () => {
       expect(command).toBe("npm run build");
       child_process.exec.mockImplementationOnce((command, callback) => {
         expect(command).toBe("mabu -t device app.package");
-        callback(null,"out.mpk");
+        callback(null, "out.mpk");
       });
       callback(null);
     });
@@ -77,7 +77,7 @@ describe("Test build", () => {
           expect(command).toBe("mldb install  ");
           callback(null);
         });
-        callback(null,"out.mpk");
+        callback(null, "out.mpk");
       });
       callback(null);
     });
@@ -98,9 +98,9 @@ describe("Test build", () => {
         });
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe("mldb install  ");
-          callback("error");
+          expect(() => callback("error")).toThrow();
         });
-        callback(null,"out.mpk");
+        callback(null, "out.mpk");
       });
       callback(null);
     });
@@ -112,7 +112,7 @@ describe("Test build", () => {
     util.createDigest = jest.fn().mockReturnValue(false);
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe("npm install");
-      callback("error");
+      expect(() => callback("error")).toThrow();
     });
     build({ "_": ["build"], "install": true });
   });

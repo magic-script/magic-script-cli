@@ -12,8 +12,7 @@ function npmInstallIfNeeded(callback) {
       if (err) {
         process.stdout.write(stdout);
         process.stderr.write(stderr);
-        console.error("Error running npm install");
-        return;
+        throw err;
       }
       console.log("npm install: success");
       callback();
@@ -47,15 +46,14 @@ module.exports = argv => {
       if (err) {
         process.stdout.write(stdout);
         process.stderr.write(stderr);
-        console.error("Error:", err);
-        return;
+        throw err;
       }
       util.createDigest(argv.debug);
       exec(buildCommand, (err, stdout, stderr) => {
         if (err) {
           process.stdout.write(stdout);
           process.stderr.write(stderr);
-          console.error("Error:", err);
+          throw err;
           return;
         }
         let mpkFile;
@@ -76,7 +74,7 @@ module.exports = argv => {
               if (err) {
                 process.stdout.write(stdout);
                 process.stderr.write(stderr);
-                console.error("Error:", err);
+                throw err;
               }
               console.log(stdout);
             });
