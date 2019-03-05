@@ -30,7 +30,9 @@ module.exports = argv => {
         let [, base] = m;
         packagePath = `${base}.package`;
       }
-    } catch (err) {}
+    } catch (err) {
+      throw err;
+    }
     var buildCommand = `mabu -t device ${packagePath}`;
     // create bin/index.js if needed
     try {
@@ -54,7 +56,6 @@ module.exports = argv => {
           process.stdout.write(stdout);
           process.stderr.write(stderr);
           throw err;
-          return;
         }
         let mpkFile;
         let outLines = stdout.split("\n");
