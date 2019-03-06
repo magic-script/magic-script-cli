@@ -22,6 +22,9 @@ afterEach(() => {
   if (util.isInstalled.mock) {
     util.isInstalled.mockRestore();
   }
+  if (child_process.exec.mock) {
+    child_process.exec.mockReset();
+  }
 });
 
 describe("Test build", () => {
