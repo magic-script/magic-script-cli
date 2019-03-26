@@ -1,7 +1,7 @@
 {
   "name": "magic-script-cli",
   "description": "Magic Script Toolkit",
-  "version": "0.11.0",
+  "version": "1.0.0",
   "author": "Magic Leap",
   "license": "MIT",
   "bin": {
@@ -10,9 +10,6 @@
   "scripts": {
     "lint": "eslint --ignore-path .gitignore --fix .",
     "test": "jest -i"
-  },
-  "publishConfig": {
-    "registry": "https://nexus.magicleap.blue/repository/npm-internal/"
   },
   "bugs": "https://github.com/magic-script/magic-script-cli/issues",
   "dependencies": {

@@ -1,4 +1,4 @@
-// Copyright 2019 Magic Leap Inc.
+// Copyright (c) 2019 Magic Leap, Inc. All Rights Reserved
 // Distributed under MIT License. See LICENSE file in the project root for full license information.
 // ESLint config for jest tests in the magic-script-cli project.
 module.exports = {
