@@ -1,15 +1,15 @@
 // Copyright (c) 2019 Magic Leap, Inc. All Rights Reserved
 // Distributed under MIT License. See LICENSE file in the project root for full license information.
-jest.mock("fs");
-jest.mock("glob");
+jest.mock('fs');
+jest.mock('glob');
 
-const mockedFs = require("fs");
-jest.spyOn(mockedFs, "existsSync");
-jest.spyOn(mockedFs, "readFileSync");
-const child_process = require("child_process");
-jest.spyOn(child_process, "exec");
-jest.spyOn(child_process, "execFile");
-const util = require("../lib/util");
+const mockedFs = require('fs');
+jest.spyOn(mockedFs, 'existsSync');
+jest.spyOn(mockedFs, 'readFileSync');
+const child_process = require('child_process');
+jest.spyOn(child_process, 'exec');
+jest.spyOn(child_process, 'execFile');
+const util = require('../lib/util');
 
 const consoleLog = console.log;
 const consoleError = console.error;
@@ -23,117 +23,116 @@ afterEach(() => {
   console.error = consoleError;
 });
 
-describe("Test Util", () => {
-
-  test("isInstalled error", () => {
-    jest.spyOn(console, "error").mockImplementationOnce((data) => {
-      expect(data).toBe("error getting installed packages:");
+describe('Test Util', () => {
+  test('isInstalled error', () => {
+    jest.spyOn(console, 'error').mockImplementationOnce((data) => {
+      expect(data).toBe('error getting installed packages:');
     });
     child_process.exec.mockImplementationOnce((command, cb) => {
-      expect(command).toBe("mldb packages -j");
-      cb("error");
+      expect(command).toBe('mldb packages -j');
+      cb('error');
     });
-    util.isInstalled("com.abc", function (result) {
+    util.isInstalled('com.abc', function (result) {
       expect(result).toBeFalsy();
     });
   });
 
-  test("isInstalled no match", () => {
+  test('isInstalled no match', () => {
     child_process.exec.mockImplementationOnce((command, cb) => {
-      expect(command).toBe("mldb packages -j");
-      cb(0, "[{\"asdf\":1 }]");
+      expect(command).toBe('mldb packages -j');
+      cb(0, '[{"asdf":1 }]');
     });
-    util.isInstalled("com.abc", function (result) {
+    util.isInstalled('com.abc', function (result) {
       expect(result).toBeFalsy();
     });
   });
 
-  test("isInstalled match", () => {
+  test('isInstalled match', () => {
     child_process.exec.mockImplementationOnce((command, cb) => {
-      expect(command).toBe("mldb packages -j");
-      cb(0, "[{\"package\":\"com.abc\" }]");
+      expect(command).toBe('mldb packages -j');
+      cb(0, '[{"package":"com.abc" }]');
     });
-    util.isInstalled("com.abc", function (result) {
+    util.isInstalled('com.abc', function (result) {
       expect(result).toBeTruthy();
     });
   });
 
-  test("isInstalled parse error", () => {
-    jest.spyOn(console, "error").mockImplementationOnce((data) => {
-      expect(data).toBe("Failed to parse packages JSON");
+  test('isInstalled parse error', () => {
+    jest.spyOn(console, 'error').mockImplementationOnce((data) => {
+      expect(data).toBe('Failed to parse packages JSON');
     });
     child_process.exec.mockImplementationOnce((command, cb) => {
-      expect(command).toBe("mldb packages -j");
+      expect(command).toBe('mldb packages -j');
       cb(0, null);
     });
-    util.isInstalled("com.abc", function (result) {
+    util.isInstalled('com.abc', function (result) {
       expect(result).toBeFalsy();
     });
   });
 
-  test("findPackageName no manifest", () => {
+  test('findPackageName no manifest', () => {
     mockedFs.existsSync.mockReturnValue(false);
-    jest.spyOn(console, "error").mockImplementationOnce((data) => {
-      expect(data).toBe("manifest.xml doesn't exist in current directory");
+    jest.spyOn(console, 'error').mockImplementationOnce((data) => {
+      expect(data).toBe('manifest.xml doesn\'t exist in current directory');
     });
     let name = util.findPackageName();
     expect(mockedFs.existsSync).toHaveBeenCalled();
-    expect(name).toBe("");
+    expect(name).toBe('');
   });
 
-  test("findPackageName manifest com.abc", () => {
+  test('findPackageName manifest com.abc', () => {
     mockedFs.existsSync.mockReturnValue(true);
     mockedFs.readFileSync.mockImplementationOnce((path, encoding) => {
-      expect(path).toBe("manifest.xml");
-      expect(encoding).toBe("utf8");
-      return "ml:package=\"com.abc\"";
+      expect(path).toBe('manifest.xml');
+      expect(encoding).toBe('utf8');
+      return 'ml:package="com.abc"';
     });
     let name = util.findPackageName();
     expect(mockedFs.existsSync).toHaveBeenCalled();
     expect(mockedFs.readFileSync).toHaveBeenCalled();
-    expect(name === "com.abc").toBeTruthy();
+    expect(name === 'com.abc').toBeTruthy();
   });
 
-  test("findPackageName manifest null", () => {
+  test('findPackageName manifest null', () => {
     mockedFs.existsSync.mockReturnValue(true);
     mockedFs.readFileSync.mockImplementationOnce((path) => {
-      expect(path).toBe("manifest.xml");
+      expect(path).toBe('manifest.xml');
       return null;
     });
     let name = util.findPackageName();
     expect(mockedFs.existsSync).toHaveBeenCalled();
     expect(mockedFs.readFileSync).toHaveBeenCalled();
-    expect(name === "").toBeTruthy();
+    expect(name === '').toBeTruthy();
   });
 
-  test("createDigest no sign script", () => {
+  test('createDigest no sign script', () => {
     mockedFs.existsSync.mockReturnValue(false);
-    jest.spyOn(console, "error").mockImplementationOnce((data) => {
-      expect(data).toBe("Signing Script not available");
+    jest.spyOn(console, 'error').mockImplementationOnce((data) => {
+      expect(data).toBe('Signing Script not available');
     });
     util.createDigest(false);
   });
 
-  test("createDigest error signing", () => {
+  test('createDigest error signing', () => {
     mockedFs.existsSync.mockReturnValue(true);
-    jest.spyOn(console, "error").mockImplementationOnce((data) => {
-      expect(data).toBe("error getting installed packages:");
+    jest.spyOn(console, 'error').mockImplementationOnce((data) => {
+      expect(data).toBe('error getting installed packages:');
     });
     child_process.execFile.mockImplementationOnce((node, command, cb) => {
-      expect(command[0].endsWith("mxs-sign.js")).toBeTruthy();
-      cb("err");
+      expect(command[0].endsWith('mxs-sign.js')).toBeTruthy();
+      cb('err');
     });
     util.createDigest(false);
   });
 
-  test("createDigest signing no error", () => {
+  test('createDigest signing no error', () => {
     mockedFs.existsSync.mockReturnValue(true);
-    jest.spyOn(console, "log").mockImplementationOnce((data) => {
-      expect(data).toBe("no error");
+    jest.spyOn(console, 'log').mockImplementationOnce((data) => {
+      expect(data).toBe('no error');
     });
     child_process.execFile.mockImplementationOnce((node, command, cb) => {
-      expect(command[0].endsWith("mxs-sign.js")).toBeTruthy();
-      cb(null, "no error");
+      expect(command[0].endsWith('mxs-sign.js')).toBeTruthy();
+      cb(null, 'no error');
     });
     util.createDigest(false);
   });
