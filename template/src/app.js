@@ -1,5 +1,5 @@
 import { LandscapeApp, ui } from 'lumin';
-const { UiText, EclipseLabelType, Alignment, HorizontalAlignment } = ui;
+const { UiText, EclipseLabelType, Alignment, HorizontalTextAlignment } = ui;
 
 export class App extends LandscapeApp {
   onAppStart () {
@@ -13,7 +13,7 @@ export class App extends LandscapeApp {
       EclipseLabelType.kT7
     );
     text.setAlignment(Alignment.CENTER_CENTER);
-    text.setTextAlignment(HorizontalAlignment.kCenter);
+    text.setTextAlignment(HorizontalTextAlignment.kCenter);
 
     // Attach the label to the root of the prism's scene graph.
     prism.getRootNode().addChild(text);
