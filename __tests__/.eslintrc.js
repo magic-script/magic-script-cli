@@ -8,10 +8,10 @@ module.exports = {
         "es6": true,
         "node": true
     },
-    "extends": ["plugin:jest/recommended"],
     "parserOptions": {
         "ecmaVersion": 2018
     },
+    "extends": ["plugin:jest/recommended"],
     "rules": {
         "indent": [
             "error",
@@ -23,7 +23,7 @@ module.exports = {
         ],
         "quotes": [
             "error",
-            "double"
+            "single"
         ],
         "semi": [
             "error",

@@ -6,13 +6,13 @@
 module.exports = {
   clearMocks: true,
   collectCoverage: true,
-  coverageDirectory: "coverage",
+  coverageDirectory: 'coverage',
   collectCoverageFrom: [
-    "commands/*.js",
-    "lib/*.js",
-    "util/*.js",
+    'commands/*.js',
+    'lib/*.js',
+    'util/*.js'
   ],
-  testEnvironment: "node",
-  testMatch: ["**/__tests__/*.js"],
-  testPathIgnorePatterns: ["/node_modules/", ".eslintrc.js"],
+  testEnvironment: 'node',
+  testMatch: ['**/__tests__/*.js'],
+  testPathIgnorePatterns: ['/node_modules/', '.eslintrc.js']
 };
