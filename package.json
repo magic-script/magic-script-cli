@@ -1,7 +1,7 @@
 {
   "name": "magic-script-cli",
   "description": "Magic Script Toolkit",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": "Magic Leap",
   "license": "MIT",
   "bin": {
@@ -43,5 +43,5 @@
   "keywords": [
     "magic-script"
   ],
-  "repository": "magic-script/magic-script-toolkit"
+  "repository": "magic-script/magic-script-cli"
 }
