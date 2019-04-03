@@ -49,6 +49,7 @@ require('yargs') // eslint-disable-line
     default: false
   })
   .wrap(null)
-  .demandCommand()
+  .demandCommand().recommendCommands().strict()
+  .showHelpOnFail(true)
   .help()
   .argv;
