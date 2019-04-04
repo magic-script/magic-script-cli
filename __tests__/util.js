@@ -9,6 +9,7 @@ jest.spyOn(mockedFs, 'readFileSync');
 const child_process = require('child_process');
 jest.spyOn(child_process, 'exec');
 jest.spyOn(child_process, 'execFile');
+jest.spyOn(child_process, 'execSync');
 const util = require('../lib/util');
 
 const consoleLog = console.log;
@@ -25,6 +26,10 @@ afterEach(() => {
 
 describe('Test Util', () => {
   test('isInstalled error', () => {
+    child_process.execSync.mockImplementationOnce((input) => {
+      expect(input).toBe('mldb start-server');
+      return "success";
+    });
     jest.spyOn(console, 'error').mockImplementationOnce((data) => {
       expect(data).toBe('error getting installed packages:');
     });
@@ -38,6 +43,10 @@ describe('Test Util', () => {
   });
 
   test('isInstalled no match', () => {
+    child_process.execSync.mockImplementationOnce((input) => {
+      expect(input).toBe('mldb start-server');
+      return "success";
+    });
     child_process.exec.mockImplementationOnce((command, cb) => {
       expect(command).toBe('mldb packages -j');
       cb(0, '[{"asdf":1 }]');
@@ -48,6 +57,10 @@ describe('Test Util', () => {
   });
 
   test('isInstalled match', () => {
+    child_process.execSync.mockImplementationOnce((input) => {
+      expect(input).toBe('mldb start-server');
+      return "success";
+    });
     child_process.exec.mockImplementationOnce((command, cb) => {
       expect(command).toBe('mldb packages -j');
       cb(0, '[{"package":"com.abc" }]');
@@ -58,6 +71,10 @@ describe('Test Util', () => {
   });
 
   test('isInstalled parse error', () => {
+    child_process.execSync.mockImplementationOnce((input) => {
+      expect(input).toBe('mldb start-server');
+      return "success";
+    });
     jest.spyOn(console, 'error').mockImplementationOnce((data) => {
       expect(data).toBe('Failed to parse packages JSON');
     });
@@ -135,5 +152,21 @@ describe('Test Util', () => {
       cb(null, 'no error');
     });
     util.createDigest(false);
+  });
+
+  test('startMLDB no error', () => {
+    child_process.execSync.mockImplementationOnce((input) => {
+      expect(input).toBe('mldb start-server');
+      return "success";
+    });
+    expect(util.startMLDB()).toBe(true);
+  });
+
+  test('startMLDB error', () => {
+    child_process.execSync.mockImplementationOnce((input) => {
+      expect(input).toBe('mldb start-server');
+      throw new Error("oops");
+    });
+    expect(util.startMLDB()).toBe(false);
   });
 });
