@@ -2,9 +2,15 @@
 // Distributed under MIT License. See LICENSE file in the project root for full license information.
 let { exec, spawn } = require('child_process');
 let util = require('../lib/util');
+let hash = require('hash-index')
 
 let packageName;
 let debug;
+let port;
+
+function getPortFromPackageName() {
+    return hash(packageName, 65535 - 1024) + 1024
+}
 
 function isRunning (callback) {
   exec('mldb ps', (err, stdout, stderr) => {
@@ -32,8 +38,10 @@ function isRunning (callback) {
 
 function launchFunction (callback) {
   let autoPrivilege = debug ? ' --auto-net-privs' : '';
-  let launchCommand = `mldb launch${autoPrivilege} ${packageName}`;
-  console.info('Launching:', packageName);
+  let portNumber = port > 0 && port < 65536 ? port : getPortFromPackageName();
+  let portArg = '-v INSPECTOR_PORT=' + portNumber;
+  let launchCommand = `mldb launch${autoPrivilege} ${portArg} ${packageName}`;
+  console.info(`Launching: ${packageName} at port: ${portNumber}`);
   exec(launchCommand, (err, stdout, stderr) => {
     if (err) {
       console.error(`exec error: ${err}`);
@@ -92,6 +100,7 @@ function launchCallback (pid) {
 module.exports = argv => {
   let localArguments = argv._;
   debug = argv.debug;
+  port = argv.port;
   if (localArguments.length > 1) {
     packageName = localArguments[1];
   } else {

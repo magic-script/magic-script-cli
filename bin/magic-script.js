@@ -43,6 +43,10 @@ require('yargs') // eslint-disable-line
       boolean: true,
       default: true
     });
+    yargs.option('port', {
+      alias: 'p',
+      default: 0
+    });
   }, argv => require('../commands/run')(argv))
   .option('verbose', {
     alias: 'v',
