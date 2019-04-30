@@ -2,14 +2,14 @@
 // Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
 let { exec, spawn } = require('child_process');
 let util = require('../lib/util');
-let hash = require('hash-index')
+let hash = require('hash-index');
 
 let packageName;
 let debug;
 let port;
 
-function getPortFromPackageName() {
-    return hash(packageName, 65535 - 1024) + 1024
+function getPortFromPackageName () {
+  return hash(packageName, 65535 - 1024) + 1024;
 }
 
 function isRunning (callback) {
