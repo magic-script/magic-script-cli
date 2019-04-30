@@ -28,7 +28,7 @@ describe('Test Util', () => {
   test('isInstalled error', () => {
     child_process.execSync.mockImplementationOnce((input) => {
       expect(input).toBe('mldb start-server');
-      return "success";
+      return 'success';
     });
     jest.spyOn(console, 'error').mockImplementationOnce((data) => {
       expect(data).toBe('error getting installed packages:');
@@ -45,7 +45,7 @@ describe('Test Util', () => {
   test('isInstalled no match', () => {
     child_process.execSync.mockImplementationOnce((input) => {
       expect(input).toBe('mldb start-server');
-      return "success";
+      return 'success';
     });
     child_process.exec.mockImplementationOnce((command, cb) => {
       expect(command).toBe('mldb packages -j');
@@ -59,7 +59,7 @@ describe('Test Util', () => {
   test('isInstalled match', () => {
     child_process.execSync.mockImplementationOnce((input) => {
       expect(input).toBe('mldb start-server');
-      return "success";
+      return 'success';
     });
     child_process.exec.mockImplementationOnce((command, cb) => {
       expect(command).toBe('mldb packages -j');
@@ -73,7 +73,7 @@ describe('Test Util', () => {
   test('isInstalled parse error', () => {
     child_process.execSync.mockImplementationOnce((input) => {
       expect(input).toBe('mldb start-server');
-      return "success";
+      return 'success';
     });
     jest.spyOn(console, 'error').mockImplementationOnce((data) => {
       expect(data).toBe('Failed to parse packages JSON');
@@ -157,7 +157,7 @@ describe('Test Util', () => {
   test('startMLDB no error', () => {
     child_process.execSync.mockImplementationOnce((input) => {
       expect(input).toBe('mldb start-server');
-      return "success";
+      return 'success';
     });
     expect(util.startMLDB()).toBe(true);
   });
@@ -165,7 +165,7 @@ describe('Test Util', () => {
   test('startMLDB error', () => {
     child_process.execSync.mockImplementationOnce((input) => {
       expect(input).toBe('mldb start-server');
-      throw new Error("oops");
+      throw new Error('oops');
     });
     expect(util.startMLDB()).toBe(false);
   });
