@@ -1,5 +1,5 @@
 // Copyright (c) 2019 Magic Leap, Inc. All Rights Reserved
-// Distributed under MIT License. See LICENSE file in the project root for full license information.
+// Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
 jest.mock('fs');
 
 const mockedFs = require('fs');
