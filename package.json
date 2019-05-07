@@ -1,9 +1,9 @@
 {
   "name": "magic-script-cli",
   "description": "Magic Script Toolkit",
-  "version": "1.0.5",
+  "version": "2.0.0",
   "author": "Magic Leap",
-  "license": "MIT",
+  "license": "Apache 2.0",
   "bin": {
     "magic-script": "./bin/magic-script.js"
   },
