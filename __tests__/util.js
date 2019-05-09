@@ -154,10 +154,18 @@ describe('Test Util', () => {
     util.createDigest(false);
   });
 
-  test('startMLDB no error', () => {
+  test('startMLDB no error string', () => {
     child_process.execSync.mockImplementationOnce((input) => {
       expect(input).toBe('mldb start-server');
       return 'success';
+    });
+    expect(util.startMLDB()).toBe(true);
+  });
+
+  test('startMLDB no error object', () => {
+    child_process.execSync.mockImplementationOnce((input) => {
+      expect(input).toBe('mldb start-server');
+      return { 'success': true };
     });
     expect(util.startMLDB()).toBe(true);
   });
