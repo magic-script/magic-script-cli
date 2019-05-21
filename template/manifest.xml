@@ -3,7 +3,6 @@
           ml:version_name="0.0.1"
           ml:version_code="1">
   <application ml:visible_name="MagicScript Hello Sample"
-               ml:application_type="untrusted"
                ml:sdk_version="1.0">
     <component ml:name=".universe"
                ml:visible_name="MagicScript Hello Sample"
