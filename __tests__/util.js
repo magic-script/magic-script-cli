@@ -177,4 +177,20 @@ describe('Test Util', () => {
     });
     expect(util.startMLDB()).toBe(false);
   });
+
+  test('isValidPackageId success', () => {
+    expect(util.isValidPackageId('com.test')).toBe(true);
+  });
+
+  test('isValidPackageId fail', () => {
+    expect(util.isValidPackageId('com.#!@#test')).toBe(false);
+  });
+
+  test('isValidFolderName success', () => {
+    expect(util.isValidFolderName('testapp')).toBe(true);
+  });
+
+  test('isValidFolderName fail', () => {
+    expect(util.isValidFolderName('com.#!@#te st')).toBe(false);
+  });
 });

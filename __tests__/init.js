@@ -2,6 +2,7 @@
 // Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
 jest.mock('fs');
 
+const inquirer = require('inquirer');
 const mockedFs = require('fs');
 jest.spyOn(mockedFs, 'existsSync');
 jest.spyOn(mockedFs, 'readFileSync');
@@ -37,7 +38,10 @@ describe('Test Init', () => {
       expect(contents).toBe('test2');
       expect(path.endsWith('file2')).toBeTruthy();
     });
+    let backup = inquirer.prompt;
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
     init({ '_': ['init'] });
+    inquirer.prompt = backup;
   });
 
   test('project exists immersive no manifest', () => {
@@ -65,7 +69,10 @@ describe('Test Init', () => {
       expect(contents).toBe('test2');
       expect(path.endsWith('main.js')).toBeTruthy();
     });
-    init({ '_': ['init'], 'immersive': true });
+    let backup = inquirer.prompt;
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: false });
+    init({ '_': ['init'] });
+    inquirer.prompt = backup;
   });
 
   test('project exists not immersive', () => {
@@ -93,7 +100,10 @@ describe('Test Init', () => {
       expect(contents).toBe('test2');
       expect(path.endsWith('file2')).toBeTruthy();
     });
+    let backup = inquirer.prompt;
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
     init({ '_': ['init'] });
+    inquirer.prompt = backup;
   });
 
   test('project exists immersive', () => {
@@ -121,12 +131,16 @@ describe('Test Init', () => {
       expect(contents).toBe('test2');
       expect(path.endsWith('file2')).toBeTruthy();
     });
-    init({ '_': ['init'], 'immersive': true });
+    let backup = inquirer.prompt;
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: false });
+    init({ '_': ['init'] });
+    inquirer.prompt = backup;
   });
 
   test('no project exists', () => {
     mockedFs.existsSync.mockReturnValueOnce(false);
     jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
+      expect(mockedFs.mkdirSync).toHaveBeenCalled();
       return ['manifest.xml', 'file2'];
     });
     jest.spyOn(mockedFs, 'statSync').mockImplementation((path) => {
@@ -149,23 +163,32 @@ describe('Test Init', () => {
       expect(contents).toBe('test2');
       expect(path.endsWith('file2')).toBeTruthy();
     });
+    let backup = inquirer.prompt;
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
     init({ '_': ['init'] });
-    expect(mockedFs.mkdirSync).toHaveBeenCalled();
+    inquirer.prompt = backup;
   });
 
   test('bad project name', () => {
-    init({ '_': ['init'], 'projectName': '$A' });
+    let backup = inquirer.prompt;
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: true, FOLDERNAME: '$A' });
+    init({ '_': ['init'] });
+    inquirer.prompt = backup;
     expect(mockedFs.existsSync).not.toHaveBeenCalled();
   });
 
   test('bad package name', () => {
-    init({ '_': ['init'], 'packageName': '$A' });
+    let backup = inquirer.prompt;
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: true, APPID: '$A' });
+    init({ '_': ['init'] });
+    inquirer.prompt = backup;
     expect(mockedFs.existsSync).not.toHaveBeenCalled();
   });
 
   test('no project exists with subdir', () => {
     mockedFs.existsSync.mockReturnValue(false);
     jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
+      expect(mockedFs.mkdirSync).toHaveBeenCalled();
       return ['manifest.xml', 'folder'];
     }).mockImplementationOnce((path) => {
       return ['file1'];
@@ -196,7 +219,9 @@ describe('Test Init', () => {
       expect(contents).toBe('test2');
       expect(path.endsWith('file1')).toBeTruthy();
     });
+    let backup = inquirer.prompt;
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
     init({ '_': ['init'] });
-    expect(mockedFs.mkdirSync).toHaveBeenCalled();
+    inquirer.prompt = backup;
   });
 });
