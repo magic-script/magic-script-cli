@@ -4,32 +4,15 @@
 'use strict';
 
 require('yargs') // eslint-disable-line
-  .command('init <projectName> <packageName> [visibleName]', 'Create a new project', yargs => {
-    yargs.positional('projectName', {
-      describe: 'Local folder to create project in.',
-      type: 'string'
-    });
-    yargs.positional('packageName', {
-      describe: 'The package identifier.',
-      type: 'string'
-    });
-    yargs.positional('visibleName', {
-      describe: 'The visible name of the project (optional)',
-      type: 'string'
-    });
-    yargs.option('immersive', {
-      alias: 'i',
-      describe: 'Generate Immersive app Template',
-      boolean: true,
-      default: false
-    });
+  .command('init', 'Create a new project', yargs => {
   }, argv => require('../commands/init')(argv))
-  .command('build', 'Compile project', yargs => {
-    yargs.option('install', {
-      alias: 'i',
-      boolean: true,
-      default: false
+  .command('install [path]', 'Install the project', yargs => {
+    yargs.positional('path', {
+      describe: 'Path to the mpk',
+      default: '.out/app/app.mpk'
     });
+  }, argv => require('../commands/install')(argv))
+  .command('build', 'Compile project', yargs => {
     yargs.option('debug', {
       alias: 'd',
       boolean: true,

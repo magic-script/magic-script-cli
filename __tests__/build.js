@@ -35,7 +35,7 @@ describe('Test build', () => {
     });
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('npm run build');
-      expect(() => callback('error')).toThrow();
+      expect(() => callback('error', '', '')).toThrow();
     });
     build({ '_': ['build'], 'install': false });
   });
@@ -50,7 +50,7 @@ describe('Test build', () => {
       expect(command).toBe('npm run build');
       child_process.exec.mockImplementationOnce((command, callback) => {
         expect(command).toBe('mabu -t device app.package');
-        expect(() => callback('error')).toThrow();
+        expect(() => callback('error', '', '')).toThrow();
       });
       callback(null);
     });
@@ -89,15 +89,11 @@ describe('Test build', () => {
           expect(packageName).toBe('com.abc');
           callback(false);
         });
-        child_process.exec.mockImplementationOnce((command, callback) => {
-          expect(command).toBe('mldb install  ');
-          callback(null);
-        });
         callback(null, 'out.mpk');
       });
       callback(null);
     });
-    build({ '_': ['build'], 'install': true });
+    build({ '_': ['build'] });
   });
 
   test('error mldb install', () => {
@@ -115,15 +111,11 @@ describe('Test build', () => {
           expect(packageName).toBe('com.abc');
           callback(false);
         });
-        child_process.exec.mockImplementationOnce((command, callback) => {
-          expect(command).toBe('mldb install  ');
-          expect(() => callback('error')).toThrow();
-        });
         callback(null, 'out.mpk');
       });
       callback(null);
     });
-    build({ '_': ['build'], 'install': true });
+    build({ '_': ['build'] });
   });
 
   test('error npm install', () => {
@@ -134,9 +126,9 @@ describe('Test build', () => {
     util.createDigest = jest.fn().mockReturnValue(false);
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('npm install');
-      expect(() => callback('error')).toThrow();
+      expect(() => callback('error', '', '')).toThrow();
     });
-    build({ '_': ['build'], 'install': true });
+    build({ '_': ['build'] });
   });
 
   test('no error npm install', () => {
@@ -152,7 +144,7 @@ describe('Test build', () => {
       });
       callback(null);
     });
-    build({ '_': ['build'], 'install': true });
+    build({ '_': ['build'] });
   });
 
   test('readdir no package', () => {

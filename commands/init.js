@@ -3,11 +3,47 @@
 let process = require('process');
 let fs = require('fs');
 let templatePath = `${__dirname}/../template`;
+let inquirer = require('inquirer');
+const util = require('../lib/util');
 
 var packageName;
 var visibleName;
 var projectName;
 var immersive;
+
+const askQuestions = () => {
+  const questions = [
+    {
+      name: 'APPNAME',
+      type: 'input',
+      message: 'What is the name of your application?'
+    },
+    {
+      name: 'APPID',
+      type: 'input',
+      message: 'What is the app ID of your application?',
+      validate: util.isValidPackageId
+    },
+    {
+      name: 'FOLDERNAME',
+      type: 'input',
+      message: 'In which folder do you want to save this project?',
+      validate: util.isValidFolderName
+    },
+    {
+      name: 'APPTYPE',
+      type: 'confirm',
+      message: 'Do you want a Landscape App?'
+    },
+    {
+      type: 'checkbox',
+      name: 'BUILDTARGETS',
+      message: 'What are your device targets?',
+      choices: ['Magic Leap', 'iOS', 'Android']
+    }
+  ];
+  return inquirer.prompt(questions);
+};
 
 function updateManifest (contents) {
   let replaced = contents
@@ -47,20 +83,13 @@ function copyFiles (srcPath, destPath) {
 }
 
 module.exports = argv => {
-  let nameRegex = /^([A-Za-z\-\_\d])+$/;
-  let idRegex = /^[a-z0-9_]+(\.[a-z0-9_]+)*(-[a-zA-Z0-9]*)?$/i;
-  immersive = argv.immersive;
-  if (!nameRegex.test(argv.projectName)) {
-    console.error('Invalid project name');
-    return -1;
-  } else if (!idRegex.test(argv.packageName)) {
-    console.error('Bad package name:', argv.packageName);
-    return -1;
-  }
-  packageName = argv.packageName;
-  projectName = argv.projectName;
-  visibleName = argv.visibleName || projectName;
-  console.log('Project Name:', projectName);
-  const currentDirectory = process.cwd();
-  copyFiles(templatePath, `${currentDirectory}/${projectName}`);
+  let answerPromise = askQuestions();
+  answerPromise.then(answers => {
+    packageName = answers['APPID'];
+    projectName = answers['FOLDERNAME'];
+    visibleName = answers['APPNAME'];
+    immersive = !answers['APPTYPE'];
+    const currentDirectory = process.cwd();
+    copyFiles(templatePath, `${currentDirectory}/${projectName}`);
+  });
 };

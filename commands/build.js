@@ -66,21 +66,6 @@ module.exports = argv => {
           }
         }
         console.log('built package: ' + mpkFile);
-        if (argv.install) {
-          let packageName = util.findPackageName();
-          util.isInstalled(packageName, (installed) => {
-            let installCommand = `mldb install ${installed ? '-u' : ''} ${mpkFile}`;
-            console.log(installCommand);
-            exec(installCommand, (err, stdout, stderr) => {
-              if (err) {
-                process.stdout.write(stdout);
-                process.stderr.write(stderr);
-                throw err;
-              }
-              console.log(stdout);
-            });
-          });
-        }
       });
     });
   });
