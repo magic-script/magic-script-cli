@@ -26,6 +26,11 @@ require('yargs') // eslint-disable-line
       boolean: true,
       default: true
     });
+    yargs.option('install', {
+      alias: 'i',
+      boolean: true,
+      default: false
+    });
     yargs.option('port', {
       alias: 'p',
       default: 0
