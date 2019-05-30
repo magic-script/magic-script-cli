@@ -18,6 +18,15 @@ require('yargs') // eslint-disable-line
       boolean: true,
       default: true
     });
+    yargs.option('install', {
+      alias: 'i',
+      boolean: true,
+      default: false
+    });
+    yargs.positional('path', {
+      describe: 'Path to the mpk',
+      default: '.out/app/app.mpk'
+    });
   }, argv => require('../commands/build')(argv))
   .command('remove', 'Remove project from device', argv => require('../commands/remove')(argv.argv))
   .command('run', 'Compile and run project', yargs => {
@@ -25,11 +34,6 @@ require('yargs') // eslint-disable-line
       alias: 'd',
       boolean: true,
       default: true
-    });
-    yargs.option('install', {
-      alias: 'i',
-      boolean: true,
-      default: false
     });
     yargs.option('port', {
       alias: 'p',
