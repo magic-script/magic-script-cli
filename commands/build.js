@@ -66,6 +66,9 @@ module.exports = argv => {
           }
         }
         console.log('built package: ' + mpkFile);
+        if (argv.install) {
+          util.installPackage(argv.path);
+        }
       });
     });
   });
