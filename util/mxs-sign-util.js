@@ -5,20 +5,26 @@ const fs = require('fs');
 const path = require('path');
 const which = require('which');
 const { execFile, exec } = require('child_process');
+
+// The digest file path.
+const DIGEST_PATH = 'digest.sha512.signed';
+
+// The header (magic number and command) before the digest content.
+const DIGEST_MAGIC = '#\u00A1\u007F';
+const DIGEST_COMMAND = 'sha512sum -c';
+const DIGEST_CONTENT_HEADER = DIGEST_MAGIC + DIGEST_COMMAND + '\n';
+
+// The separator between the digest content and the digital signature.
+const DIGEST_CONTENT_SEPARATOR = '#\0';
+
 module.exports = {
   /// ///////////////////////////////////////////////////////////////////////////
   // Constants
-
-  // The digest file path.
-  DIGEST_PATH: 'digest.sha512.signed',
-
-  // The header (magic number and command) before the digest content.
-  DIGEST_MAGIC: '#\u00A1\u007F',
-  DIGEST_COMMAND: 'sha512sum -c',
-  DIGEST_CONTENT_HEADER: this.DIGEST_MAGIC + this.DIGEST_COMMAND + '\n',
-
-  // The separator between the digest content and the digital signature.
-  DIGEST_CONTENT_SEPARATOR: '#\0',
+  DIGEST_PATH,
+  DIGEST_MAGIC,
+  DIGEST_COMMAND,
+  DIGEST_CONTENT_HEADER,
+  DIGEST_CONTENT_SEPARATOR,
 
   displayTrace: false,
   command: '',
@@ -120,7 +126,7 @@ module.exports = {
       path.basename(mlCertPath, '.cert') + '.privkey'
     );
     fs.accessSync(mlPrivKeyPath, fs.constants.F_OK);
-    var signFile = function() {
+    var signFile = function () {
       // Sign DIGEST_PATH.
       this.trace('signing digest file');
       execFile(
