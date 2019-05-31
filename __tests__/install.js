@@ -28,7 +28,7 @@ describe('Test install', () => {
       expect(command).toBe('mldb install  my/path.mpk');
       callback(null, 'install success');
     });
-    install({ '_': ['install'], path: 'my/path.mpk' });
+    install({ '_': ['install'], path: 'my/path.mpk', 'target': 'lumin' });
   });
 
 
@@ -45,7 +45,7 @@ describe('Test install', () => {
         expect(err).toBe('error');
       }
      });
-    install({ '_': ['install'], path: 'my/path.mpk' });
+    install({ '_': ['install'], path: 'my/path.mpk', 'target': 'lumin' });
   });
 
   test('re-install', () => {
@@ -56,6 +56,6 @@ describe('Test install', () => {
       expect(command).toBe('mldb install -u my/path.mpk');
       callback(null, 'install success');
     });
-    install({ '_': ['install'], path: 'my/path.mpk' });
+    install({ '_': ['install'], path: 'my/path.mpk', 'target': 'lumin' });
   });
 });

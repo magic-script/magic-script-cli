@@ -97,7 +97,7 @@ function launchCallback (pid) {
   console.info(packageName, 'launched with PID:', pid);
 }
 
-module.exports = argv => {
+function runLumin (argv) {
   let localArguments = argv._;
   debug = argv.debug;
   port = argv.port;
@@ -125,5 +125,11 @@ module.exports = argv => {
       }
     }
     util.isInstalled(packageName, installedCallback);
+  }
+}
+
+module.exports = argv => {
+  if (argv.target === 'lumin') {
+    runLumin(argv);
   }
 };
