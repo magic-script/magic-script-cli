@@ -37,7 +37,7 @@ describe('Test build', () => {
       expect(command).toBe('npm run build');
       expect(() => callback('error', '', '')).toThrow();
     });
-    build({ '_': ['build'], 'install': false });
+    build({ '_': ['build'], 'install': false, 'target': 'lumin' });
   });
 
   test('error mabu', () => {
@@ -54,7 +54,7 @@ describe('Test build', () => {
       });
       callback(null);
     });
-    build({ '_': ['build'], 'install': false });
+    build({ '_': ['build'], 'install': false, 'target': 'lumin' });
   });
 
   test('no error no install', () => {
@@ -71,7 +71,7 @@ describe('Test build', () => {
       });
       callback(null);
     });
-    build({ '_': ['build'], 'install': false });
+    build({ '_': ['build'], 'install': false, 'target': 'lumin' });
   });
 
   test('no error mldb install', () => {
@@ -85,6 +85,10 @@ describe('Test build', () => {
       child_process.exec.mockImplementationOnce((command, callback) => {
         expect(command).toBe('mabu -t device app.package');
         jest.spyOn(util, 'findPackageName').mockReturnValueOnce('com.abc');
+        child_process.exec.mockImplementationOnce((command, callback) => {
+          expect(command).toBe('mldb install  my/path.mpk');
+          callback(null, 'install success');
+        });
         util.isInstalled = jest.fn().mockImplementationOnce((packageName, callback) => {
           expect(packageName).toBe('com.abc');
           callback(false);
@@ -93,7 +97,7 @@ describe('Test build', () => {
       });
       callback(null);
     });
-    build({ '_': ['build'] });
+    build({ '_': ['build'], 'target': 'lumin', install: true, path: 'my/path.mpk' });
   });
 
   test('error mldb install', () => {
@@ -115,7 +119,7 @@ describe('Test build', () => {
       });
       callback(null);
     });
-    build({ '_': ['build'] });
+    build({ '_': ['build'], 'target': 'lumin' });
   });
 
   test('error npm install', () => {
@@ -128,7 +132,7 @@ describe('Test build', () => {
       expect(command).toBe('npm install');
       expect(() => callback('error', '', '')).toThrow();
     });
-    build({ '_': ['build'] });
+    build({ '_': ['build'], 'target': 'lumin' });
   });
 
   test('no error npm install', () => {
@@ -144,7 +148,7 @@ describe('Test build', () => {
       });
       callback(null);
     });
-    build({ '_': ['build'] });
+    build({ '_': ['build'], 'target': 'lumin' });
   });
 
   test('readdir no package', () => {
@@ -160,7 +164,7 @@ describe('Test build', () => {
       });
       callback(null);
     });
-    build({ '_': ['build'], 'install': false });
+    build({ '_': ['build'], 'install': false, 'target': 'lumin' });
   });
 
   test('mkdir error EEXIST', () => {
@@ -181,7 +185,7 @@ describe('Test build', () => {
       });
       callback(null);
     });
-    build({ '_': ['build'], 'install': false });
+    build({ '_': ['build'], 'install': false, 'target': 'lumin' });
   });
 
   test('mkdir error other', () => {
@@ -198,7 +202,7 @@ describe('Test build', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('npm run build');
     });
-    expect(() => build({ '_': ['build'], 'install': false })).toThrow();
+    expect(() => build({ '_': ['build'], 'install': false, 'target': 'lumin' })).toThrow();
   });
 
   test('readdir error', () => {
@@ -210,6 +214,6 @@ describe('Test build', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('npm run build');
     });
-    expect(() => build({ '_': ['build'], 'install': false })).toThrow();
+    expect(() => build({ '_': ['build'], 'install': false, 'target': 'lumin' })).toThrow();
   });
 });

@@ -6,13 +6,17 @@
 require('yargs') // eslint-disable-line
   .command('init', 'Create a new project', yargs => {
   }, argv => require('../commands/init')(argv))
-  .command('install [path]', 'Install the project', yargs => {
+  .command('install [target] [path]', 'Install the project', yargs => {
     yargs.positional('path', {
       describe: 'Path to the mpk',
       default: '.out/app/app.mpk'
     });
+    yargs.positional('target', {
+      describe: 'target(s) to build for',
+      default: 'lumin'
+    });
   }, argv => require('../commands/install')(argv))
-  .command('build', 'Compile project', yargs => {
+  .command('build [target]', 'Compile project', yargs => {
     yargs.option('debug', {
       alias: 'd',
       boolean: true,
@@ -23,13 +27,13 @@ require('yargs') // eslint-disable-line
       boolean: true,
       default: false
     });
-    yargs.positional('path', {
-      describe: 'Path to the mpk',
-      default: '.out/app/app.mpk'
+    yargs.positional('target', {
+      describe: 'target(s) to build for',
+      default: 'lumin'
     });
   }, argv => require('../commands/build')(argv))
   .command('remove', 'Remove project from device', argv => require('../commands/remove')(argv.argv))
-  .command('run', 'Compile and run project', yargs => {
+  .command('run [target[', 'Compile and run project', yargs => {
     yargs.option('debug', {
       alias: 'd',
       boolean: true,
@@ -38,6 +42,10 @@ require('yargs') // eslint-disable-line
     yargs.option('port', {
       alias: 'p',
       default: 0
+    });
+    yargs.positional('target', {
+      describe: 'target(s) to build for',
+      default: 'lumin'
     });
   }, argv => require('../commands/run')(argv))
   .option('verbose', {

@@ -3,5 +3,5 @@
 const util = require('../lib/util');
 
 module.exports = argv => {
-  util.installPackage(argv.path);
+  util.installPackage(argv);
 };

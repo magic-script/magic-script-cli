@@ -26,7 +26,7 @@ describe('Test Run', () => {
     jest.spyOn(console, 'warn').mockImplementationOnce((data) => {
       expect(data).toBe('Package: com.abc is not installed.  Please install it.');
     });
-    run({ '_': ['run', 'com.abc'] });
+    run({ '_': ['run', 'com.abc'], target: 'lumin' });
   });
 
   test('not installed "com.abc" running', () => {
@@ -37,12 +37,12 @@ describe('Test Run', () => {
     jest.spyOn(console, 'warn').mockImplementationOnce((data) => {
       expect(data).toBe('Package: com.abc is not installed.  Please install it.');
     });
-    run({ '_': ['run', 'com.abc'] });
+    run({ '_': ['run', 'com.abc'], target: 'lumin' });
   });
 
   test('no packageName', () => {
     const mockFindPackageName = jest.spyOn(util, 'findPackageName').mockReturnValueOnce('');
-    run({ '_': ['run'] });
+    run({ '_': ['run'], target: 'lumin' });
     expect(mockFindPackageName).toHaveBeenCalled();
   });
 
@@ -54,7 +54,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, cb) => {
       expect(command).toBe('mldb ps');
     });
-    run({ '_': ['run', 'com.abc'] });
+    run({ '_': ['run', 'com.abc'], target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
   });
@@ -74,7 +74,7 @@ describe('Test Run', () => {
       });
       callback(null, '1440 110011 Running com.abc .universe');
     });
-    run({ '_': ['run', 'com.abc'] });
+    run({ '_': ['run', 'com.abc'], target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
   });
@@ -97,7 +97,7 @@ describe('Test Run', () => {
       });
       callback('error');
     });
-    run({ '_': ['run', 'com.abc'] });
+    run({ '_': ['run', 'com.abc'], target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
   });
@@ -121,7 +121,7 @@ describe('Test Run', () => {
       });
       callback('error');
     });
-    run({ '_': ['run', 'com.abc'] });
+    run({ '_': ['run', 'com.abc'], target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
   });
@@ -159,7 +159,7 @@ describe('Test Run', () => {
       });
       callback('error');
     });
-    run({ '_': ['run', 'com.abc'], 'debug': true });
+    run({ '_': ['run', 'com.abc'], 'debug': true, target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
   });
@@ -198,7 +198,7 @@ describe('Test Run', () => {
       });
       callback('error');
     });
-    run({ '_': ['run', 'com.abc'], 'debug': true });
+    run({ '_': ['run', 'com.abc'], 'debug': true, target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
   });
@@ -241,7 +241,7 @@ describe('Test Run', () => {
       });
       callback('error');
     });
-    run({ '_': ['run', 'com.abc'], 'debug': true });
+    run({ '_': ['run', 'com.abc'], 'debug': true, target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
   });
@@ -284,7 +284,7 @@ describe('Test Run', () => {
       });
       callback('error');
     });
-    run({ '_': ['run', 'com.abc'], 'debug': true });
+    run({ '_': ['run', 'com.abc'], 'debug': true, target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
   });
@@ -312,7 +312,7 @@ describe('Test Run', () => {
       });
       callback('error');
     });
-    run({ '_': ['run', 'com.abc'], 'debug': false });
+    run({ '_': ['run', 'com.abc'], 'debug': false, target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
   });
@@ -340,7 +340,7 @@ describe('Test Run', () => {
       });
       callback('error');
     });
-    run({ '_': ['run', 'com.abc'], 'debug': false, 'port': 12345 });
+    run({ '_': ['run', 'com.abc'], 'debug': false, 'port': 12345, target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
   });
@@ -363,7 +363,7 @@ describe('Test Run', () => {
       });
       callback(null, '1440 110011 Running com.abc .universe');
     });
-    run({ '_': ['run', 'com.abc'] });
+    run({ '_': ['run', 'com.abc'], target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
   });
