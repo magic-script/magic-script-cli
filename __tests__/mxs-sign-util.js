@@ -160,6 +160,10 @@ describe('Test mxs-sign-util', () => {
       expect(node.includes('sign-file')).toBeTruthy();
       cb();
     });
+    exec.mockImplementationOnce((node, cb) => {
+      expect(node.includes('python')).toBeTruthy();
+      cb();
+    });
     try {
       mxsSignUtil.signDigest();
       expect(true).toBe(true);
@@ -174,6 +178,16 @@ describe('Test mxs-sign-util', () => {
     process.env['MLCERT'] = 'test';
     jest.spyOn(which, 'sync').mockImplementationOnce(() => {
       return '/asdf/mabu';
+    });
+    exec.mockImplementationOnce((node, cb) => {
+      expect(node.includes('python')).toBeTruthy();
+      var error = console.error;
+      console.error = jest.fn().mockImplementation((log, data) => {
+        expect(log).toBe('Error Adding tail data:');
+        expect(data).toBe('err');
+      });
+      cb('err');
+      console.error = error;
     });
     execFile.mockImplementationOnce((node, command, cb) => {
       expect(node.includes('sign-file')).toBeTruthy();
