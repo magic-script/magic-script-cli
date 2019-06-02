@@ -8,6 +8,7 @@ function npmInstallIfNeeded (callback) {
   if (fs.existsSync('node_modules')) {
     callback();
   } else {
+    console.log('npm install: installing');
     exec('npm install', (err, stdout, stderr) => {
       if (err) {
         process.stdout.write(stdout);
