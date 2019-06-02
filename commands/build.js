@@ -1,6 +1,6 @@
 // Copyright (c) 2019 Magic Leap, Inc. All Rights Reserved
 // Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
-const { exec } = require('child_process');
+const { exec, spawn } = require('child_process');
 const fs = require('fs');
 const util = require('../lib/util');
 
@@ -9,11 +9,16 @@ function npmInstallIfNeeded (callback) {
     callback();
   } else {
     console.log('npm install: installing');
-    exec('npm install', (err, stdout, stderr) => {
-      if (err) {
-        process.stdout.write(stdout);
-        process.stderr.write(stderr);
-        throw err;
+    const proc = spawn('npm', ['install'], { stdio: 'inherit' });
+    proc.on('error', function (err) {
+      throw err;
+    });
+    proc.on('exit', function (code, signal) {
+      if (signal !== null) {
+        throw Error(`npm install failed with signal: ${signal}`);
+      }
+      if (code !== 0) {
+        throw Error(`npm install failed with code: ${code}`);
       }
       console.log('npm install: success');
       callback();
