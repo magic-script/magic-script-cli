@@ -9,6 +9,7 @@ jest.spyOn(mockedFs, 'readFileSync');
 jest.spyOn(mockedFs, 'readdirSync');
 const child_process = require('child_process');
 jest.spyOn(child_process, 'exec');
+jest.spyOn(child_process, 'spawn');
 const util = require('../lib/util');
 const build = require('../commands/build');
 
@@ -24,6 +25,9 @@ afterEach(() => {
   }
   if (child_process.exec.mock) {
     child_process.exec.mockReset();
+  }
+  if (child_process.spawn.mock) {
+    child_process.spawn.mockReset();
   }
 });
 
@@ -122,17 +126,55 @@ describe('Test build', () => {
     build({ '_': ['build'], 'target': 'lumin' });
   });
 
-  test('error npm install', () => {
+  test('error return code npm install', () => {
     mockedFs.existsSync.mockReturnValue(false);
     mockedFs.readdirSync.mockImplementationOnce(() => {
       return ['app.package'];
     });
     util.createDigest = jest.fn().mockReturnValue(false);
-    child_process.exec.mockImplementationOnce((command, callback) => {
-      expect(command).toBe('npm install');
-      expect(() => callback('error', '', '')).toThrow();
+    let proc;
+    child_process.spawn.mockImplementationOnce((command, callback) => {
+      proc = new child_process.ChildProcess();
+      return proc;
     });
-    build({ '_': ['build'], 'target': 'lumin' });
+    expect(() => {
+      build({ '_': ['build'], 'target': 'lumin' });
+      proc.emit('exit', 1, null);
+    }).toThrow('npm install failed with code: 1');
+  });
+
+  test('error signal npm install', () => {
+    mockedFs.existsSync.mockReturnValue(false);
+    mockedFs.readdirSync.mockImplementationOnce(() => {
+      return ['app.package'];
+    });
+    util.createDigest = jest.fn().mockReturnValue(false);
+    let proc;
+    child_process.spawn.mockImplementationOnce((command, callback) => {
+      proc = new child_process.ChildProcess();
+      return proc;
+    });
+    expect(() => {
+      build({ '_': ['build'], 'target': 'lumin' });
+      proc.emit('exit', null, 'SIGTERM');
+    }).toThrow('npm install failed with signal: SIGTERM');
+  });
+
+  test('error process npm install', () => {
+    mockedFs.existsSync.mockReturnValue(false);
+    mockedFs.readdirSync.mockImplementationOnce(() => {
+      return ['app.package'];
+    });
+    util.createDigest = jest.fn().mockReturnValue(false);
+    let proc;
+    child_process.spawn.mockImplementationOnce((command, callback) => {
+      proc = new child_process.ChildProcess();
+      return proc;
+    });
+    expect(() => {
+      build({ '_': ['build'], 'target': 'lumin' });
+      proc.emit('error', 'sample process err');
+    }).toThrow('sample process err');
   });
 
   test('no error npm install', () => {
@@ -141,14 +183,20 @@ describe('Test build', () => {
       return ['app.package'];
     });
     util.createDigest = jest.fn().mockReturnValue(false);
+    let proc;
+    child_process.spawn.mockImplementationOnce((command, callback) => {
+      proc = new child_process.ChildProcess();
+      return proc;
+    });
     child_process.exec.mockImplementationOnce((command, callback) => {
-      expect(command).toBe('npm install');
+      expect(command).toBe('npm run build');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('npm run build');
+        expect(command).toBe('mabu -t device app.package');
       });
       callback(null);
     });
     build({ '_': ['build'], 'target': 'lumin' });
+    proc.emit('exit', 0, null);
   });
 
   test('readdir no package', () => {
