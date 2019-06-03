@@ -1,6 +1,6 @@
 # MagicScript Command Line Toolkit
 
-[![npm version](https://badge.fury.io/js/magic-script-cli.svg)](https://badge.fury.io/js/magic-script-cli) [![License](https://img.shields.io/:license-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
+[![Build Status](https://travis-ci.com/magic-script/magic-script-cli.svg)](https://travis-ci.com/magic-script/magic-script-cli) [![npm version](https://badge.fury.io/js/magic-script-cli.svg)](https://badge.fury.io/js/magic-script-cli) [![License](https://img.shields.io/:license-Apache%202.0-blue.svg?style=flat-square)](LICENSE)
 
 This repository is the command line toolkit for generating, compiling, and running MagicScript applications.
 
