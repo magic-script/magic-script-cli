@@ -90,7 +90,7 @@ describe('Test build', () => {
         expect(command).toBe('mabu -t device app.package');
         jest.spyOn(util, 'findPackageName').mockReturnValueOnce('com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
-          expect(command).toBe('mldb install  my/path.mpk');
+          expect(command).toBe('mldb install  ');
           callback(null, 'install success');
         });
         util.isInstalled = jest.fn().mockImplementationOnce((packageName, callback) => {
