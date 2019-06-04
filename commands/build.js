@@ -72,6 +72,7 @@ function buildLumin (argv) {
       }
       console.log('built package: ' + mpkFile);
       if (argv.install) {
+        argv.path = mpkFile;
         util.installPackage(argv);
       }
     });
