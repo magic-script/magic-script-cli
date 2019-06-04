@@ -147,7 +147,7 @@ module.exports = {
     );
     const script = path.join(mlsdkRoot, '/tools/mabu/src/taildata_v3.py');
 
-    let tailDataCommand = `${python} ${script} --sbox USER`;
+    let tailDataCommand = `"${python}" "${script}" --sbox USER`;
     if (debug) tailDataCommand += ' --debuggable';
     tailDataCommand += ` ${DIGEST_PATH}`;
 
