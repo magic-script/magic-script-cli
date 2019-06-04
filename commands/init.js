@@ -34,12 +34,6 @@ const askQuestions = () => {
       name: 'APPTYPE',
       type: 'confirm',
       message: 'Do you want a Landscape App?'
-    },
-    {
-      type: 'checkbox',
-      name: 'BUILDTARGETS',
-      message: 'What are your device targets?',
-      choices: ['Magic Leap', 'iOS', 'Android']
     }
   ];
   return inquirer.prompt(questions);
