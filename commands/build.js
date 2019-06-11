@@ -9,7 +9,7 @@ function npmInstallIfNeeded (callback) {
     callback();
   } else {
     console.log('npm install: installing');
-    const proc = spawn('npm', ['install'], { stdio: 'inherit' });
+    const proc = spawn('npm', ['install'], { stdio: 'inherit', shell: process.platform === 'win32' });
     proc.on('error', function (err) {
       throw err;
     });
