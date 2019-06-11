@@ -18,4 +18,11 @@ export class App extends LandscapeApp {
     // Attach the label to the root of the prism's scene graph.
     prism.getRootNode().addChild(text);
   }
+
+  // Known Issue
+  // Web Inspector does not work unless the updateLoop function is present in source.
+  // It can be removed for production code.
+  updateLoop (delta) {
+    return true;
+  }
 }
