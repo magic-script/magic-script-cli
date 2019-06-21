@@ -8,7 +8,7 @@ const util = require('../lib/util');
 
 var packageName;
 var visibleName;
-var projectName;
+var folderName;
 var immersive;
 
 const askQuestions = () => {
@@ -16,24 +16,28 @@ const askQuestions = () => {
     {
       name: 'APPNAME',
       type: 'input',
-      message: 'What is the name of your application?'
+      message: 'What is the name of your application?',
+      default: visibleName
     },
     {
       name: 'APPID',
       type: 'input',
       message: 'What is the app ID of your application?',
-      validate: util.isValidPackageId
+      validate: util.isValidPackageId,
+      default: packageName
     },
     {
       name: 'FOLDERNAME',
       type: 'input',
       message: 'In which folder do you want to save this project?',
-      validate: util.isValidFolderName
+      validate: util.isValidFolderName,
+      default: folderName
     },
     {
       name: 'APPTYPE',
       type: 'confirm',
-      message: 'Do you want a Landscape App?'
+      message: 'Do you want a Landscape App?',
+      default: true
     }
   ];
   return inquirer.prompt(questions);
@@ -64,7 +68,7 @@ function copyFiles (srcPath, destPath) {
       var contents = fs.readFileSync(origFilePath, 'utf8');
       if (file === 'manifest.xml') {
         contents = updateManifest(contents);
-      } else if (immersive && file === 'main.js') {
+      } else if (immersive && file === 'app.js') {
         contents = contents.replace(new RegExp('LandscapeApp', 'g'), 'ImmersiveApp');
       }
       const writePath = `${destPath}/${file}`;
@@ -77,13 +81,32 @@ function copyFiles (srcPath, destPath) {
 }
 
 module.exports = argv => {
+  let nameRegex = /^([A-Za-z\-\_\d])+$/;
+  let idRegex = /^[a-z0-9_]+(\.[a-z0-9_]+)*(-[a-zA-Z0-9]*)?$/i;
+  if (argv.visibleName) {
+    visibleName = argv.visibleName;
+  }
+  if (argv.folderName && nameRegex.test(argv.folderName)) {
+    folderName = argv.folderName;
+    if (!visibleName) {
+      visibleName = folderName;
+    }
+  }
+  if (argv.folderName && idRegex.test(argv.packageName)) {
+    packageName = argv.packageName;
+  }
+  const currentDirectory = process.cwd();
+  if (packageName && folderName) {
+    immersive = argv.immersive;
+    copyFiles(templatePath, `${currentDirectory}/${folderName}`);
+    return;
+  }
   let answerPromise = askQuestions();
   answerPromise.then(answers => {
     packageName = answers['APPID'];
-    projectName = answers['FOLDERNAME'];
+    folderName = answers['FOLDERNAME'];
     visibleName = answers['APPNAME'];
     immersive = !answers['APPTYPE'];
-    const currentDirectory = process.cwd();
-    copyFiles(templatePath, `${currentDirectory}/${projectName}`);
+    copyFiles(templatePath, `${currentDirectory}/${folderName}`);
   });
 };

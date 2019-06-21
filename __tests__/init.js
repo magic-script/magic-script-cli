@@ -47,7 +47,7 @@ describe('Test Init', () => {
   test('project exists immersive no manifest', () => {
     mockedFs.existsSync.mockReturnValueOnce(true);
     jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
-      return ['file1', 'main.js'];
+      return ['file1', 'app.js'];
     });
     jest.spyOn(mockedFs, 'statSync').mockImplementation((path) => {
       var statObject = {};
@@ -67,7 +67,7 @@ describe('Test Init', () => {
     }).mockImplementationOnce((path, contents, type) => {
       expect(type).toBe('utf8');
       expect(contents).toBe('test2');
-      expect(path.endsWith('main.js')).toBeTruthy();
+      expect(path.endsWith('app.js')).toBeTruthy();
     });
     let backup = inquirer.prompt;
     inquirer.prompt = () => Promise.resolve({ APPTYPE: false });
@@ -222,6 +222,126 @@ describe('Test Init', () => {
     let backup = inquirer.prompt;
     inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
     init({ '_': ['init'] });
+    inquirer.prompt = backup;
+  });
+
+  test('visibleName parameter', () => {
+    mockedFs.existsSync.mockReturnValue(false);
+    jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
+      expect(mockedFs.mkdirSync).toHaveBeenCalled();
+      return ['manifest.xml', 'folder'];
+    }).mockImplementationOnce((path) => {
+      return ['file1'];
+    });
+    jest.spyOn(mockedFs, 'statSync').mockImplementation((path) => {
+      var statObject = {};
+      statObject.isFile = function () {
+        if (path.endsWith('folder')) {
+          return false;
+        } else {
+          return true;
+        }
+      };
+      statObject.isDirectory = function () { return true; };
+      return statObject;
+    });
+    mockedFs.readFileSync.mockImplementationOnce(() => {
+      return 'test1';
+    }).mockImplementationOnce(() => {
+      return 'test2';
+    });
+    jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
+      expect(type).toBe('utf8');
+      expect(contents).toBe('test1');
+      expect(path.endsWith('manifest.xml')).toBeTruthy();
+    }).mockImplementationOnce((path, contents, type) => {
+      expect(type).toBe('utf8');
+      expect(contents).toBe('test2');
+      expect(path.endsWith('file1')).toBeTruthy();
+    });
+    let backup = inquirer.prompt;
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
+    init({ '_': ['init'], visibleName: 'visible' });
+    inquirer.prompt = backup;
+  });
+
+  test('visibleName folderName parameter', () => {
+    mockedFs.existsSync.mockReturnValue(false);
+    jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
+      expect(mockedFs.mkdirSync).toHaveBeenCalled();
+      return ['manifest.xml', 'folder'];
+    }).mockImplementationOnce((path) => {
+      return ['file1'];
+    });
+    jest.spyOn(mockedFs, 'statSync').mockImplementation((path) => {
+      var statObject = {};
+      statObject.isFile = function () {
+        if (path.endsWith('folder')) {
+          return false;
+        } else {
+          return true;
+        }
+      };
+      statObject.isDirectory = function () { return true; };
+      return statObject;
+    });
+    mockedFs.readFileSync.mockImplementationOnce(() => {
+      return 'test1';
+    }).mockImplementationOnce(() => {
+      return 'test2';
+    });
+    jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
+      expect(type).toBe('utf8');
+      expect(contents).toBe('test1');
+      expect(path.endsWith('manifest.xml')).toBeTruthy();
+    }).mockImplementationOnce((path, contents, type) => {
+      expect(type).toBe('utf8');
+      expect(contents).toBe('test2');
+      expect(path.endsWith('file1')).toBeTruthy();
+    });
+    let backup = inquirer.prompt;
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
+    init({ '_': ['init'], visibleName: 'visible', folderName: 'project' });
+    inquirer.prompt = backup;
+  });
+
+  test('packageName folderName parameter', () => {
+    mockedFs.existsSync.mockReturnValue(false);
+    jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
+      expect(mockedFs.mkdirSync).toHaveBeenCalled();
+      return ['manifest.xml', 'folder'];
+    }).mockImplementationOnce((path) => {
+      return ['file1'];
+    });
+    jest.spyOn(mockedFs, 'statSync').mockImplementation((path) => {
+      var statObject = {};
+      statObject.isFile = function () {
+        if (path.endsWith('folder')) {
+          return false;
+        } else {
+          return true;
+        }
+      };
+      statObject.isDirectory = function () { return true; };
+      return statObject;
+    });
+    mockedFs.readFileSync.mockImplementationOnce(() => {
+      return 'test1';
+    }).mockImplementationOnce(() => {
+      return 'test2';
+    });
+    jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
+      expect(type).toBe('utf8');
+      expect(contents).toBe('test1');
+      expect(path.endsWith('manifest.xml')).toBeTruthy();
+    }).mockImplementationOnce((path, contents, type) => {
+      expect(type).toBe('utf8');
+      expect(contents).toBe('test2');
+      expect(path.endsWith('file1')).toBeTruthy();
+    });
+    let backup = inquirer.prompt;
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
+    init({ '_': ['init'], packageName: 'packageID', folderName: 'project' });
     inquirer.prompt = backup;
   });
 });
