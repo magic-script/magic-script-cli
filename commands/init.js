@@ -35,9 +35,10 @@ const askQuestions = () => {
     },
     {
       name: 'APPTYPE',
-      type: 'confirm',
-      message: 'Do you want a Landscape App?',
-      default: true
+      type: 'list',
+      message: 'What app type do you want?',
+      choices: ['Landscape', 'Immersive', 'Components'],
+      default: "Landscape"
     }
   ];
   return inquirer.prompt(questions);
@@ -106,7 +107,12 @@ module.exports = argv => {
     packageName = answers['APPID'];
     folderName = answers['FOLDERNAME'];
     visibleName = answers['APPNAME'];
-    immersive = !answers['APPTYPE'];
+    let appType = answers['APPTYPE'];
+    immersive = appType === 'Immersive' || argv.immersive
+    if (appType == 'Components') {
+      immersive = false;
+      templatePath = `${__dirname}/../template_components`;
+    }
     copyFiles(templatePath, `${currentDirectory}/${folderName}`);
   });
 };
