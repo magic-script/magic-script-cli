@@ -39,7 +39,7 @@ describe('Test Init', () => {
       expect(path.endsWith('file2')).toBeTruthy();
     });
     let backup = inquirer.prompt;
-    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Components' });
     init({ '_': ['init'] });
     inquirer.prompt = backup;
   });
@@ -70,7 +70,7 @@ describe('Test Init', () => {
       expect(path.endsWith('app.js')).toBeTruthy();
     });
     let backup = inquirer.prompt;
-    inquirer.prompt = () => Promise.resolve({ APPTYPE: false });
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Immersive' });
     init({ '_': ['init'] });
     inquirer.prompt = backup;
   });
@@ -101,7 +101,7 @@ describe('Test Init', () => {
       expect(path.endsWith('file2')).toBeTruthy();
     });
     let backup = inquirer.prompt;
-    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Landscape' });
     init({ '_': ['init'] });
     inquirer.prompt = backup;
   });
@@ -132,7 +132,7 @@ describe('Test Init', () => {
       expect(path.endsWith('file2')).toBeTruthy();
     });
     let backup = inquirer.prompt;
-    inquirer.prompt = () => Promise.resolve({ APPTYPE: false });
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Immersive' });
     init({ '_': ['init'] });
     inquirer.prompt = backup;
   });
@@ -164,14 +164,14 @@ describe('Test Init', () => {
       expect(path.endsWith('file2')).toBeTruthy();
     });
     let backup = inquirer.prompt;
-    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Landscape' });
     init({ '_': ['init'] });
     inquirer.prompt = backup;
   });
 
   test('bad project name', () => {
     let backup = inquirer.prompt;
-    inquirer.prompt = () => Promise.resolve({ APPTYPE: true, FOLDERNAME: '$A' });
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Landscape', FOLDERNAME: '$A' });
     init({ '_': ['init'] });
     inquirer.prompt = backup;
     expect(mockedFs.existsSync).not.toHaveBeenCalled();
@@ -179,7 +179,7 @@ describe('Test Init', () => {
 
   test('bad package name', () => {
     let backup = inquirer.prompt;
-    inquirer.prompt = () => Promise.resolve({ APPTYPE: true, APPID: '$A' });
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Landscape', APPID: '$A' });
     init({ '_': ['init'] });
     inquirer.prompt = backup;
     expect(mockedFs.existsSync).not.toHaveBeenCalled();
@@ -220,7 +220,7 @@ describe('Test Init', () => {
       expect(path.endsWith('file1')).toBeTruthy();
     });
     let backup = inquirer.prompt;
-    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Landscape' });
     init({ '_': ['init'] });
     inquirer.prompt = backup;
   });
@@ -260,7 +260,7 @@ describe('Test Init', () => {
       expect(path.endsWith('file1')).toBeTruthy();
     });
     let backup = inquirer.prompt;
-    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Landscape' });
     init({ '_': ['init'], visibleName: 'visible' });
     inquirer.prompt = backup;
   });
@@ -300,7 +300,7 @@ describe('Test Init', () => {
       expect(path.endsWith('file1')).toBeTruthy();
     });
     let backup = inquirer.prompt;
-    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Landscape' });
     init({ '_': ['init'], visibleName: 'visible', folderName: 'project' });
     inquirer.prompt = backup;
   });
@@ -340,7 +340,7 @@ describe('Test Init', () => {
       expect(path.endsWith('file1')).toBeTruthy();
     });
     let backup = inquirer.prompt;
-    inquirer.prompt = () => Promise.resolve({ APPTYPE: true });
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Landscape' });
     init({ '_': ['init'], packageName: 'packageID', folderName: 'project' });
     inquirer.prompt = backup;
   });
