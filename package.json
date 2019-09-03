@@ -1,7 +1,7 @@
 {
   "name": "magic-script-cli",
   "description": "Magic Script Toolkit",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "author": "Magic Leap",
   "license": "Apache-2.0",
   "bin": {
@@ -39,6 +39,7 @@
     "/lib",
     "/commands",
     "/template",
+    "/template_components",
     "/util"
   ],
   "homepage": "https://github.com/magic-script/magic-script-cli",
