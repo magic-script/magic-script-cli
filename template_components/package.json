@@ -22,7 +22,7 @@
     "semistandard": "^13.0.1"
   },
   "dependencies": {
-    "magic-script-components": "1.0.5",
+    "magic-script-components": "2.0.0",
     "magic-script-components-lumin": "1.0.0",
     "magic-script-polyfills": "^2.4.2"
   }
