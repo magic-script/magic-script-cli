@@ -151,7 +151,7 @@ module.exports = argv => {
     componentsPlatforms = argv.target;
   }
   const currentDirectory = process.cwd();
-  if (packageName && folderName && argv.targetargv.target[0] === 'Lumin') {
+  if (packageName && folderName && argv.target[0] === 'Lumin') {
     immersive = argv.immersive;
     copyFiles(templatePath, `${currentDirectory}/${folderName}`);
     return;
@@ -209,19 +209,6 @@ function preparePlatforms (destPath) {
   } else {
     fs.renameSync(`${destPath}/package.lumin.json`, `${destPath}/package.json`);
   }
-  // if (!componentsPlatforms.includes(`Android`) && !componentsPlatforms.includes(`iOS`)) {
-  //   if (fs.existsSync(`${destPath}/package.reactnative.json`)) {
-  //     fs.unlinkSync(`${destPath}/package.reactnative.json`);
-  //   }
-  //   fs.renameSync(`${destPath}/package.lumin.json`, `${destPath}/package.json`);
-  // } else if (!componentsPlatforms.includes('Lumin')) {
-  //     var luminPackage = fs.readFileSync(`${destPath}/package.lumin.json`);
-  //     var updateReactPackage = fs.readFileSync(`${destPath}/package.reactnative.json`);
-  //     fs.writeFileSync(`${destPath}/package.json`, merge(luminPackage, updateReactPackage));
-  //   } else {
-  //     fs.renameSync(`${destPath}/package.reactnative.json}`, `${destPath}/package.json`);
-  //   }
-  // }
   removePackageJsons(destPath);
 }
 
