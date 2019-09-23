@@ -7,12 +7,6 @@ import React from "react";
 import mxs from "magic-script-components-lumin";
 
 // Load main app logic from the app class.
-import MyApp from "./app.js";
+import MyApp from "../src/app";
 
-mxs.bootstrap(
-  <MyApp
-    type="landscape"
-    volumeSize={[1, 0.5, 0.1]}
-    message="Hello Components"
-  />
-);
+mxs.bootstrap(<MyApp type='landscape' volumeSize={[1,1,1]} />);

@@ -64,6 +64,7 @@ function terminateFunction (callback) {
     setTimeout(callback, 1000);
   });
 }
+
 function launchCallback (pid) {
   if (pid == null) {
     console.error('Failed to launch:', packageName);

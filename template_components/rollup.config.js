@@ -15,7 +15,7 @@ export default [
   {
     ...common,
     external: ['uv', 'lumin', 'ssl', 'jpeg', 'png', 'gl'],
-    input: 'src/main.js',
+    input: 'lumin/main.js',
     preserveModules: true,
     output: {
       dir: 'bin',

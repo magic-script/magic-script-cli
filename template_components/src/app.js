@@ -1,9 +1,9 @@
 //
-import React from "react";
-import { View, Text } from "magic-script-components";
+import React from 'react';
+import { View, Text } from 'magic-script-components';
 
 export default class MyApp extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props);
 
     this.state = {
@@ -11,7 +11,7 @@ export default class MyApp extends React.Component {
     };
   }
 
-  render() {
+  render () {
     return (
       <View name="main-view">
         <Text textSize={0.1} localPosition={[-0.3, 0, 0]}>

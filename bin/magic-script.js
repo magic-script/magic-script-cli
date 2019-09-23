@@ -17,6 +17,11 @@ require('yargs') // eslint-disable-line
       describe: 'The visible name of the project (optional)',
       type: 'string'
     });
+    yargs.positional('target', {
+      alias: 't',
+      default: null,
+      type: 'array'
+    });
     yargs.option('immersive', {
       alias: 'i',
       describe: 'Generate Immersive app Template',
