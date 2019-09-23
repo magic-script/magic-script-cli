@@ -25,4 +25,8 @@ export class App extends LandscapeApp {
   updateLoop (delta) {
     return true;
   }
+
+  init () {
+    return 0;
+  }
 }
