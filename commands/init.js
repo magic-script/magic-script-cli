@@ -1,13 +1,11 @@
 // Copyright (c) 2019 Magic Leap, Inc. All Rights Reserved
 // Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
 let process = require('process');
-const { execSync } = require('child_process');
 let fs = require('fs');
 let templatePath = `${__dirname}/../template`;
 let inquirer = require('inquirer');
 let path = require('path');
 const util = require('../lib/util');
-let merge = require('merge-package-json');
 
 var packageName;
 var visibleName;
@@ -201,9 +199,7 @@ function preparePlatforms (destPath) {
     }
   }
   if ((android && iOS && lumin) || (android && lumin) || (iOS && lumin)) {
-    var luminPackage = fs.readFileSync(`${destPath}/package.lumin.json`);
-    var reactPackage = fs.readFileSync(`${destPath}/package.reactnative.json`);
-    fs.writeFileSync(`${destPath}/package.json`, merge(luminPackage, reactPackage));
+    fs.renameSync(`${destPath}/package.allplatforms.json`, `${destPath}/package.json`);
   } else if ((android && iOS) || android || iOS) {
     fs.renameSync(`${destPath}/package.reactnative.json`, `${destPath}/package.json`);
   } else {
@@ -218,5 +214,8 @@ function removePackageJsons (destPath) {
   }
   if (fs.existsSync(`${destPath}/package.reactnative.json`)) {
     fs.unlinkSync(`${destPath}/package.reactnative.json`);
+  }
+  if (fs.existsSync(`${destPath}/package.allplatforms.json`)) {
+    fs.unlinkSync(`${destPath}/package.allplatforms.json`);
   }
 }

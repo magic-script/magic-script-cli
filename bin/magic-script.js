@@ -71,6 +71,19 @@ require('yargs') // eslint-disable-line
       default: 'lumin'
     });
   }, argv => require('../commands/run')(argv))
+  .command(
+    'rename [projectName] [packageName]',
+    'Update the project name',
+    yargs => {
+      yargs.positional('projectName', {
+        describe: 'The name of the project',
+        type: 'string'
+      });
+      yargs.option('packageName', {
+        describe: 'The package identifier. (optional)',
+        type: 'string'
+      });
+    }, argv => require('../commands/rename')(argv))
   .option('verbose', {
     alias: 'v',
     default: false
