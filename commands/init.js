@@ -6,6 +6,8 @@ let templatePath = `${__dirname}/../template`;
 let inquirer = require('inquirer');
 let path = require('path');
 const util = require('../lib/util');
+const reactFiles = ['.buckconfig', '.eslintrc.js', '.flowconfig', '.gitattributes', '.prettierrc.js', '.watchmanconfig', 'app.json', 'babel.config.js', 'metro.config.js'];
+const luminFiles = ['.babelrc', 'app.mabu', 'app.package', 'lr_resource_locator', 'manifest.xml', 'rollup.config.js', 'tsconfig.js'];
 
 var packageName;
 var visibleName;
@@ -181,6 +183,7 @@ function preparePlatforms (destPath) {
   let android = componentsPlatforms.includes('Android');
   let iOS = componentsPlatforms.includes('iOS');
   let lumin = componentsPlatforms.includes('Lumin');
+  let isReact = (componentsPlatforms.includes('iOS') && componentsPlatforms.includes('Android'));
   if (!iOS) {
     if (fs.existsSync(`${destPath}/ios`)) {
       fs.rmdirSync(`${destPath}/ios`, { recursive: true });
@@ -198,12 +201,14 @@ function preparePlatforms (destPath) {
       fs.rmdirSync(`${destPath}/lumin`, { recursive: true });
     }
   }
-  if ((android && iOS && lumin) || (android && lumin) || (iOS && lumin)) {
+  if ((isReact && lumin) || (android && lumin) || (iOS && lumin)) {
     fs.renameSync(`${destPath}/package.allplatforms.json`, `${destPath}/package.json`);
-  } else if ((android && iOS) || android || iOS) {
+  } else if (isReact || android || iOS) {
     fs.renameSync(`${destPath}/package.reactnative.json`, `${destPath}/package.json`);
+    removeLuminFiles(destPath);
   } else {
     fs.renameSync(`${destPath}/package.lumin.json`, `${destPath}/package.json`);
+    removeReactFiles(destPath);
   }
   removePackageJsons(destPath);
 }
@@ -218,4 +223,20 @@ function removePackageJsons (destPath) {
   if (fs.existsSync(`${destPath}/package.allplatforms.json`)) {
     fs.unlinkSync(`${destPath}/package.allplatforms.json`);
   }
+}
+
+function removeLuminFiles (destPath) {
+  luminFiles.forEach(fileName => {
+    if (fs.existsSync(`${destPath}/${fileName}`)) {
+      fs.unlinkSync(`${destPath}/${fileName}`);
+    }
+  });
+}
+
+function removeReactFiles (destPath) {
+  reactFiles.forEach(fileName => {
+    if (fs.existsSync(`${destPath}/${fileName}`)) {
+      fs.unlinkSync(`${destPath}/${fileName}`);
+    }
+  });
 }

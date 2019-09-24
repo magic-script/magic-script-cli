@@ -15,7 +15,7 @@ export default class MyApp extends React.Component {
     return (
       <View name="main-view">
         <Text textSize={0.1} localPosition={[-0.3, 0, 0]}>
-          {this.state.message}
+          Hello Magic Script
         </Text>
       </View>
     );
