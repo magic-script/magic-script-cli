@@ -9,6 +9,10 @@ const util = require('../lib/util');
 const reactFiles = ['.buckconfig', '.eslintrc.js', '.flowconfig', '.gitattributes', '.prettierrc.js', '.watchmanconfig', 'app.json', 'babel.config.js', 'metro.config.js'];
 const luminFiles = ['.babelrc', 'app.mabu', 'app.package', 'lr_resource_locator', 'manifest.xml', 'rollup.config.js', 'tsconfig.js'];
 const targetPlatforms = ['IOS', 'ANDROID', 'LUMIN'];
+const red = '\x1b[31m';
+const green = '\x1b[32m';
+const yellow = '\x1b[33m';
+const normal = '\x1b[0m';
 
 var packageName;
 var visibleName;
@@ -157,7 +161,7 @@ module.exports = argv => {
   }
   target = argv.target.map(util.toUpperCase);
   if (!isComponentsAndAtLeastOneTarget(appType, target)) {
-    console.log('There is no proper target passed, project will generate Lumin files structure for Components app');
+    console.log(yellow, 'There is no proper target passed, project will generate Lumin files structure for Components app', normal);
     target = ['LUMIN'];
   }
   const currentDirectory = process.cwd();
@@ -171,7 +175,7 @@ module.exports = argv => {
     copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
     copyManifest(`${currentDirectory}/${folderName}`);
     preparePlatforms(`${currentDirectory}/${folderName}`);
-    console.log(`Project created for platforms: ${target}`);
+    console.log(green, `Project created successfully for platforms: ${target}`, normal);
     return;
   }
 
@@ -181,8 +185,9 @@ module.exports = argv => {
     folderName = answers['FOLDERNAME'];
     visibleName = answers['APPNAME'];
     appType = answers['APPTYPE'];
-    target = answers['COMPONENTS_PLATFORM'];
+    target = answers['COMPONENTS_PLATFORM'].map(util.toUpperCase);
     if (!target || target.length < 1) {
+      console.log(yellow, 'There is no proper target passed, project will generate Lumin files structure for Components app', normal);
       target = ['LUMIN'];
     }
     immersive = appType === 'Immersive' || argv.immersive;
@@ -192,16 +197,15 @@ module.exports = argv => {
       copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
       copyManifest(`${currentDirectory}/${folderName}`);
       preparePlatforms(`${currentDirectory}/${folderName}`);
-      console.log(`Project created for platforms: ${target}`);
+      console.log(green, `Project successfully created for platforms: ${target}`, normal);
     } else {
       copyFiles(templatePath, `${currentDirectory}/${folderName}`);
-      console.log(`Project created for: ${appType}`);
+      console.log(green, `Project successfully created for ${appType}`, normal);
     }
-  }).catch(error => console.log(error));
+  }).catch(error => console.log(red, error, normal));
 };
 
 function preparePlatforms (destPath) {
-  console.log(`prepare platforms: ${target}`);
   let android = target.includes('ANDROID');
   let iOS = target.includes('IOS');
   let lumin = target.includes('LUMIN');
