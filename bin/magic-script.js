@@ -4,7 +4,7 @@
 'use strict';
 
 require('yargs') // eslint-disable-line
-  .command('init [folderName] [packageName] [visibleName]', 'Create a new project', yargs => {
+  .command('init [folderName] [packageName] [appType] [target] [visibleName]', 'Create a new project', yargs => {
     yargs.positional('folderName', {
       describe: 'Local folder to create project in.',
       type: 'string'
@@ -17,9 +17,15 @@ require('yargs') // eslint-disable-line
       describe: 'The visible name of the project (optional)',
       type: 'string'
     });
-    yargs.positional('target', {
+    yargs.positional('appType', {
+      describe: 'The type of the app. Can be either Landscape, Immersive or Components',
+      type: 'string',
+      default: 'Components'
+    });
+    yargs.option('target', {
       alias: 't',
-      default: null,
+      describe: 'Target platforms for Components app type. Can be a combination of iOS, Android and Lumin',
+      default: ['Lumin'],
       type: 'array'
     });
     yargs.option('immersive', {

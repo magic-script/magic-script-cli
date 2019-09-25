@@ -8,12 +8,14 @@ let path = require('path');
 const util = require('../lib/util');
 const reactFiles = ['.buckconfig', '.eslintrc.js', '.flowconfig', '.gitattributes', '.prettierrc.js', '.watchmanconfig', 'app.json', 'babel.config.js', 'metro.config.js'];
 const luminFiles = ['.babelrc', 'app.mabu', 'app.package', 'lr_resource_locator', 'manifest.xml', 'rollup.config.js', 'tsconfig.js'];
+const targetPlatforms = ['IOS', 'ANDROID', 'LUMIN'];
 
 var packageName;
 var visibleName;
 var folderName;
 var immersive;
-var componentsPlatforms;
+var appType;
+var target;
 
 const askQuestions = () => {
   const questions = [
@@ -58,6 +60,7 @@ const askQuestions = () => {
         {
           name: 'Android'
         }],
+      default: ['Lumin'],
       when: function (answers) {
         return answers.APPTYPE === 'Components';
       }
@@ -144,25 +147,44 @@ module.exports = argv => {
       visibleName = folderName;
     }
   }
+  if (argv.appType) {
+    appType = argv.appType;
+  } else {
+    appType = 'Components';
+  }
   if (argv.folderName && idRegex.test(argv.packageName)) {
     packageName = argv.packageName;
   }
-  if (argv.target && (argv.target.includes('Lumin') || argv.target.includes('iOS') || argv.target.includes('Android'))) {
-    componentsPlatforms = argv.target;
+  target = argv.target.map(util.toUpperCase);
+  if (!isComponentsAndAtLeastOneTarget(appType, target)) {
+    console.log('There is no proper target passed, project will generate Lumin files structure for Components app');
+    target = ['LUMIN'];
   }
   const currentDirectory = process.cwd();
-  if (packageName && folderName && argv.target[0] === 'Lumin') {
-    immersive = argv.immersive;
+  if (packageName && folderName && (appType === 'Immersive' || appType === 'Landscape')) {
+    immersive = argv.appType === 'Immersive' || argv.immersive;
     copyFiles(templatePath, `${currentDirectory}/${folderName}`);
     return;
   }
+  if (packageName && folderName && appType === 'Components') {
+    templatePath = path.join(__dirname, '../template_components');
+    copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
+    copyManifest(`${currentDirectory}/${folderName}`);
+    preparePlatforms(`${currentDirectory}/${folderName}`);
+    console.log(`Project created for platforms: ${target}`);
+    return;
+  }
+
   let answerPromise = askQuestions();
   answerPromise.then(answers => {
     packageName = answers['APPID'];
     folderName = answers['FOLDERNAME'];
     visibleName = answers['APPNAME'];
-    let appType = answers['APPTYPE'];
-    componentsPlatforms = answers['COMPONENTS_PLATFORM'];
+    appType = answers['APPTYPE'];
+    target = answers['COMPONENTS_PLATFORM'];
+    if (!target || target.length < 1) {
+      target = ['LUMIN'];
+    }
     immersive = appType === 'Immersive' || argv.immersive;
     if (appType === 'Components') {
       immersive = false;
@@ -170,7 +192,7 @@ module.exports = argv => {
       copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
       copyManifest(`${currentDirectory}/${folderName}`);
       preparePlatforms(`${currentDirectory}/${folderName}`);
-      console.log(`Project created for platforms: ${componentsPlatforms}`);
+      console.log(`Project created for platforms: ${target}`);
     } else {
       copyFiles(templatePath, `${currentDirectory}/${folderName}`);
       console.log(`Project created for: ${appType}`);
@@ -179,11 +201,11 @@ module.exports = argv => {
 };
 
 function preparePlatforms (destPath) {
-  console.log(`prepare platforms: ${componentsPlatforms}`);
-  let android = componentsPlatforms.includes('Android');
-  let iOS = componentsPlatforms.includes('iOS');
-  let lumin = componentsPlatforms.includes('Lumin');
-  let isReact = (componentsPlatforms.includes('iOS') && componentsPlatforms.includes('Android'));
+  console.log(`prepare platforms: ${target}`);
+  let android = target.includes('ANDROID');
+  let iOS = target.includes('IOS');
+  let lumin = target.includes('LUMIN');
+  let isReact = (target.includes('IOS') && target.includes('ANDROID'));
   if (!iOS) {
     if (fs.existsSync(`${destPath}/ios`)) {
       fs.rmdirSync(`${destPath}/ios`, { recursive: true });
@@ -239,4 +261,10 @@ function removeReactFiles (destPath) {
       fs.unlinkSync(`${destPath}/${fileName}`);
     }
   });
+}
+
+function isComponentsAndAtLeastOneTarget (appType, target) {
+  return (appType === 'Components' && target && target.some(substring => {
+    return targetPlatforms.includes(substring);
+  }));
 }

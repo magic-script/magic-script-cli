@@ -34,8 +34,7 @@
       "react": "16.8.3",
       "react-native": "0.60.5",
       "react-native-fs": "2.14.1",
-      "magic-script-components-react-native": "git+https://github.com/magic-script/magic-script-components-react-native",
-      "react-native-rename": "2.4.1"
+      "magic-script-components-react-native": "git+https://github.com/magic-script/magic-script-components-react-native"
     }
   }
   
