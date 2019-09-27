@@ -7,6 +7,7 @@ const mockedFs = require('fs');
 jest.spyOn(mockedFs, 'existsSync');
 jest.spyOn(mockedFs, 'readFileSync');
 jest.spyOn(mockedFs, 'readdirSync');
+// eslint-disable-next-line camelcase
 const child_process = require('child_process');
 jest.spyOn(child_process, 'exec');
 jest.spyOn(child_process, 'spawn');

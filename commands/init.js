@@ -6,8 +6,7 @@ let templatePath = `${__dirname}/../template`;
 let inquirer = require('inquirer');
 let path = require('path');
 const util = require('../lib/util');
-const reactFiles = ['.buckconfig', '.eslintrc.js', '.flowconfig', '.gitattributes', '.prettierrc.js', '.watchmanconfig', 'app.json', 'babel.config.js', 'metro.config.js'];
-const luminFiles = ['.babelrc', 'app.mabu', 'app.package', 'lr_resource_locator', 'manifest.xml', 'rollup.config.js', 'tsconfig.js'];
+const consts = require('../lib/consts');
 const targetPlatforms = ['IOS', 'ANDROID', 'LUMIN'];
 const red = '\x1b[31m';
 const green = '\x1b[32m';
@@ -19,7 +18,7 @@ var visibleName;
 var folderName;
 var immersive;
 var appType;
-var target;
+var target = [];
 
 const askQuestions = () => {
   const questions = [
@@ -51,7 +50,7 @@ const askQuestions = () => {
       default: 'Landscape'
     },
     {
-      name: 'COMPONENTS_PLATFORM',
+      name: 'TARGET',
       type: 'checkbox',
       message: 'What platform do you want develop on?',
       choices: [
@@ -140,69 +139,58 @@ function copyFiles (srcPath, destPath) {
 
 module.exports = argv => {
   // eslint-disable-next-line no-useless-escape
-  let nameRegex = /^([A-Za-z\-\_\d])+$/;
-  let idRegex = /^[a-z0-9_]+(\.[a-z0-9_]+)*(-[a-zA-Z0-9]*)?$/i;
-  if (argv.visibleName) {
-    visibleName = argv.visibleName;
-  }
-  if (argv.folderName && nameRegex.test(argv.folderName)) {
-    folderName = argv.folderName;
-    if (!visibleName) {
-      visibleName = folderName;
-    }
-  }
-  if (argv.appType) {
-    appType = argv.appType;
-  } else {
-    appType = 'Components';
-  }
-  if (argv.folderName && idRegex.test(argv.packageName)) {
-    packageName = argv.packageName;
-  }
-  target = argv.target.map(util.toUpperCase);
-  if (!isComponentsAndAtLeastOneTarget(appType, target)) {
-    console.log(yellow, 'There is no proper target passed, project will generate Lumin files structure for Components app', normal);
-    target = ['LUMIN'];
-  }
+  setVisibleName(argv.visibleName);
+  setFolderName(argv.folderName);
+  setAppType(argv.appType);
+  setPackageName(argv.packageName);
+  setTarget(appType, argv.target);
   const currentDirectory = process.cwd();
-  if (packageName && folderName && (appType === 'Immersive' || appType === 'Landscape')) {
+  if (isLandscapeOrImmersive(folderName, packageName, appType)) {
     immersive = argv.appType === 'Immersive' || argv.immersive;
     copyFiles(templatePath, `${currentDirectory}/${folderName}`);
+    console.log(green, `${appType} project created successfully!`, normal);
     return;
   }
-  if (packageName && folderName && appType === 'Components') {
+  if (isComponents(folderName, packageName, appType)) {
     templatePath = path.join(__dirname, '../template_components');
     copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
     copyManifest(`${currentDirectory}/${folderName}`);
     preparePlatforms(`${currentDirectory}/${folderName}`);
-    console.log(green, `Project created successfully for platforms: ${target}`, normal);
+    console.log(green, `Components project created successfully for platforms: ${target}!`, normal);
     return;
   }
-
   let answerPromise = askQuestions();
   answerPromise.then(answers => {
     packageName = answers['APPID'];
     folderName = answers['FOLDERNAME'];
     visibleName = answers['APPNAME'];
     appType = answers['APPTYPE'];
-    target = answers['COMPONENTS_PLATFORM'].map(util.toUpperCase);
-    if (!target || target.length < 1) {
-      console.log(yellow, 'There is no proper target passed, project will generate Lumin files structure for Components app', normal);
-      target = ['LUMIN'];
-    }
-    immersive = appType === 'Immersive' || argv.immersive;
-    if (appType === 'Components') {
-      immersive = false;
+    target = answers['TARGET'];
+    immersive = appType === 'Immersive';
+    
+    if (isComponents(folderName, packageName, appType)) {
+      setTarget(appType, target);
+      console.log(green, `Start creating project for Components type, target: ${target}`, normal);
       templatePath = path.join(__dirname, '../template_components');
       copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
       copyManifest(`${currentDirectory}/${folderName}`);
       preparePlatforms(`${currentDirectory}/${folderName}`);
       console.log(green, `Project successfully created for platforms: ${target}`, normal);
-    } else {
+    } else if (isLandscapeOrImmersive(folderName, packageName, appType)) {
+      console.log(green, `Start creating project for ${appType} type`, normal);
       copyFiles(templatePath, `${currentDirectory}/${folderName}`);
       console.log(green, `Project successfully created for ${appType}`, normal);
     }
-  }).catch(error => console.log(red, error, normal));
+  }).catch((err) => console.log(red, err, normal))
+    // Add this callback for testing purpose - inquirer doesn't provide functionality to reset values
+    // after every test and caches them
+    .finally(() => {
+      folderName = null;
+      visibleName = null;
+      appType = null;
+      packageName = null;
+      target = null;
+    });
 };
 
 function preparePlatforms (destPath) {
@@ -252,7 +240,7 @@ function removePackageJsons (destPath) {
 }
 
 function removeLuminFiles (destPath) {
-  luminFiles.forEach(fileName => {
+  consts.luminFiles.forEach(fileName => {
     if (fs.existsSync(`${destPath}/${fileName}`)) {
       fs.unlinkSync(`${destPath}/${fileName}`);
     }
@@ -260,15 +248,64 @@ function removeLuminFiles (destPath) {
 }
 
 function removeReactFiles (destPath) {
-  reactFiles.forEach(fileName => {
+  consts.reactFiles.forEach(fileName => {
     if (fs.existsSync(`${destPath}/${fileName}`)) {
       fs.unlinkSync(`${destPath}/${fileName}`);
     }
   });
 }
 
-function isComponentsAndAtLeastOneTarget (appType, target) {
-  return (appType === 'Components' && target && target.some(substring => {
+function isComponentsAndAtLeastOneTarget (appType, argTarget) {
+  return (appType === 'Components' && argTarget && argTarget.some(substring => {
     return targetPlatforms.includes(substring);
   }));
+}
+
+function setFolderName (name) {
+  if (util.isValidFolderName(name)) {
+    folderName = name;
+    if (!visibleName) {
+      visibleName = folderName;
+    }
+  }
+}
+
+function setVisibleName (name) {
+  if (name) {
+    visibleName = name;
+  }
+}
+
+function setAppType (type) {
+  if (util.isValidAppType(type)) {
+    appType = type;
+  }
+}
+
+function setPackageName (name) {
+  if (util.isValidPackageId(name)) {
+    packageName = name;
+  }
+}
+
+function isLandscapeOrImmersive (folderName, packageName, appType) {
+  return packageName && folderName && appType && (appType === 'Immersive' || appType === 'Landscape');
+}
+
+function isComponents (folderName, packageName, appType) {
+  return folderName && packageName && appType && appType === 'Components';
+}
+
+function setTarget (appType, argTarget) {
+  if (argTarget) {
+    target = argTarget.map(toUpperCase);
+  }
+  if (!isComponentsAndAtLeastOneTarget(appType, target)) {
+    console.log(yellow, 'There is no proper target passed, project will generate Lumin files structure for Components app', normal);
+    target = ['LUMIN'];
+  }
+}
+
+function toUpperCase (string) {
+  return string.toUpperCase();
 }
