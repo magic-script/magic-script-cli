@@ -145,14 +145,15 @@ function installPods (path, onInstallFinish) {
   console.log('start installing pods');
   var podCommand = `cd ${path}/ios && pod install && cd ..`;
   var podProcess = exec(podCommand);
-  podProcess.stdout.on('data', data => {
+  podProcess.on('message', data => {
     console.log(data);
   });
   podProcess.on('error', function (err) {
     throw err;
   });
   podProcess.on('exit', function (code, signal) {
-    if (signal !== null) {
+    console.log(`--TEST-- code: ${code}, signal: ${signal}`);
+    if (signal) {
       throw Error(`pod install failed with signal: ${signal}`);
     }
     if (code !== 0) {
@@ -167,7 +168,7 @@ function runiOS () {
   console.log('run ios app');
   var buildCommand = 'react-native run-ios';
   var runProcess = exec(buildCommand);
-  runProcess.stdout.on('data', data => {
+  runProcess.on('message', data => {
     console.log(data);
   });
   runProcess.on('error', function (err) {

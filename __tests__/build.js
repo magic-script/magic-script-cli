@@ -4,6 +4,8 @@ jest.mock('fs');
 jest.mock('glob');
 
 const mockedFs = require('fs');
+const events = require('events');
+
 jest.spyOn(mockedFs, 'existsSync');
 jest.spyOn(mockedFs, 'readFileSync');
 jest.spyOn(mockedFs, 'readdirSync');
@@ -44,6 +46,71 @@ describe('Test build', () => {
     });
     build({ '_': ['build'], 'install': false, 'target': 'lumin' });
   });
+
+  test('should not build any platform if target is not specified', () => {
+    mockedFs.existsSync.mockReturnValueOnce(true);
+    build({ '_': ['build'], 'install': false });
+    expect(mockedFs.existsSync).toHaveBeenCalledTimes(1);
+  });
+
+  test('should build android project if target is android', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    jest.spyOn(mockedFs, 'chmodSync').mockImplementationOnce((path, chmod) => {
+      expect(path.endsWith('android/gradlew')).toBeTruthy();
+      expect(chmod).toBe('755');
+    });
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe('react-native run-android');
+      callback(null);
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'android' });
+  });
+
+  test('should build and run ios when target is ios', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const podInstallEmitter = new events.EventEmitter();
+    const runEmitter = new events.EventEmitter();
+    const podsInstallCallback = () => {
+      child_process.exec.mockImplementationOnce((command, callback) => {
+        expect(command).toBe('react-native run-ios');
+        runEmitter.on('message', () => {});
+        runEmitter.on('error', (err) => { throw err; });
+        runEmitter.on('exit', (code, signal) => {});
+        return runEmitter;
+      });
+    };
+    child_process.exec.mockImplementationOnce((command) => {
+      expect(command.endsWith('/ios && pod install && cd ..')).toBeTruthy();
+      podInstallEmitter.on('message', () => {});
+      podInstallEmitter.on('error', (err) => { throw err; });
+      podInstallEmitter.on('exit', (code, signal) => { podsInstallCallback(); });
+      return podInstallEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'ios' });
+    podInstallEmitter.emit('exit', (null, 0));
+  });
+
+  // test('should throw error when target is ios and signal is not 0', () => {
+  //   mockedFs.existsSync.mockReturnValue(true);
+  //   const podInstallEmitter = new events.EventEmitter();
+  //   podInstallEmitter.on('message', () => {});
+  //   const errorCallback = (err) => { throw err; };
+  //   const exitCallback = jest.fn();
+  //   podInstallEmitter.on('error', errorCallback);
+  //   podInstallEmitter.on('exit', exitCallback);
+  //   const spy = jest.spyOn(podInstallEmitter, 'on').mockImplementation((event, listener) => {});
+  //   child_process.exec.mockImplementationOnce((command) => {
+  //     expect(command.endsWith('/ios && pod install && cd ..')).toBeTruthy();
+  //     const errorCallback = (err) => { throw err; };
+  //     podInstallEmitter.on('message', () => {});
+  //     podInstallEmitter.on('error', errorCallback);
+  //     podInstallEmitter.on('exit', exitCallback);
+  //     // return podInstallEmitter;
+  //     return spy;
+  //   });
+  //   build({ '_': ['build'], 'install': false, 'target': 'ios' });
+  //   podInstallEmitter.emit('exit', (null, 1));
+  // });
 
   test('error mabu', () => {
     mockedFs.existsSync.mockReturnValue(true);
@@ -217,7 +284,7 @@ describe('Test build', () => {
   });
 
   test('mkdir error EEXIST', () => {
-    mockedFs.existsSync.mockReturnValueOnce(true);
+    mockedFs.existsSync.mockReturnValue(true);
     mockedFs.readdirSync.mockImplementationOnce(() => {
       return ['app.package'];
     });
@@ -238,7 +305,7 @@ describe('Test build', () => {
   });
 
   test('mkdir error other', () => {
-    mockedFs.existsSync.mockReturnValueOnce(true);
+    mockedFs.existsSync.mockReturnValue(true);
     mockedFs.readdirSync.mockImplementationOnce(() => {
       return ['app.package'];
     });
@@ -255,7 +322,7 @@ describe('Test build', () => {
   });
 
   test('readdir error', () => {
-    mockedFs.existsSync.mockReturnValueOnce(true);
+    mockedFs.existsSync.mockReturnValue(true);
     mockedFs.readdirSync.mockImplementationOnce(() => {
       throw new Error();
     });
