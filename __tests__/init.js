@@ -54,6 +54,32 @@ function mockCopyComponentsFiles () {
   });
 }
 
+function mockNonComponentsFiles () {
+  jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
+    return ['file1', 'file2'];
+  });
+  jest.spyOn(mockedFs, 'statSync').mockImplementation((path) => {
+    var statObject = {};
+    statObject.isFile = function () { return true; };
+    statObject.isDirectory = function () { return false; };
+    return statObject;
+  });
+  mockedFs.readFileSync.mockImplementationOnce(() => {
+    return 'test1';
+  }).mockImplementationOnce(() => {
+    return 'test2';
+  });
+  jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
+    expect(type).toBe('utf8');
+    expect(contents).toBe('test1');
+    expect(path.endsWith('file1')).toBeTruthy();
+  }).mockImplementationOnce((path, contents, type) => {
+    expect(type).toBe('utf8');
+    expect(contents).toBe('test2');
+    expect(path.endsWith('file2')).toBeTruthy();
+  });
+}
+
 function mockRemovePackageJsons () {
   // remove package jsons
   jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
@@ -297,6 +323,98 @@ describe('Test Components configurations', () => {
         TARGET: ['android', 'lumin', 'ios']
       });
       init({ '_': ['init'] });
+    });
+  });
+
+  describe('Test Components configurations with args passed in command line', () => {
+    test('command line', () => {
+      mockedFs.existsSync.mockReturnValue(true);
+      util.createAndroidLocalProperties = jest.fn('path');
+
+      mockCopyComponentsFiles();
+      // rename allplatforms package json
+      jest.spyOn(mockedFs, 'renameSync').mockImplementationOnce((firstFilename, secondFilename) => {
+        expect(firstFilename.endsWith('package.allplatforms.json')).toBeTruthy();
+        expect(secondFilename.endsWith('package.json')).toBeTruthy();
+      });
+      // create android local.properties file
+      const localPropertiesSpy = jest.spyOn(util, 'createAndroidLocalProperties').mockImplementationOnce(path => {
+        expect(localPropertiesSpy).toHaveBeenCalled();
+      });
+      mockRemovePackageJsons();
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.resolve({});
+      init({ '_': ['init'], folderName: 'visible', appType: 'Components', target: ['lumin', 'android', 'ios'], packageName: 'com.package.name' });
+    });
+    test('command line should create landscape project', () => {
+      mockedFs.existsSync.mockReturnValueOnce(true);
+      mockNonComponentsFiles();
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.resolve({});
+      init({ '_': ['init'], folderName: 'visible', appType: 'Landscape', target: ['lumin', 'android', 'ios'], packageName: 'com.package.name' });
+    });
+    test('command line should create immersive project', () => {
+      mockedFs.existsSync.mockReturnValueOnce(true);
+      mockNonComponentsFiles();
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.resolve({});
+      init({ '_': ['init'], folderName: 'visible', appType: 'Immersive', target: ['lumin', 'android', 'ios'], packageName: 'com.package.name' });
+    });
+    test('command line no target and components app type passed should create lumin project', () => {
+      mockedFs.existsSync.mockReturnValue(true);
+      consts.reactFiles = ['react'];
+      // remove packages not specified by target
+      jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
+        expect(path.endsWith('ios')).toBeTruthy();
+      }).mockImplementationOnce(path => {
+        expect(path.endsWith('android')).toBeTruthy();
+      });
+      mockCopyComponentsFiles();
+    
+      // rename lumin package json
+      jest.spyOn(mockedFs, 'renameSync').mockImplementationOnce((firstFilename, secondFilename) => {
+        expect(firstFilename.endsWith('package.lumin.json')).toBeTruthy();
+        expect(secondFilename.endsWith('package.json')).toBeTruthy();
+      });
+      // remove react files
+      jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
+        expect(file.endsWith('react')).toBeTruthy();
+      });
+      mockRemovePackageJsons();
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.resolve({});
+      init({ '_': ['init'], folderName: 'visible', appType: 'Components', packageName: 'com.package.name' });
+    });
+    test('command line wrong target passed and components app type should create lumin project', () => {
+      mockedFs.existsSync.mockReturnValue(true);
+      consts.reactFiles = ['react'];
+      // remove packages not specified by target
+      jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
+        expect(path.endsWith('ios')).toBeTruthy();
+      }).mockImplementationOnce(path => {
+        expect(path.endsWith('android')).toBeTruthy();
+      });
+      mockCopyComponentsFiles();
+    
+      // rename lumin package json
+      jest.spyOn(mockedFs, 'renameSync').mockImplementationOnce((firstFilename, secondFilename) => {
+        expect(firstFilename.endsWith('package.lumin.json')).toBeTruthy();
+        expect(secondFilename.endsWith('package.json')).toBeTruthy();
+      });
+      // remove react files
+      jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
+        expect(file.endsWith('react')).toBeTruthy();
+      });
+      mockRemovePackageJsons();
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.resolve({});
+      init({ '_': ['init'], folderName: 'visible', appType: 'Components', packageName: 'com.package.name', target: 'nonarraypassed' });
+    });
+    test('command line no target and no app type passed should not create project', () => {
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.resolve({});
+      init({ '_': ['init'], folderName: 'visible', packageName: 'com.package.name' });
+      expect(mockedFs.existsSync).not.toHaveBeenCalled();
     });
   });
 
@@ -621,7 +739,7 @@ describe('Test Components configurations', () => {
     });
     
     test('packageName folderName parameter', () => {
-      mockedFs.existsSync.mockReturnValue(false);
+      mockedFs.existsSync.mockReturnValueOnce(false);
       jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
         expect(mockedFs.mkdirSync).toHaveBeenCalled();
         return ['manifest.xml', 'folder'];

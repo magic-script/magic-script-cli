@@ -47,7 +47,7 @@ const askQuestions = () => {
       type: 'list',
       message: 'What app type do you want?',
       choices: ['Landscape', 'Immersive', 'Components'],
-      default: 'Landscape'
+      default: appType
     },
     {
       name: 'TARGET',
@@ -149,6 +149,7 @@ module.exports = argv => {
     immersive = argv.appType === 'Immersive' || argv.immersive;
     copyFiles(templatePath, `${currentDirectory}/${folderName}`);
     console.log(green, `${appType} project created successfully!`, normal);
+    resetValues();
     return;
   }
   if (isComponents(folderName, packageName, appType)) {
@@ -157,6 +158,7 @@ module.exports = argv => {
     copyManifest(`${currentDirectory}/${folderName}`);
     preparePlatforms(`${currentDirectory}/${folderName}`);
     console.log(green, `Components project created successfully for platforms: ${target}!`, normal);
+    resetValues();
     return;
   }
   let answerPromise = askQuestions();
@@ -297,7 +299,7 @@ function isComponents (folderName, packageName, appType) {
 }
 
 function setTarget (appType, argTarget) {
-  if (argTarget) {
+  if (argTarget && Array.isArray(argTarget)) {
     target = argTarget.map(toUpperCase);
   }
   if (!isComponentsAndAtLeastOneTarget(appType, target)) {
@@ -308,4 +310,12 @@ function setTarget (appType, argTarget) {
 
 function toUpperCase (string) {
   return string.toUpperCase();
+}
+
+function resetValues () {
+  folderName = null;
+  visibleName = null;
+  appType = null;
+  packageName = null;
+  target = null;
 }

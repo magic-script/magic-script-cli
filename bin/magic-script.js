@@ -19,8 +19,7 @@ require('yargs') // eslint-disable-line
     });
     yargs.positional('appType', {
       describe: 'The type of the app. Can be either Landscape, Immersive or Components',
-      type: 'string',
-      default: 'Components'
+      type: 'string'
     });
     yargs.option('target', {
       alias: 't',
