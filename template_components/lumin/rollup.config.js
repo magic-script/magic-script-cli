@@ -4,9 +4,8 @@ import commonjs from 'rollup-plugin-commonjs';
 
 const common = {
   plugins: [
-    babel({ 
-      exclude: 'node_modules/**',
-      include: ['../src']
+    babel({
+      exclude: 'node_modules/**'
     }),
     resolve(),
     commonjs()
