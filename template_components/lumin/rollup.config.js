@@ -4,7 +4,10 @@ import commonjs from 'rollup-plugin-commonjs';
 
 const common = {
   plugins: [
-    babel({ exclude: 'node_modules/**' }),
+    babel({ 
+      exclude: 'node_modules/**',
+      include: ['../src']
+    }),
     resolve(),
     commonjs()
   ]
@@ -15,7 +18,7 @@ export default [
   {
     ...common,
     external: ['uv', 'lumin', 'ssl', 'jpeg', 'png', 'gl'],
-    input: 'lumin/main.js',
+    input: './src/main.js',
     preserveModules: true,
     output: {
       dir: 'bin',
@@ -25,13 +28,13 @@ export default [
   // Build for MagicScript on Magicverse (iOS, Android)
   {
     ...common,
-    input: 'src/app.js',
+    input: '../src/app.js',
     external: ['react'],
     output: {
       globals: {
         'react': 'React'
       },
-      file: 'bin/bundle.js',
+      file: '../reactnative/bin/bundle.js',
       format: 'iife',
       name: '_'
     }

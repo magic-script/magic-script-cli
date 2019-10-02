@@ -86,26 +86,11 @@ function updateManifest (contents) {
 }
 
 function copyComponentsFiles (srcPath, destPath) {
-  if (!fs.existsSync(destPath)) {
-    fs.mkdirSync(destPath);
-  }
-  const filesToCreate = fs.readdirSync(srcPath);
-  filesToCreate.forEach(file => {
-    const origFilePath = `${srcPath}/${file}`;
-    const stats = fs.statSync(origFilePath);
-    if (stats.isFile()) {
-      var contents = fs.readFileSync(origFilePath);
-      const writePath = `${destPath}/${file}`;
-      fs.writeFileSync(writePath, contents);
-    } else if (stats.isDirectory()) {
-      let newDestPath = `${destPath}/${file}`;
-      copyComponentsFiles(origFilePath, newDestPath);
-    }
-  });
+  util.copyComponentsFiles(srcPath, destPath);
 }
 
 function copyManifest (destPath) {
-  let manifestPath = `${destPath}/manifest.xml`;
+  let manifestPath = `${destPath}/lumin/manifest.xml`;
   if (fs.existsSync(manifestPath)) {
     var contents = fs.readFileSync(manifestPath, 'utf8');
     contents = updateManifest(contents);
@@ -199,63 +184,68 @@ function preparePlatforms (destPath) {
   let android = target.includes('ANDROID');
   let iOS = target.includes('IOS');
   let lumin = target.includes('LUMIN');
-  let isReact = (target.includes('IOS') && target.includes('ANDROID'));
+  let isReact = (target.includes('IOS') || target.includes('ANDROID'));
   if (!iOS) {
-    if (fs.existsSync(`${destPath}/ios`)) {
-      fs.rmdirSync(`${destPath}/ios`, { recursive: true });
+    if (fs.existsSync(`${destPath}/reactnative/ios`)) {
+      fs.rmdirSync(`${destPath}/reactnative/ios`, { recursive: true });
     }
   }
   if (!android) {
-    if (fs.existsSync(`${destPath}/android`)) {
-      fs.rmdirSync(`${destPath}/android`, { recursive: true });
+    if (fs.existsSync(`${destPath}/reactnative/android`)) {
+      fs.rmdirSync(`${destPath}/reactnative/android`, { recursive: true });
     }
   } else {
     util.createAndroidLocalProperties(destPath);
+  }
+  if (!isReact) {
+    if (fs.existsSync(`${destPath}/reactnative`)) {
+      fs.rmdirSync(`${destPath}/reactnative`, { recursive: true });
+    }
   }
   if (!lumin) {
     if (fs.existsSync(`${destPath}/lumin`)) {
       fs.rmdirSync(`${destPath}/lumin`, { recursive: true });
     }
   }
-  if ((isReact && lumin) || (android && lumin) || (iOS && lumin)) {
-    fs.renameSync(`${destPath}/package.allplatforms.json`, `${destPath}/package.json`);
-  } else if (isReact || android || iOS) {
-    fs.renameSync(`${destPath}/package.reactnative.json`, `${destPath}/package.json`);
-    removeLuminFiles(destPath);
-  } else {
-    fs.renameSync(`${destPath}/package.lumin.json`, `${destPath}/package.json`);
-    removeReactFiles(destPath);
-  }
-  removePackageJsons(destPath);
 }
+  // if ((isReact && lumin) || (android && lumin) || (iOS && lumin)) {
+  //   fs.renameSync(`${destPath}/package.allplatforms.json`, `${destPath}/package.json`);
+  // } else if (isReact || android || iOS) {
+  //   fs.renameSync(`${destPath}/package.reactnative.json`, `${destPath}/package.json`);
+  //   removeLuminFiles(destPath);
+  // } else {
+  //   fs.renameSync(`${destPath}/package.lumin.json`, `${destPath}/package.json`);
+  //   removeReactFiles(destPath);
+  // }
+  // removePackageJsons(destPath);
 
-function removePackageJsons (destPath) {
-  if (fs.existsSync(`${destPath}/package.lumin.json`)) {
-    fs.unlinkSync(`${destPath}/package.lumin.json`);
-  }
-  if (fs.existsSync(`${destPath}/package.reactnative.json`)) {
-    fs.unlinkSync(`${destPath}/package.reactnative.json`);
-  }
-  if (fs.existsSync(`${destPath}/package.allplatforms.json`)) {
-    fs.unlinkSync(`${destPath}/package.allplatforms.json`);
-  }
-}
+// function removePackageJsons (destPath) {
+//   if (fs.existsSync(`${destPath}/package.lumin.json`)) {
+//     fs.unlinkSync(`${destPath}/package.lumin.json`);
+//   }
+//   if (fs.existsSync(`${destPath}/package.reactnative.json`)) {
+//     fs.unlinkSync(`${destPath}/package.reactnative.json`);
+//   }
+//   if (fs.existsSync(`${destPath}/package.allplatforms.json`)) {
+//     fs.unlinkSync(`${destPath}/package.allplatforms.json`);
+//   }
+// }
 
-function removeLuminFiles (destPath) {
-  consts.luminFiles.forEach(fileName => {
-    if (fs.existsSync(`${destPath}/${fileName}`)) {
-      fs.unlinkSync(`${destPath}/${fileName}`);
-    }
-  });
-}
+// function removeLuminFiles (destPath) {
+//   consts.luminFiles.forEach(fileName => {
+//     if (fs.existsSync(`${destPath}/${fileName}`)) {
+//       fs.unlinkSync(`${destPath}/${fileName}`);
+//     }
+//   });
+// }
 
-function removeReactFiles (destPath) {
-  consts.reactFiles.forEach(fileName => {
-    if (fs.existsSync(`${destPath}/${fileName}`)) {
-      fs.unlinkSync(`${destPath}/${fileName}`);
-    }
-  });
-}
+// function removeReactFiles (destPath) {
+//   consts.reactFiles.forEach(fileName => {
+//     if (fs.existsSync(`${destPath}/${fileName}`)) {
+//       fs.unlinkSync(`${destPath}/${fileName}`);
+//     }
+//   });
+// }
 
 function isComponentsAndAtLeastOneTarget (appType, argTarget) {
   return (appType === 'Components' && argTarget && argTarget.some(substring => {

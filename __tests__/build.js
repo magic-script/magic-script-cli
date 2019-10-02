@@ -90,27 +90,29 @@ describe('Test build', () => {
     podInstallEmitter.emit('exit', (null, 0));
   });
 
-  // test('should throw error when target is ios and signal is not 0', () => {
-  //   mockedFs.existsSync.mockReturnValue(true);
-  //   const podInstallEmitter = new events.EventEmitter();
-  //   podInstallEmitter.on('message', () => {});
-  //   const errorCallback = (err) => { throw err; };
-  //   const exitCallback = jest.fn();
-  //   podInstallEmitter.on('error', errorCallback);
-  //   podInstallEmitter.on('exit', exitCallback);
-  //   const spy = jest.spyOn(podInstallEmitter, 'on').mockImplementation((event, listener) => {});
-  //   child_process.exec.mockImplementationOnce((command) => {
-  //     expect(command.endsWith('/ios && pod install && cd ..')).toBeTruthy();
-  //     const errorCallback = (err) => { throw err; };
-  //     podInstallEmitter.on('message', () => {});
-  //     podInstallEmitter.on('error', errorCallback);
-  //     podInstallEmitter.on('exit', exitCallback);
-  //     // return podInstallEmitter;
-  //     return spy;
-  //   });
-  //   build({ '_': ['build'], 'install': false, 'target': 'ios' });
-  //   podInstallEmitter.emit('exit', (null, 1));
-  // });
+  test('should throw error when target is ios and signal is not 0', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const podInstallEmitter = new events.EventEmitter();
+    podInstallEmitter.on('message', () => {});
+    const errorCallback = (err) => { throw err; };
+    const exitCallback = jest.fn();
+    podInstallEmitter.on('error', errorCallback);
+    podInstallEmitter.on('exit', exitCallback);
+    const spy = jest.spyOn(podInstallEmitter, 'on').mockImplementation((event, listener) => {});
+    child_process.exec.mockImplementationOnce((command) => {
+      expect(command.endsWith('/ios && pod install && cd ..')).toBeTruthy();
+      const errorCallback = (err) => { throw err; };
+      podInstallEmitter.on('message', () => {});
+      podInstallEmitter.on('error', errorCallback);
+      podInstallEmitter.on('exit', exitCallback);
+      // return podInstallEmitter;
+      return spy;
+    });
+    expect(() => {
+      build({ '_': ['build'], 'install': false, 'target': 'ios' });
+      podInstallEmitter.emit('exit', (null, 1));
+    }).toThrow();
+  });
 
   test('error mabu', () => {
     mockedFs.existsSync.mockReturnValue(true);
