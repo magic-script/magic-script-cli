@@ -20,17 +20,25 @@ beforeEach(() => {
   mockedFs.existsSync = jest.fn();
   mockedFs.mkdirSync = jest.fn();
   mockedFs.readdirSync = jest.fn();
+  util.copyComponentsFiles = jest.fn();
+  process.chdir = jest.fn();
 });
 
 afterEach(() => {
   if (util.isInstalled.mock) {
     util.isInstalled.mockRestore();
   }
+  if (util.copyComponentsFiles.mock) {
+    util.copyComponentsFiles.mockRestore();
+  }
   if (child_process.exec.mock) {
     child_process.exec.mockReset();
   }
   if (child_process.spawn.mock) {
     child_process.spawn.mockReset();
+  }
+  if (process.chdir.mock) {
+    process.chdir.mockRestore();
   }
 });
 
@@ -42,7 +50,7 @@ describe('Test build', () => {
     });
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('npm run build');
-      expect(() => callback('error', '', '')).toThrow();
+      expect(() => callback ('error', '', '')).toThrow();
     });
     build({ '_': ['build'], 'install': false, 'target': 'lumin' });
   });
@@ -50,7 +58,7 @@ describe('Test build', () => {
   test('should not build any platform if target is not specified', () => {
     mockedFs.existsSync.mockReturnValueOnce(true);
     build({ '_': ['build'], 'install': false });
-    expect(mockedFs.existsSync).toHaveBeenCalledTimes(1);
+    expect(mockedFs.existsSync).not.toHaveBeenCalled();
   });
 
   test('should build android project if target is android', () => {
@@ -80,7 +88,7 @@ describe('Test build', () => {
       });
     };
     child_process.exec.mockImplementationOnce((command) => {
-      expect(command.endsWith('/ios && pod install && cd ..')).toBeTruthy();
+      expect(command.endsWith('/ios && pod install && cd .. && cd ..')).toBeTruthy();
       podInstallEmitter.on('message', () => {});
       podInstallEmitter.on('error', (err) => { throw err; });
       podInstallEmitter.on('exit', (code, signal) => { podsInstallCallback(); });
@@ -100,7 +108,7 @@ describe('Test build', () => {
     podInstallEmitter.on('exit', exitCallback);
     const spy = jest.spyOn(podInstallEmitter, 'on').mockImplementation((event, listener) => {});
     child_process.exec.mockImplementationOnce((command) => {
-      expect(command.endsWith('/ios && pod install && cd ..')).toBeTruthy();
+      expect(command.endsWith('/ios && pod install && cd .. && cd ..')).toBeTruthy();
       const errorCallback = (err) => { throw err; };
       podInstallEmitter.on('message', () => {});
       podInstallEmitter.on('error', errorCallback);

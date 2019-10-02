@@ -44,7 +44,6 @@ function buildLuminComponents (argv) {
 }
 
 function buildLumin (argv) {
-  console.log(`BUILD COMMAND dir: ${process.cwd()}`);
   let packagePath = 'app.package';
   try {
     for (let name of fs.readdirSync('.')) {
@@ -79,7 +78,6 @@ function buildLumin (argv) {
     }
     util.createDigest(argv.debug);
     exec(buildCommand, (err, stdout, stderr) => {
-      console.log(`BUILD COMMAND dir: ${process.cwd()}`);
       if (err) {
         process.stdout.write(stdout);
         process.stderr.write(stderr);
@@ -175,8 +173,8 @@ function installPods (path, onInstallFinish) {
   console.log('start installing pods');
   var podCommand = `cd ${path}/reactnative/ios && pod install && cd .. && cd ..`;
   var podProcess = exec(podCommand);
-  podProcess.on('message', (message, sendhandle) => {
-    console.log(message);
+  podProcess.stdout.on('data', (data) => {
+    console.log(data);
   });
   podProcess.on('error', function (err) {
     throw err;
