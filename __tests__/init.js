@@ -2,13 +2,11 @@
 // Copyright (c) 2019 Magic Leap, Inc. All Rights Reserved
 // Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
 jest.mock('fs');
-jest.mock('../lib/consts');
 
 const inquirer = require('inquirer');
 const mockedFs = require('fs');
 const init = require('../commands/init');
 const util = require('../lib/util');
-const consts = require('../lib/consts');
 
 jest.spyOn(mockedFs, 'existsSync');
 jest.spyOn(mockedFs, 'readFileSync');
@@ -95,7 +93,6 @@ describe('Test Components configurations', () => {
   describe('Test Components configurations', () => {
     test('create components project for lumin if target is not specified and apptype is Components', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      consts.reactFiles = ['react'];
       // remove packages not specified by target
       jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
         expect(path.endsWith('ios')).toBeTruthy();
@@ -123,7 +120,6 @@ describe('Test Components configurations', () => {
     });
     test('create components project for lumin if target is lumin and apptype is Components', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      consts.reactFiles = ['react'];
       // remove packages not specified by target
       jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
         expect(path.endsWith('ios')).toBeTruthy();
@@ -153,7 +149,6 @@ describe('Test Components configurations', () => {
 
     test('create components project for android if target is android and apptype is Components', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      consts.luminFiles = ['lumin'];
       util.createAndroidLocalProperties = jest.fn('path');
 
       // remove packages not specified by target
@@ -188,7 +183,6 @@ describe('Test Components configurations', () => {
     });
     test('create components project for ios if target is ios and apptype is Components', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      consts.luminFiles = ['lumin'];
 
       // remove packages not specified by target
       jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
@@ -218,7 +212,6 @@ describe('Test Components configurations', () => {
     });
     test('create components project for ios and android if target is ios and android and apptype is Components', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      consts.luminFiles = ['lumin'];
       util.createAndroidLocalProperties = jest.fn('path');
 
       // remove packages not specified by target
@@ -362,7 +355,6 @@ describe('Test Components configurations', () => {
     });
     test('command line no target and components app type passed should create lumin project', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      consts.reactFiles = ['react'];
       // remove packages not specified by target
       jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
         expect(path.endsWith('ios')).toBeTruthy();
@@ -387,7 +379,6 @@ describe('Test Components configurations', () => {
     });
     test('command line wrong target passed and components app type should create lumin project', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      consts.reactFiles = ['react'];
       // remove packages not specified by target
       jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
         expect(path.endsWith('ios')).toBeTruthy();

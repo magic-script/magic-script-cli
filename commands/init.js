@@ -6,7 +6,6 @@ let templatePath = `${__dirname}/../template`;
 let inquirer = require('inquirer');
 let path = require('path');
 const util = require('../lib/util');
-const consts = require('../lib/consts');
 const targetPlatforms = ['IOS', 'ANDROID', 'LUMIN'];
 const red = '\x1b[31m';
 const green = '\x1b[32m';
@@ -208,44 +207,6 @@ function preparePlatforms (destPath) {
     }
   }
 }
-  // if ((isReact && lumin) || (android && lumin) || (iOS && lumin)) {
-  //   fs.renameSync(`${destPath}/package.allplatforms.json`, `${destPath}/package.json`);
-  // } else if (isReact || android || iOS) {
-  //   fs.renameSync(`${destPath}/package.reactnative.json`, `${destPath}/package.json`);
-  //   removeLuminFiles(destPath);
-  // } else {
-  //   fs.renameSync(`${destPath}/package.lumin.json`, `${destPath}/package.json`);
-  //   removeReactFiles(destPath);
-  // }
-  // removePackageJsons(destPath);
-
-// function removePackageJsons (destPath) {
-//   if (fs.existsSync(`${destPath}/package.lumin.json`)) {
-//     fs.unlinkSync(`${destPath}/package.lumin.json`);
-//   }
-//   if (fs.existsSync(`${destPath}/package.reactnative.json`)) {
-//     fs.unlinkSync(`${destPath}/package.reactnative.json`);
-//   }
-//   if (fs.existsSync(`${destPath}/package.allplatforms.json`)) {
-//     fs.unlinkSync(`${destPath}/package.allplatforms.json`);
-//   }
-// }
-
-// function removeLuminFiles (destPath) {
-//   consts.luminFiles.forEach(fileName => {
-//     if (fs.existsSync(`${destPath}/${fileName}`)) {
-//       fs.unlinkSync(`${destPath}/${fileName}`);
-//     }
-//   });
-// }
-
-// function removeReactFiles (destPath) {
-//   consts.reactFiles.forEach(fileName => {
-//     if (fs.existsSync(`${destPath}/${fileName}`)) {
-//       fs.unlinkSync(`${destPath}/${fileName}`);
-//     }
-//   });
-// }
 
 function isComponentsAndAtLeastOneTarget (appType, argTarget) {
   return (appType === 'Components' && argTarget && argTarget.some(substring => {
