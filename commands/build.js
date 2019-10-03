@@ -135,19 +135,25 @@ function isComponents () {
 
 function buildAndroid () {
   var path = process.cwd();
-  var buildCommand = 'react-native run-android';
   if (fs.existsSync(`${path}/reactnative/android`)) {
     fs.chmodSync(`${path}/reactnative/android/gradlew`, '755');
-    process.chdir('reactnative');
-    exec(buildCommand, (err, stdout, stderr) => {
-      if (err) {
-        process.chdir('..');
-        process.stdout.write(stdout);
-        process.stderr.write(stderr);
-        throw err;
+    var runProcess = spawn('react-native', ['run-android'], {
+      stdio: 'inherit',
+      cwd: `${path}/reactnative`
+    });
+    runProcess.on('message', (message, sendhandle) => {
+      console.log(message);
+    });
+    runProcess.on('error', function (err) {
+      throw err;
+    });
+    runProcess.on('exit', function (code, signal) {
+      if (signal !== null) {
+        throw Error(`react-native run-android failed with signal: ${signal}`);
       }
-      console.log(stdout);
-      process.chdir('..');
+      if (code !== 0) {
+        throw Error(`react-native run-android failed with code: ${code}`);
+      }
     });
   } else {
     console.error(
@@ -171,10 +177,13 @@ function buildiOS () {
 
 function installPods (path, onInstallFinish) {
   console.log('start installing pods');
-  var podCommand = `cd ${path}/reactnative/ios && pod install && cd .. && cd ..`;
-  var podProcess = exec(podCommand);
-  podProcess.stdout.on('data', (data) => {
-    console.log(data);
+
+  var podProcess = spawn('pod', ['install'], {
+    stdio: 'inherit',
+    cwd: `${path}/reactnative/ios`
+  });
+  podProcess.on('message', function (message, sendhandle) {
+    console.log(message);
   });
   podProcess.on('error', function (err) {
     throw err;
@@ -194,18 +203,17 @@ function installPods (path, onInstallFinish) {
 
 function runiOS () {
   console.log('run ios app');
-  var buildCommand = 'react-native run-ios';
-  process.chdir('reactnative');
-  var runProcess = exec(buildCommand);
-  runProcess.stdout.on('data', data => {
-    console.log(data);
+  var runProcess = spawn('react-native', ['run-ios'], {
+    stdio: 'inherit',
+    cwd: `${process.cwd()}/reactnative`
+  });
+  runProcess.on('message', (message, sendhandle) => {
+    console.log(message);
   });
   runProcess.on('error', function (err) {
-    process.chdir('..');
     throw err;
   });
   runProcess.on('exit', function (code, signal) {
-    process.chdir('..');
     if (signal !== null) {
       throw Error(`react-native run-ios failed with signal: ${signal}`);
     }

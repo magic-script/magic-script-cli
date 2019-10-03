@@ -193,4 +193,66 @@ describe('Test Util', () => {
   test('isValidFolderName fail', () => {
     expect(util.isValidFolderName('com.#!@#te st')).toBe(false);
   });
+
+  test('copy files where stat is not directory', () => {
+    jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
+      return ['file1', 'file2'];
+    });
+    jest.spyOn(mockedFs, 'statSync').mockImplementation((path) => {
+      var statObject = {};
+      statObject.isFile = function () { return true; };
+      statObject.isDirectory = function () { return false; };
+      return statObject;
+    });
+    mockedFs.readFileSync.mockImplementationOnce(() => {
+      return 'test1';
+    }).mockImplementationOnce(() => {
+      return 'test2';
+    });
+    jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
+      expect(contents).toBe('test1');
+      expect(path.endsWith('file1')).toBeTruthy();
+    }).mockImplementationOnce((path, contents, type) => {
+      expect(contents).toBe('test2');
+      expect(path.endsWith('file2')).toBeTruthy();
+    });
+    // mock for copy manifest
+    mockedFs.readFileSync.mockImplementationOnce(() => {
+      return 'test1';
+    });
+    util.copyComponentsFiles('test', 'test');
+  });
+
+  test('should navigate to lumin if lumin folder exists', () => {
+    process.chdir = jest.fn();
+    const callback = jest.fn();
+    mockedFs.existsSync.mockReturnValueOnce(true);
+    util.navigateIfComponents(callback);
+    expect(process.chdir).toHaveBeenCalledWith('lumin');
+  });
+
+  test('should not navigate to lumin if lumin folder does not exist', () => {
+    process.chdir = jest.fn();
+    const callback = jest.fn();
+    mockedFs.existsSync.mockReturnValueOnce(false);
+    util.navigateIfComponents(callback);
+    expect(process.chdir).not.toHaveBeenCalledWith('test');
+    expect(callback.mock.calls.length).toBe(1);
+  });
+
+  test('create android local properties file if does not exist', () => {
+    mockedFs.existsSync.mockReturnValueOnce(false);
+    process.env.ANDROID_HOME = 'test';
+    jest.spyOn(mockedFs, 'writeFile').mockImplementationOnce((path, content) => {
+      expect(path.endsWith('android/local.properties')).toBeTruthy();
+      expect(content).toBe('sdk.dir=test');
+    });
+    util.createAndroidLocalProperties();
+  });
+
+  test('should not create android local properties file if file exists', () => {
+    mockedFs.existsSync.mockReturnValueOnce(true);
+    util.createAndroidLocalProperties();
+    expect(mockedFs.writeFile).not.toHaveBeenCalled();
+  });
 });
