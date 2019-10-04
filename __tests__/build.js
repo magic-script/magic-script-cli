@@ -251,6 +251,70 @@ describe('Test build', () => {
     }).toThrow();
   });
 
+  test('should throw error on run ios if signal is not null', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const podInstallEmitter = new events.EventEmitter();
+    const runEmitter = new events.EventEmitter();
+    const podsInstallCallback = () => {
+      child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+        expect(command).toBe('react-native');
+        expect(commandArgs).toStrictEqual(['run-ios']);
+        runEmitter.on('message', () => {});
+        runEmitter.on('error', (err) => { throw err; });
+        runEmitter.on('exit', (code, signal) => {
+          console.log(`code: ${code}, signal: ${signal}`);
+          expect(code).toBe(1);
+          expect(signal).toBe('error');
+        });
+        return runEmitter;
+      });
+    };
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('pod');
+      expect(commandArgs).toStrictEqual(['install']);
+      podInstallEmitter.on('message', () => {});
+      podInstallEmitter.on('error', (err) => { throw err; });
+      podInstallEmitter.on('exit', () => { podsInstallCallback(); });
+      return podInstallEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'ios' });
+    podInstallEmitter.emit('exit', (null, 0));
+    expect(() => {
+      runEmitter.emit('exit', 0, 'error');
+    }).toThrow();
+  });
+
+  test('should throw error on run ios if error occurs', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const podInstallEmitter = new events.EventEmitter();
+    const runEmitter = new events.EventEmitter();
+    const podsInstallCallback = () => {
+      child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+        expect(command).toBe('react-native');
+        expect(commandArgs).toStrictEqual(['run-ios']);
+        runEmitter.on('message', () => {});
+        runEmitter.on('error', (err) => { throw err; });
+        runEmitter.on('exit', (code, signal) => {
+          console.log(`code: ${code}, signal: ${signal}`);
+          expect(code).toBe(0);
+          expect(signal).toBe(null);
+        });
+        return runEmitter;
+      });
+    };
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('pod');
+      expect(commandArgs).toStrictEqual(['install']);
+      podInstallEmitter.on('message', () => {});
+      podInstallEmitter.on('error', (err) => { throw err; });
+      podInstallEmitter.on('exit', () => { podsInstallCallback(); });
+      return podInstallEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'ios' });
+    podInstallEmitter.emit('exit', (null, 0));
+    runEmitter.emit('exit', 0, null);
+  });
+
   test('error mabu', () => {
     mockedFs.existsSync.mockReturnValue(true);
     mockedFs.readdirSync.mockImplementationOnce(() => {
