@@ -127,7 +127,6 @@ module.exports = argv => {
   setFolderName(argv.folderName);
   setAppType(argv.appType);
   setPackageName(argv.packageName);
-  setTarget(appType, argv.target);
   const currentDirectory = process.cwd();
   if (isLandscapeOrImmersive(folderName, packageName, appType)) {
     immersive = argv.appType === 'Immersive' || argv.immersive;
@@ -137,6 +136,7 @@ module.exports = argv => {
     return;
   }
   if (isComponents(folderName, packageName, appType)) {
+    setTarget(appType, argv.target);
     templatePath = path.join(__dirname, '../template_components');
     copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
     copyManifest(`${currentDirectory}/${folderName}`);
