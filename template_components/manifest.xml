@@ -1,5 +1,5 @@
 <manifest xmlns:ml="magicleap"
-          ml:package="com.magicleap.component.template"
+          ml:package="com.magicleap.magicscript.hello-sample"
           ml:version_name="0.0.1"
           ml:version_code="1">
   <application ml:visible_name="MagicScript Hello Sample"
