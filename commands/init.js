@@ -11,6 +11,12 @@ var visibleName;
 var folderName;
 var immersive;
 
+const validatePackageId = (packageId) => util.isValidPackageId(packageId) ? true
+  : 'Invalid package ID. Must match ' + util.PackageIdRegex.toString();
+
+const validateFolderName = (folderName) => util.isValidFolderName(folderName) ? true
+  : 'Invalid folder name. Must match ' + util.FolderNameRegex.toString();
+
 const askQuestions = () => {
   const questions = [
     {
@@ -23,14 +29,14 @@ const askQuestions = () => {
       name: 'APPID',
       type: 'input',
       message: 'What is the app ID of your application?',
-      validate: util.isValidPackageId,
+      validate: validatePackageId,
       default: packageName
     },
     {
       name: 'FOLDERNAME',
       type: 'input',
       message: 'In which folder do you want to save this project?',
-      validate: util.isValidFolderName,
+      validate: validateFolderName,
       default: folderName
     },
     {
