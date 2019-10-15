@@ -11,6 +11,12 @@ var visibleName;
 var folderName;
 var immersive;
 
+const validatePackageId = (packageId) => util.isValidPackageId(packageId) ? true
+  : 'Invalid package ID. Must match ' + util.PackageIdRegex.toString();
+
+const validateFolderName = (folderName) => util.isValidFolderName(folderName) ? true
+  : 'Invalid folder name. Must match ' + util.FolderNameRegex.toString();
+
 const askQuestions = () => {
   const questions = [
     {
@@ -23,14 +29,14 @@ const askQuestions = () => {
       name: 'APPID',
       type: 'input',
       message: 'What is the app ID of your application?',
-      validate: util.isValidPackageId,
+      validate: validatePackageId,
       default: packageName
     },
     {
       name: 'FOLDERNAME',
       type: 'input',
       message: 'In which folder do you want to save this project?',
-      validate: util.isValidFolderName,
+      validate: validateFolderName,
       default: folderName
     },
     {
@@ -38,7 +44,7 @@ const askQuestions = () => {
       type: 'list',
       message: 'What app type do you want?',
       choices: ['Landscape', 'Immersive', 'Components'],
-      default: "Landscape"
+      default: 'Landscape'
     }
   ];
   return inquirer.prompt(questions);
@@ -82,18 +88,16 @@ function copyFiles (srcPath, destPath) {
 }
 
 module.exports = argv => {
-  let nameRegex = /^([A-Za-z\-\_\d])+$/;
-  let idRegex = /^[a-z0-9_]+(\.[a-z0-9_]+)*(-[a-zA-Z0-9]*)?$/i;
   if (argv.visibleName) {
     visibleName = argv.visibleName;
   }
-  if (argv.folderName && nameRegex.test(argv.folderName)) {
+  if (argv.folderName && util.isValidFolderName(argv.folderName)) {
     folderName = argv.folderName;
     if (!visibleName) {
       visibleName = folderName;
     }
   }
-  if (argv.folderName && idRegex.test(argv.packageName)) {
+  if (argv.packageName && util.isValidPackageId(argv.packageName)) {
     packageName = argv.packageName;
   }
   const currentDirectory = process.cwd();
@@ -108,8 +112,9 @@ module.exports = argv => {
     folderName = answers['FOLDERNAME'];
     visibleName = answers['APPNAME'];
     let appType = answers['APPTYPE'];
-    immersive = appType === 'Immersive' || argv.immersive
-    if (appType == 'Components') {
+
+    immersive = appType === 'Immersive' || argv.immersive;
+    if (appType === 'Components') {
       immersive = false;
       templatePath = `${__dirname}/../template_components`;
     }
