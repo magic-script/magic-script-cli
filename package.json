@@ -1,7 +1,7 @@
 {
   "name": "magic-script-cli",
   "description": "Magic Script Toolkit",
-  "version": "2.2.13",
+  "version": "2.2.14",
   "author": "Magic Leap",
   "license": "Apache-2.0",
   "bin": {
