@@ -23,4 +23,4 @@ jobs:
         path: coverage
     - uses: codecov/codecov-action@v1.0.3
       with:
-        token: a1df3bee-9f73-45a5-9e05-30d9de234698
+        token: ${{secrets.CODECOV_TOKEN}}
