@@ -1,5 +1,6 @@
 # MagicScript Command Line Toolkit
 
+[![codecov](https://codecov.io/gh/magic-script/magic-script-cli/branch/master/graph/badge.svg)](https://codecov.io/gh/magic-script/magic-script-cli)
 [![CI](https://github.com/magic-script/magic-script-cli/workflows/CI/badge.svg)](https://github.com/magic-script/magic-script-cli/actions)
 [![npm version](https://badge.fury.io/js/magic-script-cli.svg)](https://badge.fury.io/js/magic-script-cli)
 [![npm downloads](https://img.shields.io/npm/dt/magic-script-cli.svg)](https://www.npmjs.com/package/magic-script-cli)
