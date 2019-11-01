@@ -45,6 +45,12 @@ const askQuestions = () => {
       message: 'What app type do you want?',
       choices: ['Landscape', 'Immersive', 'Components'],
       default: 'Landscape'
+    },
+    {
+      name: 'TYPESCRIPT',
+      type: 'confirm',
+      message: 'Use TypeScript?',
+      default: false
     }
   ];
   return inquirer.prompt(questions);
@@ -112,6 +118,7 @@ module.exports = argv => {
     folderName = answers['FOLDERNAME'];
     visibleName = answers['APPNAME'];
     let appType = answers['APPTYPE'];
+    let typescript = answers['TYPESCRIPT'];
 
     immersive = appType === 'Immersive' || argv.immersive;
     if (appType === 'Components') {
@@ -119,5 +126,14 @@ module.exports = argv => {
       templatePath = `${__dirname}/../template_components`;
     }
     copyFiles(templatePath, `${currentDirectory}/${folderName}`);
+
+    if (typescript && appType !== 'Components') {
+      // Remove non-typescript source files from template
+      fs.unlinkSync(`${currentDirectory}/${folderName}/src/main.js`);
+      fs.unlinkSync(`${currentDirectory}/${folderName}/src/app.js`);
+      // Copy typescript template overlay over existing template files
+      let templatePath = `${__dirname}/../template_overlay_typescript`;
+      copyFiles(templatePath, `${currentDirectory}/${folderName}`);
+    }
   });
 };
