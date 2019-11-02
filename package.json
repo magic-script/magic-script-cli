@@ -40,6 +40,7 @@
     "/commands",
     "/template",
     "/template_components",
+    "/template_overlay_typescript",
     "/util"
   ],
   "homepage": "https://github.com/magic-script/magic-script-cli",
