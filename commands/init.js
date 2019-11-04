@@ -127,12 +127,13 @@ module.exports = argv => {
     }
     copyFiles(templatePath, `${currentDirectory}/${folderName}`);
 
-    if (typescript && appType !== 'Components') {
+    if (typescript) {
       // Remove non-typescript source files from template
       fs.unlinkSync(`${currentDirectory}/${folderName}/src/main.js`);
       fs.unlinkSync(`${currentDirectory}/${folderName}/src/app.js`);
       // Copy typescript template overlay over existing template files
-      let templatePath = `${__dirname}/../template_overlay_typescript`;
+      const pathSuffix = (appType === 'Components') ? '_components' : '';
+      templatePath = `${__dirname}/../template_overlay_typescript${pathSuffix}`;
       copyFiles(templatePath, `${currentDirectory}/${folderName}`);
     }
   });

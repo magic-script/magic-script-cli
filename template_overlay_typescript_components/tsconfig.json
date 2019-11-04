@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "noEmit": true,
+    "strict": true,
+    "target": "esnext",
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "typeRoots" : [
+      "./node_modules/@types",
+      "./node_modules",
+      "./node_modules/magic-script-typings"
+    ]
+  }
+}
