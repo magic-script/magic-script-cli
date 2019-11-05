@@ -1,11 +1,6 @@
 import React from 'react';
 
-import { View, Text, vec3 } from 'magic-script-components';
-
-interface AppProps {
-  type: 'landscape' | 'immersive';
-  volumeSize: vec3;
-}
+import { View, Text, AppProps } from 'magic-script-components';
 
 interface Props extends AppProps {
   message: string;

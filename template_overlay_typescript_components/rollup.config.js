@@ -27,7 +27,7 @@ export default [
   // Build for MagicScript on Magicverse (iOS, Android)
   {
     ...common,
-    input: 'src/app.js',
+    input: 'src/app.tsx',
     external: ['react'],
     output: {
       globals: {
