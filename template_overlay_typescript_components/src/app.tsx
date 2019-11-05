@@ -11,7 +11,7 @@ interface State {
 }
 
 export default class MyApp extends React.Component<Props, State> {
-  state: State = { message: '' }
+  state: State;
 
   constructor(props: Props) {
     super(props);
