@@ -5,4 +5,3 @@
      "typeRoots" : ["./node_modules/magic-script-typings", "./node_modules/@types"]
    }
 }
-
