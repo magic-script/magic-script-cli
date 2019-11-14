@@ -9,7 +9,7 @@
   },
   "scripts": {
     "lint": "eslint --ignore-path .gitignore --fix .",
-    "test": "jest -i"
+    "test": "jest -i --json --outputFile=coverage/coverage.json"
   },
   "bugs": "https://github.com/magic-script/magic-script-cli/issues",
   "dependencies": {
