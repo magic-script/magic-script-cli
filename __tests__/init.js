@@ -373,7 +373,7 @@ describe('Test Init', () => {
     });
     let backup = inquirer.prompt;
     inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Landscape' });
-    init({ '_': ['init'], packageName: 'packageID', folderName: 'project' });
+    init({ '_': ['init'], packageName: 'packageid', folderName: 'project' });
     inquirer.prompt = backup;
   });
 });
