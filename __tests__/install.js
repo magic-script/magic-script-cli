@@ -1,7 +1,9 @@
 // Copyright (c) 2019 Magic Leap, Inc. All Rights Reserved
 // Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
+// eslint-disable-next-line camelcase
 const child_process = require('child_process');
 jest.spyOn(child_process, 'exec');
+jest.spyOn(child_process, 'spawn');
 const util = require('../lib/util');
 const install = require('../commands/install');
 beforeEach(() => {
@@ -16,6 +18,9 @@ afterEach(() => {
   if (child_process.exec.mock) {
     child_process.exec.mockReset();
   }
+  if (child_process.spawn.mock) {
+    child_process.spawn.mockReset();
+  }
   util.findPackageName.mockReset();
 });
 
@@ -28,11 +33,18 @@ describe('Test install', () => {
       expect(command).toBe('mldb install  my/path.mpk');
       callback(null, 'install success');
     });
+
+    child_process.spawn.mockImplementationOnce(() => {
+      let stdout = function (data, callback) {
+      };
+      let stderr = function (data, callback) {
+      };
+      return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout }, 'on': stderr };
+    });
     install({ '_': ['install'], path: 'my/path.mpk', 'target': 'lumin' });
   });
 
-
-  test('clean install error', () => {
+  test('install error', () => {
     util.isInstalled.mockImplementationOnce((pakage, callback) => {
       callback(false);
     });
