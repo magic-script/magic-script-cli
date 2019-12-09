@@ -207,6 +207,6 @@ describe('Test Util', () => {
   });
 
   test('validateFolderName fail', () => {
-    expect(util.validateFolderName('com.#!@#te st')).toBe('Invalid folder name. Must match /^([A-Za-z\\-_\\d])+$/');
+    expect(util.validateFolderName('com.#!@#te st')).toBe('Invalid folder name. Must match /^(?:[A-Za-z\\-_\\d])+$|^\\.$/');
   });
 });
