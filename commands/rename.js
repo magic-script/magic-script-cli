@@ -38,13 +38,8 @@ module.exports = argv => {
           );
         }
         if (result) {
-          fs.writeFile(manifestPath, result, 'utf8', function (err) {
-            if (err) {
-              console.log(err);
-              throw err;
-            }
-            console.log('Manifest file has been updated successfully');
-          });
+          fs.writeFileSync(manifestPath, result, 'utf8');
+          console.log('Lumin manifest file has been updated successfully');
         }
       }
     }

@@ -37,13 +37,12 @@ function npmInstallIfNeeded (path, callback) {
 function buildLuminComponents (argv) {
   let path = process.cwd();
   if (fs.existsSync(`${path}/lumin`)) {
-    util.copyComponentsFiles(`${path}/src`, `${path}/lumin/src`);
     process.chdir('lumin/');
-    buildLumin(argv);
+    buildLumin(argv, "#!/system/bin/script/mxs\nimport './lumin/src/main.js';\n");
   }
 }
 
-function buildLumin (argv) {
+function buildLumin (argv, indexContent) {
   let packagePath = 'app.package';
   try {
     for (let name of fs.readdirSync('.')) {
@@ -66,7 +65,7 @@ function buildLumin (argv) {
   }
   fs.writeFileSync(
     'bin/index.js',
-    "#!/system/bin/script/mxs\nimport './src/main.js';\n",
+    indexContent,
     { mode: 0o755 }
   );
 
@@ -112,7 +111,7 @@ module.exports = argv => {
       });
     } else {
       npmInstallIfNeeded(`${process.cwd()}`, () => {
-        buildLumin(argv);
+        buildLumin(argv, "#!/system/bin/script/mxs\nimport './src/main.js';\n");
       });
     }
   } else if (argv.target === 'android') {
@@ -130,7 +129,7 @@ module.exports = argv => {
 
 function isComponents () {
   let path = process.cwd();
-  return fs.existsSync(`${path}/lumin`);
+  return fs.existsSync(`${path}/lumin/rollup.config.js`);
 }
 
 function buildAndroid () {
@@ -189,7 +188,6 @@ function installPods (path, onInstallFinish) {
     throw err;
   });
   podProcess.on('exit', function (code, signal) {
-    console.log(`--TEST-- code: ${code}, signal: ${signal}`);
     if (signal) {
       throw Error(`pod install failed with signal: ${signal}`);
     }

@@ -1,13 +1,25 @@
 import babel from 'rollup-plugin-babel';
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
+import includePaths from 'rollup-plugin-includepaths';
+
+let includePathOptions = {
+  include: {},
+  paths: ['./src', '../src'],
+  external: []
+};
 
 const common = {
   plugins: [
+    includePaths(includePathOptions),
     babel({
       exclude: 'node_modules/**'
     }),
-    resolve(),
+    resolve({
+      customResolveOptions: {
+        moduleDirectory: '../node_modules'
+      }
+    }),
     commonjs()
   ]
 };
@@ -17,7 +29,7 @@ export default [
   {
     ...common,
     external: ['uv', 'lumin', 'ssl', 'jpeg', 'png', 'gl'],
-    input: './src/main.js',
+    input: 'src/main.js',
     preserveModules: true,
     output: {
       dir: 'bin',
