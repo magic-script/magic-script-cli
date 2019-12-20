@@ -17,6 +17,7 @@ var visibleName;
 var folderName;
 var immersive;
 var appType;
+var typeScript;
 var target = [];
 
 const askQuestions = () => {
@@ -31,14 +32,14 @@ const askQuestions = () => {
       name: 'APPID',
       type: 'input',
       message: 'What is the app ID of your application?',
-      validate: util.isValidPackageId,
+      validate: util.validatePackageId,
       default: packageName
     },
     {
       name: 'FOLDERNAME',
       type: 'input',
       message: 'In which folder do you want to save this project?',
-      validate: util.isValidFolderName,
+      validate: util.validateFolderName,
       default: folderName
     },
     {
@@ -65,6 +66,15 @@ const askQuestions = () => {
       default: ['Lumin'],
       when: function (answers) {
         return answers.APPTYPE === 'Components';
+      }
+    },
+    {
+      name: 'TYPESCRIPT',
+      type: 'confirm',
+      message: 'Use TypeScript?',
+      default: false,
+      when: function (answers) {
+        return (answers.APPTYPE === 'Components' && answers.TARGET && answers.TARGET.every(elem => ['Lumin'].includes(elem))) || answers.APPTYPE !== 'Components';
       }
     }
   ];
@@ -135,11 +145,11 @@ module.exports = argv => {
     resetValues();
     return;
   }
+
   if (isComponents(folderName, packageName, appType)) {
     setTarget(appType, argv.target);
-    templatePath = path.join(__dirname, '../template_components');
+    templatePath = path.join(__dirname, '../template_multiplatform_components');
     copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
-    fs.symlinkSync(`${currentDirectory}/${folderName}/resources`, `${currentDirectory}/${folderName}/reactnative`);
     copyManifest(`${currentDirectory}/${folderName}`);
     util.renameComponentsFiles(folderName, packageName);
     fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
@@ -155,21 +165,36 @@ module.exports = argv => {
     visibleName = answers['APPNAME'];
     appType = answers['APPTYPE'];
     target = answers['TARGET'];
+    typeScript = answers['TYPESCRIPT'];
     immersive = appType === 'Immersive';
     if (isComponents(folderName, packageName, appType)) {
       setTarget(appType, target);
       console.log(green, `Start creating project for Components type, target: ${target}`, normal);
-      templatePath = path.join(__dirname, '../template_components');
-      copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
-      copyManifest(`${currentDirectory}/${folderName}`);
-      util.renameComponentsFiles(folderName, packageName);
-      fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
-      preparePlatforms(`${currentDirectory}/${folderName}`);
-      console.log(green, `Project successfully created for platforms: ${target}`, normal);
+      if (typeScript) {
+        templatePath = path.join(__dirname, '../template_components');
+        copyFiles(templatePath, `${currentDirectory}/${folderName}`);
+        console.log(green, `Project successfully created for platforms: ${target}`, normal);
+      } else {
+        templatePath = path.join(__dirname, '../template_multiplatform_components');
+        copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
+        copyManifest(`${currentDirectory}/${folderName}`);
+        util.renameComponentsFiles(folderName, packageName);
+        fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
+        preparePlatforms(`${currentDirectory}/${folderName}`);
+        console.log(green, `Project successfully created for platforms: ${target}`, normal);
+      }
     } else if (isLandscapeOrImmersive(folderName, packageName, appType)) {
       console.log(green, `Start creating project for ${appType} type`, normal);
       copyFiles(templatePath, `${currentDirectory}/${folderName}`);
       console.log(green, `Project successfully created for ${appType}`, normal);
+    }
+    if (typeScript) {
+      fs.unlinkSync(`${currentDirectory}/${folderName}/src/main.js`);
+      fs.unlinkSync(`${currentDirectory}/${folderName}/src/app.js`);
+      // Copy typescript template overlay over existing template files
+      const pathSuffix = (appType === 'Components') ? '_components' : '';
+      templatePath = `${__dirname}/../template_overlay_typescript${pathSuffix}`;
+      copyFiles(templatePath, `${currentDirectory}/${folderName}`);
     }
   }).catch((err) => console.log(red, err, normal))
     // Add this callback for testing purpose - inquirer doesn't provide functionality to reset values
@@ -180,6 +205,7 @@ module.exports = argv => {
       appType = null;
       packageName = null;
       target = null;
+      typeScript = null;
     });
 };
 
@@ -219,7 +245,7 @@ function isComponentsAndAtLeastOneTarget (appType, argTarget) {
 }
 
 function setFolderName (name) {
-  if (util.isValidFolderName(name)) {
+  if (name && util.isValidFolderName(name)) {
     folderName = name;
     if (!visibleName) {
       visibleName = folderName;
@@ -240,7 +266,7 @@ function setAppType (type) {
 }
 
 function setPackageName (name) {
-  if (util.isValidPackageId(name)) {
+  if (name && util.isValidPackageId(name)) {
     packageName = name;
   }
 }
@@ -273,4 +299,5 @@ function resetValues () {
   appType = null;
   packageName = null;
   target = null;
+  typeScript = null;
 }

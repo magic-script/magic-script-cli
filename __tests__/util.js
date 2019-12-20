@@ -291,4 +291,20 @@ describe('Test Util', () => {
     expect(mockedFs.writeFileSync).toHaveBeenCalled();
     expect(mockedFs.readFileSync).toHaveBeenCalled();
   });
+
+  test('validatePackageId success', () => {
+    expect(util.validatePackageId('testapp')).toBe(true);
+  });
+
+  test('validatePackageId fail', () => {
+    expect(util.validatePackageId('com.#!@#te st')).toBe('Invalid package ID. Must match /^[a-z0-9_]+(\\.[a-z0-9_]+)*(-[a-zA-Z0-9]*)?$/');
+  });
+
+  test('validateFolderName success', () => {
+    expect(util.validateFolderName('testapp')).toBe(true);
+  });
+
+  test('validateFolderName fail', () => {
+    expect(util.validateFolderName('com.#!@#te st')).toBe('Invalid folder name. Must match /^([A-Za-z\\-_\\d])+$/');
+  });
 });
