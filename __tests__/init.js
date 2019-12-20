@@ -81,7 +81,7 @@ describe('Test Components configurations', () => {
   describe('Test Components configurations', () => {
     test('create components project for lumin if target is not specified and apptype is Components', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      util.renameComponentsFiles = jest.fn('folder', 'path');
+      util.renameComponentsFiles = jest.fn('folder', 'path', 'name');
       // remove packages not specified by target
       jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
         expect(path.endsWith('ios')).toBeTruthy();
@@ -106,7 +106,7 @@ describe('Test Components configurations', () => {
     });
     test('create components project for lumin if target is lumin and apptype is Components', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      util.renameComponentsFiles = jest.fn('folder', 'path');
+      util.renameComponentsFiles = jest.fn('folder', 'path', 'name');
       // remove packages not specified by target
       jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
         expect(path.endsWith('ios')).toBeTruthy();
@@ -136,7 +136,7 @@ describe('Test Components configurations', () => {
     test('create components project for android if target is android and apptype is Components', () => {
       mockedFs.existsSync.mockReturnValue(true);
       util.createAndroidLocalProperties = jest.fn('path');
-      util.renameComponentsFiles = jest.fn('folder', 'path');
+      util.renameComponentsFiles = jest.fn('folder', 'path', 'name');
 
       // remove packages not specified by target
       jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
@@ -290,7 +290,7 @@ describe('Test Components configurations', () => {
   describe('Test Components configurations with args passed in command line', () => {
     test('command line', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      util.renameComponentsFiles = jest.fn('folder', 'path');
+      util.renameComponentsFiles = jest.fn('folder', 'path', 'name');
       // util.createAndroidLocalProperties = jest.fn('path');
 
       mockCopyComponentsFiles();

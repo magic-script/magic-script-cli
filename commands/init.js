@@ -151,7 +151,7 @@ module.exports = argv => {
     templatePath = path.join(__dirname, '../template_multiplatform_components');
     copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
     copyManifest(`${currentDirectory}/${folderName}`);
-    util.renameComponentsFiles(visibleName, packageName);
+    util.renameComponentsFiles(folderName, packageName, visibleName);
     fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
     preparePlatforms(`${currentDirectory}/${folderName}`);
     console.log(green, `Components project created successfully for platforms: ${target}!`, normal);
@@ -178,7 +178,7 @@ module.exports = argv => {
         templatePath = path.join(__dirname, '../template_multiplatform_components');
         copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
         copyManifest(`${currentDirectory}/${folderName}`);
-        util.renameComponentsFiles(visibleName, packageName);
+        util.renameComponentsFiles(folderName, packageName, visibleName);
         fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
         preparePlatforms(`${currentDirectory}/${folderName}`);
         console.log(green, `Project successfully created for platforms: ${target}`, normal);
