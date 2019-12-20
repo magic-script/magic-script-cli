@@ -586,7 +586,7 @@ describe('Test Components configurations', () => {
     });
   
     test('bad package name', () => {
-      mockNonComponentsFiles()
+      mockNonComponentsFiles();
       backup = inquirer.prompt;
       inquirer.prompt = () => Promise.resolve({
         APPTYPE: 'Immersive',
@@ -766,5 +766,9 @@ describe('Test Components configurations', () => {
       });
       init({ '_': ['init'], packageName: 'packageID', folderName: 'project' });
     });
+    let backup = inquirer.prompt;
+    inquirer.prompt = () => Promise.resolve({ APPTYPE: 'Landscape' });
+    init({ '_': ['init'], packageName: 'packageid', folderName: 'project' });
+    inquirer.prompt = backup;
   });
 });
