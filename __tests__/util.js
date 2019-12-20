@@ -268,7 +268,7 @@ describe('Test Util', () => {
       expect(result).toBe('test1');
       expect(type).toBe('utf8');
     });
-    util.renameComponentsFiles('name', 'package');
+    util.renameComponentsFiles('name', 'package', 'visiblename');
     expect(mockedFs.renameSync).toHaveBeenCalled();
     expect(mockedFs.writeFileSync).toHaveBeenCalled();
     expect(mockedFs.readFileSync).toHaveBeenCalled();
@@ -286,7 +286,7 @@ describe('Test Util', () => {
       expect(result).toBe('test1');
       expect(type).toBe('utf8');
     });
-    util.renameComponentsFiles('name', null);
+    util.renameComponentsFiles('name', null, 'name');
     expect(mockedFs.renameSync).toHaveBeenCalled();
     expect(mockedFs.writeFileSync).toHaveBeenCalled();
     expect(mockedFs.readFileSync).toHaveBeenCalled();
