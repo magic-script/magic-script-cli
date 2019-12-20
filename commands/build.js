@@ -98,7 +98,6 @@ function buildLumin (argv, indexContent) {
         argv.path = mpkFile;
         util.installPackage(argv);
       }
-      process.chdir('..');
     });
   });
 }
