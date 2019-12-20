@@ -138,7 +138,8 @@ function buildAndroid () {
     fs.chmodSync(`${path}/reactnative/android/gradlew`, '755');
     var runProcess = spawn('react-native', ['run-android'], {
       stdio: 'inherit',
-      cwd: `${path}/reactnative`
+      cwd: `${path}/reactnative`,
+      shell: process.platform === 'win32'
     });
     runProcess.on('message', (message, sendhandle) => {
       console.log(message);
@@ -179,7 +180,8 @@ function installPods (path, onInstallFinish) {
 
   var podProcess = spawn('pod', ['install'], {
     stdio: 'inherit',
-    cwd: `${path}/reactnative/ios`
+    cwd: `${path}/reactnative/ios`,
+    shell: process.platform === 'win32'
   });
   podProcess.on('message', function (message, sendhandle) {
     console.log(message);
@@ -203,7 +205,8 @@ function runiOS () {
   console.log('run ios app');
   var runProcess = spawn('react-native', ['run-ios'], {
     stdio: 'inherit',
-    cwd: `${process.cwd()}/reactnative`
+    cwd: `${process.cwd()}/reactnative`,
+    shell: process.platform === 'win32'
   });
   runProcess.on('message', (message, sendhandle) => {
     console.log(message);

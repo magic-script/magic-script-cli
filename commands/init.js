@@ -142,6 +142,7 @@ module.exports = argv => {
     fs.symlinkSync(`${currentDirectory}/${folderName}/resources`, `${currentDirectory}/${folderName}/reactnative`);
     copyManifest(`${currentDirectory}/${folderName}`);
     util.renameComponentsFiles(folderName, packageName);
+    fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
     preparePlatforms(`${currentDirectory}/${folderName}`);
     console.log(green, `Components project created successfully for platforms: ${target}!`, normal);
     resetValues();
@@ -162,6 +163,7 @@ module.exports = argv => {
       copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
       copyManifest(`${currentDirectory}/${folderName}`);
       util.renameComponentsFiles(folderName, packageName);
+      fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
       preparePlatforms(`${currentDirectory}/${folderName}`);
       console.log(green, `Project successfully created for platforms: ${target}`, normal);
     } else if (isLandscapeOrImmersive(folderName, packageName, appType)) {

@@ -255,4 +255,40 @@ describe('Test Util', () => {
     util.createAndroidLocalProperties();
     expect(mockedFs.writeFile).not.toHaveBeenCalled();
   });
+
+  test('should rename files of the project based on package name and project name', () => {
+    let manifest = 'test1';
+    process.cwd = jest.fn().mockReturnValue('cwd');
+    mockedFs.existsSync.mockReturnValueOnce(true).mockReturnValueOnce(true).mockReturnValueOnce(true);
+    mockedFs.readFileSync.mockImplementationOnce(() => {
+      return manifest;
+    });
+    mockedFs.writeFileSync.mockImplementationOnce((path, result, type) => {
+      expect(path).toBe('cwd/name/lumin/manifest.xml');
+      expect(result).toBe('test1');
+      expect(type).toBe('utf8');
+    });
+    util.renameComponentsFiles('name', 'package');
+    expect(mockedFs.renameSync).toHaveBeenCalled();
+    expect(mockedFs.writeFileSync).toHaveBeenCalled();
+    expect(mockedFs.readFileSync).toHaveBeenCalled();
+  });
+
+  test('should rename files of the project based on project name', () => {
+    let manifest = 'test1';
+    process.cwd = jest.fn().mockReturnValue('cwd');
+    mockedFs.existsSync.mockReturnValueOnce(true).mockReturnValueOnce(true).mockReturnValueOnce(true);
+    mockedFs.readFileSync.mockImplementationOnce(() => {
+      return manifest;
+    });
+    mockedFs.writeFileSync.mockImplementationOnce((path, result, type) => {
+      expect(path).toBe('cwd/name/lumin/manifest.xml');
+      expect(result).toBe('test1');
+      expect(type).toBe('utf8');
+    });
+    util.renameComponentsFiles('name', null);
+    expect(mockedFs.renameSync).toHaveBeenCalled();
+    expect(mockedFs.writeFileSync).toHaveBeenCalled();
+    expect(mockedFs.readFileSync).toHaveBeenCalled();
+  });
 });
