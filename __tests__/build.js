@@ -56,10 +56,10 @@ describe('Test build', () => {
   });
 
   test('should spawn npm install if node_modules does not exist and call callback when spawn ends', () => {
-    mockedFs.existsSync.mockReturnValueOnce(true);
+    mockedFs.existsSync.mockReturnValueOnce(true).mockReturnValueOnce(true);
     const emitter = new events.EventEmitter();
     const callback = jest.fn();
-    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+    child_process.spawn.mockImplementation((command, commandArgs) => {
       expect(command).toBe('npm');
       expect(commandArgs).toStrictEqual(['install']);
       emitter.on('message', () => {});
@@ -94,7 +94,7 @@ describe('Test build', () => {
   test('should not build any platform if target is not specified', () => {
     mockedFs.existsSync.mockReturnValueOnce(true);
     build({ '_': ['build'], 'install': false });
-    expect(mockedFs.existsSync).not.toHaveBeenCalled();
+    expect(mockedFs.existsSync).toHaveBeenCalled();
   });
 
   test('should build android project if target is android', () => {

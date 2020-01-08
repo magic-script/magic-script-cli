@@ -103,27 +103,27 @@ function buildLumin (argv, indexContent) {
 }
 
 module.exports = argv => {
-  if (argv.target === 'lumin') {
-    if (isComponents()) {
-      npmInstallIfNeeded(`${process.cwd()}/lumin`, () => {
-        buildLuminComponents(argv);
+  npmInstallIfNeeded(`${process.cwd()}`, () => {
+    if (argv.target === 'lumin') {
+      if (isComponents()) {
+        npmInstallIfNeeded(`${process.cwd()}/lumin`, () => {
+          buildLuminComponents(argv);
+        });
+      } else {
+        buildLumin(argv, "#!/system/bin/script/mxs\nimport './src/main.js';\n");
+      }
+    } else if (argv.target === 'android') {
+      npmInstallIfNeeded(`${process.cwd()}/reactnative`, () => {
+        buildAndroid(argv);
+      });
+    } else if (argv.target === 'ios') {
+      npmInstallIfNeeded(`${process.cwd()}/reactnative`, () => {
+        buildiOS(argv);
       });
     } else {
-      npmInstallIfNeeded(`${process.cwd()}`, () => {
-        buildLumin(argv, "#!/system/bin/script/mxs\nimport './src/main.js';\n");
-      });
+      console.error('The target must be either lumin, ios or android!');
     }
-  } else if (argv.target === 'android') {
-    npmInstallIfNeeded(`${process.cwd()}/reactnative`, () => {
-      buildAndroid(argv);
-    });
-  } else if (argv.target === 'ios') {
-    npmInstallIfNeeded(`${process.cwd()}/reactnative`, () => {
-      buildiOS(argv);
-    });
-  } else {
-    console.error('The target must be either lumin, ios or android!');
-  }
+  });
 };
 
 function isComponents () {
@@ -156,7 +156,7 @@ function buildAndroid () {
     });
   } else {
     console.error(
-      "Cannot build the app for Android because the project doesn't support this platform!"
+      "Cannot build the app for Android because the project wasn't set up to support this platform!"
     );
   }
 }
@@ -169,7 +169,7 @@ function buildiOS () {
     });
   } else {
     console.error(
-      "Cannot build the app for iOS because the project doesn't support this platform!"
+      "Cannot build the app for iOS because the project project wasn't set up to support this platform!"
     );
   }
 }

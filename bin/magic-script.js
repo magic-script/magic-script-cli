@@ -57,7 +57,7 @@ require('yargs') // eslint-disable-line
     });
     yargs.positional('target', {
       describe: 'target(s) to build for',
-      default: 'lumin'
+      default: 'none'
     });
   }, argv => require('../commands/build')(argv))
   .command('remove', 'Remove project from device', argv => require('../commands/remove')(argv.argv))

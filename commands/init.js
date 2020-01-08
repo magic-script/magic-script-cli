@@ -179,7 +179,11 @@ module.exports = argv => {
         copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
         copyManifest(`${currentDirectory}/${folderName}`);
         util.renameComponentsFiles(folderName, packageName, visibleName);
-        fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
+        try {
+          fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
+        } catch (error) {
+          console.log(yellow, `Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https://github.com/magic-script/magic-script-cli`);
+        }
         preparePlatforms(`${currentDirectory}/${folderName}`);
         console.log(green, `Project successfully created for platforms: ${target}`, normal);
       }
@@ -216,24 +220,24 @@ function preparePlatforms (destPath) {
   let isReact = (target.includes('IOS') || target.includes('ANDROID'));
   if (!iOS) {
     if (fs.existsSync(`${destPath}/reactnative/ios`)) {
-      fs.rmdirSync(`${destPath}/reactnative/ios`, { recursive: true });
+      util.removeFilesRecursively(`${destPath}/reactnative/ios`);
     }
   }
   if (!android) {
     if (fs.existsSync(`${destPath}/reactnative/android`)) {
-      fs.rmdirSync(`${destPath}/reactnative/android`, { recursive: true });
+      util.removeFilesRecursively(`${destPath}/reactnative/android`);
     }
   } else {
     util.createAndroidLocalProperties(destPath);
   }
   if (!isReact) {
     if (fs.existsSync(`${destPath}/reactnative`)) {
-      fs.rmdirSync(`${destPath}/reactnative`, { recursive: true });
+      util.removeFilesRecursively(`${destPath}/reactnative`);
     }
   }
   if (!lumin) {
     if (fs.existsSync(`${destPath}/lumin`)) {
-      fs.rmdirSync(`${destPath}/lumin`, { recursive: true });
+      util.removeFilesRecursively(`${destPath}/lumin`);
     }
   }
 }

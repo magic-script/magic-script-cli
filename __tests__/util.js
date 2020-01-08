@@ -223,6 +223,27 @@ describe('Test Util', () => {
     util.copyComponentsFiles('test', 'test');
   });
 
+  test('remove files where stat is not directory', () => {
+    jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
+      return ['file1', 'file2'];
+    });
+    jest.spyOn(mockedFs, 'lstatSync').mockImplementation((path) => {
+      var statObject = {};
+      statObject.isFile = function () { return true; };
+      statObject.isDirectory = function () { return false; };
+      return statObject;
+    });
+    jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((path, contents, type) => {
+      expect(path.endsWith('file1')).toBeTruthy();
+    }).mockImplementationOnce((path, contents, type) => {
+      expect(path.endsWith('file2')).toBeTruthy();
+    });
+    jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce((path) => {
+      expect(path.endsWith('path')).toBeTruthy();
+    });
+    util.removeFilesRecursively('path');
+  });
+
   test('should navigate to lumin if lumin folder exists', () => {
     process.chdir = jest.fn();
     const callback = jest.fn();

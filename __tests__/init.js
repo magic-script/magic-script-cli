@@ -14,6 +14,7 @@ let backup;
 
 beforeEach(() => {
   mockedFs.existsSync = jest.fn();
+  util.removeFilesRecursively = jest.fn();
 });
 
 afterEach(() => {
@@ -195,7 +196,6 @@ describe('Test Components configurations', () => {
     });
     test('create components project for ios and android if target is ios and android and apptype is Components', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      // util.createAndroidLocalProperties = jest.fn('path');
 
       // remove packages not specified by target
       jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
@@ -322,11 +322,16 @@ describe('Test Components configurations', () => {
     test('command line no target and components app type passed should create lumin project', () => {
       mockedFs.existsSync.mockReturnValue(true);
       // remove packages not specified by target
-      jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
+      jest.spyOn(util, 'removeFilesRecursively').mockImplementationOnce((path) => {
         expect(path.endsWith('ios')).toBeTruthy();
-      }).mockImplementationOnce(path => {
+      }).mockImplementationOnce((path) => {
         expect(path.endsWith('android')).toBeTruthy();
       });
+      // jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
+      //   expect(path.endsWith('ios')).toBeTruthy();
+      // }).mockImplementationOnce(path => {
+      //   expect(path.endsWith('android')).toBeTruthy();
+      // });
       const renameSpy = jest.spyOn(util, 'renameComponentsFiles').mockImplementationOnce((folder, path) => {
         expect(renameSpy).toHaveBeenCalled();
       });
@@ -345,11 +350,16 @@ describe('Test Components configurations', () => {
         expect(renameSpy).toHaveBeenCalled();
       });
       // remove packages not specified by target
-      jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
+      jest.spyOn(util, 'removeFilesRecursively').mockImplementationOnce((path) => {
         expect(path.endsWith('ios')).toBeTruthy();
-      }).mockImplementationOnce(path => {
+      }).mockImplementationOnce((path) => {
         expect(path.endsWith('android')).toBeTruthy();
       });
+      // jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
+      //   expect(path.endsWith('ios')).toBeTruthy();
+      // }).mockImplementationOnce(path => {
+      //   expect(path.endsWith('android')).toBeTruthy();
+      // });
       mockCopyComponentsFiles();
       // remove react files
       jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
