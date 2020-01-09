@@ -152,7 +152,11 @@ module.exports = argv => {
     copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
     copyManifest(`${currentDirectory}/${folderName}`);
     util.renameComponentsFiles(folderName, packageName, visibleName);
-    fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
+    try {
+      fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
+    } catch (error) {
+      console.log(yellow, `Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https://github.com/magic-script/magic-script-cli`);
+    }
     preparePlatforms(`${currentDirectory}/${folderName}`);
     console.log(green, `Components project created successfully for platforms: ${target}!`, normal);
     resetValues();
