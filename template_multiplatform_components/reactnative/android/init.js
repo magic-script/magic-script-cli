@@ -12,7 +12,7 @@ if (!fs.existsSync('./local.properties')) {
     console.log('Successfully created local.properties file!');
   } else {
     console.log(
-      "Android SDK environment variable doesn't exist. Follow instructions to fix the problem: https://github.com/magic-script/magic-script-template/blob/master/README.md#Android",
+      "Android SDK environment variable doesn't exist. Follow instructions to fix the problem: https://magicscript.org/"
     );
   }
 } else {

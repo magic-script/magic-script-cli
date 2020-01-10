@@ -15,7 +15,7 @@ function npmInstallIfNeeded (path, callback) {
       stdio: 'inherit',
       shell: process.platform === 'win32'
     });
-    proc.on('message', function (message, sendhandle) {
+    proc.on('message', function (message) {
       console.log(message);
     });
     proc.on('error', function (err) {
@@ -38,7 +38,10 @@ function buildLuminComponents (argv) {
   let path = process.cwd();
   if (fs.existsSync(`${path}/lumin`)) {
     process.chdir('lumin/');
-    buildLumin(argv, "#!/system/bin/script/mxs\nimport './lumin/src/main.js';\n");
+    buildLumin(
+      argv,
+      "#!/system/bin/script/mxs\nimport './lumin/src/main.js';\n"
+    );
   }
 }
 
@@ -63,11 +66,7 @@ function buildLumin (argv, indexContent) {
       throw error;
     }
   }
-  fs.writeFileSync(
-    'bin/index.js',
-    indexContent,
-    { mode: 0o755 }
-  );
+  fs.writeFileSync('bin/index.js', indexContent, { mode: 0o755 });
 
   exec('npm run build', (err, stdout, stderr) => {
     if (err) {
@@ -140,7 +139,7 @@ function buildAndroid () {
       cwd: `${path}/reactnative`,
       shell: process.platform === 'win32'
     });
-    runProcess.on('message', (message, sendhandle) => {
+    runProcess.on('message', message => {
       console.log(message);
     });
     runProcess.on('error', function (err) {
@@ -182,7 +181,7 @@ function installPods (path, onInstallFinish) {
     cwd: `${path}/reactnative/ios`,
     shell: process.platform === 'win32'
   });
-  podProcess.on('message', function (message, sendhandle) {
+  podProcess.on('message', function (message) {
     console.log(message);
   });
   podProcess.on('error', function (err) {
@@ -207,7 +206,7 @@ function runiOS () {
     cwd: `${process.cwd()}/reactnative`,
     shell: process.platform === 'win32'
   });
-  runProcess.on('message', (message, sendhandle) => {
+  runProcess.on('message', message => {
     console.log(message);
   });
   runProcess.on('error', function (err) {

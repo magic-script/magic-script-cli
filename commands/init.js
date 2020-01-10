@@ -155,7 +155,7 @@ module.exports = argv => {
     try {
       fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
     } catch (error) {
-      console.log(yellow, `Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https://github.com/magic-script/magic-script-cli`);
+      console.log(yellow, `Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https:///magicscript.org/`);
     }
     preparePlatforms(`${currentDirectory}/${folderName}`);
     console.log(green, `Components project created successfully for platforms: ${target}!`, normal);
@@ -186,7 +186,7 @@ module.exports = argv => {
         try {
           fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
         } catch (error) {
-          console.log(yellow, `Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https://github.com/magic-script/magic-script-cli`);
+          console.log(yellow, `Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https://magic-script.org/`);
         }
         preparePlatforms(`${currentDirectory}/${folderName}`);
         console.log(green, `Project successfully created for platforms: ${target}`, normal);
@@ -208,12 +208,7 @@ module.exports = argv => {
     // Add this callback for testing purpose - inquirer doesn't provide functionality to reset values
     // after every test and caches them
     .finally(() => {
-      folderName = null;
-      visibleName = null;
-      appType = null;
-      packageName = null;
-      target = null;
-      typeScript = null;
+      resetValues();
     });
 };
 
@@ -289,16 +284,14 @@ function isComponents (folderName, packageName, appType) {
 
 function setTarget (appType, argTarget) {
   if (argTarget && Array.isArray(argTarget)) {
-    target = argTarget.map(toUpperCase);
+    target = argTarget.map((string) => {
+      return string.toUpperCase();
+    });
   }
   if (!isComponentsAndAtLeastOneTarget(appType, target)) {
     console.log(yellow, 'There is no proper target passed, project will generate Lumin files structure for Components app', normal);
     target = ['LUMIN'];
   }
-}
-
-function toUpperCase (string) {
-  return string.toUpperCase();
 }
 
 function resetValues () {
