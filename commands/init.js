@@ -186,7 +186,7 @@ module.exports = argv => {
         try {
           fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
         } catch (error) {
-          console.log(yellow, `Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https://magic-script.org/`);
+          console.log(yellow, `Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https://magicscript.org/`);
         }
         preparePlatforms(`${currentDirectory}/${folderName}`);
         console.log(green, `Project successfully created for platforms: ${target}`, normal);

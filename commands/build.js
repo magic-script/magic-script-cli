@@ -104,7 +104,7 @@ function buildLumin (argv, indexContent) {
 module.exports = argv => {
   npmInstallIfNeeded(`${process.cwd()}`, () => {
     if (argv.target === 'lumin') {
-      if (isComponents()) {
+      if (isMultiplatformStructure()) {
         npmInstallIfNeeded(`${process.cwd()}/lumin`, () => {
           buildLuminComponents(argv);
         });
@@ -125,7 +125,7 @@ module.exports = argv => {
   });
 };
 
-function isComponents () {
+function isMultiplatformStructure () {
   let path = process.cwd();
   return fs.existsSync(`${path}/lumin/rollup.config.js`);
 }

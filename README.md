@@ -82,11 +82,9 @@ Please be aware, that it is recommended to use the latest stable versions of bel
 - If you have information that Android SDK environment variable doesn't exist, it means that local.properties file wasn't created under `<project>/reactnative/android`. 
 a. If you have Android Studio installed, open `<project>/reactnative/android` as an Android project. The local.properties file should be created automatically
 b. If not, create `local.properties` file in `<project>/reactnative/android` with one line: `sdk.dir=<Location of your Android SDK>`
-<br/>
 - If you have information that CLI couldn't create symlink for resources directory and you want to use resources on Android or iOS (like images, video, sounds, 3D model), you have to create a directory symlink in `<project>/reactnative/` pointing to `<project>/resources`. 
 a. If you're Windows user, you can find more information here: https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/mklink
 b. If you're MacOS or Linux user, you can use `ln` tool for that
-<br/>
 - If you have information that the project couldn't be renamed to the specified by the user, the project will be called `Template` and package id will be set to `com.magicscript.template`. If you want to change the name of the project and package id:
 a. For Android use Android Studio to change the project name and package id
 b. For iOS use XCode to change the project name and package id
