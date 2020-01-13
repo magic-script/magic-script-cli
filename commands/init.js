@@ -4,12 +4,21 @@ let process = require('process');
 let fs = require('fs');
 let templatePath = `${__dirname}/../template`;
 let inquirer = require('inquirer');
+let path = require('path');
 const util = require('../lib/util');
+const targetPlatforms = ['IOS', 'ANDROID', 'LUMIN'];
+const red = '\x1b[31m';
+const green = '\x1b[32m';
+const yellow = '\x1b[33m';
+const normal = '\x1b[0m';
 
 var packageName;
 var visibleName;
 var folderName;
 var immersive;
+var appType;
+var typeScript;
+var target = [];
 
 const askQuestions = () => {
   const questions = [
@@ -38,13 +47,35 @@ const askQuestions = () => {
       type: 'list',
       message: 'What app type do you want?',
       choices: ['Landscape', 'Immersive', 'Components'],
-      default: 'Landscape'
+      default: appType
+    },
+    {
+      name: 'TARGET',
+      type: 'checkbox',
+      message: 'What platform do you want develop on?',
+      choices: [
+        {
+          name: 'Lumin'
+        },
+        {
+          name: 'iOS'
+        },
+        {
+          name: 'Android'
+        }],
+      default: ['Lumin'],
+      when: function (answers) {
+        return answers.APPTYPE === 'Components';
+      }
     },
     {
       name: 'TYPESCRIPT',
       type: 'confirm',
       message: 'Use TypeScript?',
-      default: false
+      default: false,
+      when: function (answers) {
+        return (answers.APPTYPE === 'Components' && answers.TARGET && answers.TARGET.every(elem => ['Lumin'].includes(elem))) || answers.APPTYPE !== 'Components';
+      }
     }
   ];
   return inquirer.prompt(questions);
@@ -61,6 +92,19 @@ function updateManifest (contents) {
         '<uses-privilege ml:name="LowLatencyLightwear"/>\n    <uses-privilege ml:name="MagicScript"/>');
   }
   return replaced;
+}
+
+function copyComponentsFiles (srcPath, destPath) {
+  util.copyComponentsFiles(srcPath, destPath);
+}
+
+function copyManifest (destPath) {
+  let manifestPath = `${destPath}/lumin/manifest.xml`;
+  if (fs.existsSync(manifestPath)) {
+    var contents = fs.readFileSync(manifestPath, 'utf8');
+    contents = updateManifest(contents);
+    fs.writeFileSync(manifestPath, contents, 'utf8');
+  }
 }
 
 function copyFiles (srcPath, destPath) {
@@ -88,22 +132,34 @@ function copyFiles (srcPath, destPath) {
 }
 
 module.exports = argv => {
-  if (argv.visibleName) {
-    visibleName = argv.visibleName;
-  }
-  if (argv.folderName && util.isValidFolderName(argv.folderName)) {
-    folderName = argv.folderName;
-    if (!visibleName) {
-      visibleName = folderName;
-    }
-  }
-  if (argv.packageName && util.isValidPackageId(argv.packageName)) {
-    packageName = argv.packageName;
-  }
+  // eslint-disable-next-line no-useless-escape
+  setVisibleName(argv.visibleName);
+  setFolderName(argv.folderName);
+  setAppType(argv.appType);
+  setPackageName(argv.packageName);
   const currentDirectory = process.cwd();
-  if (packageName && folderName) {
-    immersive = argv.immersive;
+  if (isLandscapeOrImmersive(folderName, packageName, appType)) {
+    immersive = argv.appType === 'Immersive' || argv.immersive;
     copyFiles(templatePath, `${currentDirectory}/${folderName}`);
+    console.log(green, `${appType} project created successfully!`, normal);
+    resetValues();
+    return;
+  }
+
+  if (isComponents(folderName, packageName, appType)) {
+    setTarget(appType, argv.target);
+    templatePath = path.join(__dirname, '../template_multiplatform_components');
+    copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
+    copyManifest(`${currentDirectory}/${folderName}`);
+    util.renameComponentsFiles(folderName, packageName, visibleName);
+    try {
+      fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
+    } catch (error) {
+      console.log(yellow, `Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https:///magicscript.org/`);
+    }
+    preparePlatforms(`${currentDirectory}/${folderName}`);
+    console.log(green, `Components project created successfully for platforms: ${target}!`, normal);
+    resetValues();
     return;
   }
   let answerPromise = askQuestions();
@@ -111,18 +167,36 @@ module.exports = argv => {
     packageName = answers['APPID'];
     folderName = answers['FOLDERNAME'];
     visibleName = answers['APPNAME'];
-    let appType = answers['APPTYPE'];
-    let typescript = answers['TYPESCRIPT'];
-
-    immersive = appType === 'Immersive' || argv.immersive;
-    if (appType === 'Components') {
-      immersive = false;
-      templatePath = `${__dirname}/../template_components`;
+    appType = answers['APPTYPE'];
+    target = answers['TARGET'];
+    typeScript = answers['TYPESCRIPT'];
+    immersive = appType === 'Immersive';
+    if (isComponents(folderName, packageName, appType)) {
+      setTarget(appType, target);
+      console.log(green, `Start creating project for Components type, target: ${target}`, normal);
+      if (typeScript) {
+        templatePath = path.join(__dirname, '../template_components');
+        copyFiles(templatePath, `${currentDirectory}/${folderName}`);
+        console.log(green, `Project successfully created for platforms: ${target}`, normal);
+      } else {
+        templatePath = path.join(__dirname, '../template_multiplatform_components');
+        copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
+        copyManifest(`${currentDirectory}/${folderName}`);
+        util.renameComponentsFiles(folderName, packageName, visibleName);
+        try {
+          fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
+        } catch (error) {
+          console.log(yellow, `Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https://magicscript.org/`);
+        }
+        preparePlatforms(`${currentDirectory}/${folderName}`);
+        console.log(green, `Project successfully created for platforms: ${target}`, normal);
+      }
+    } else if (isLandscapeOrImmersive(folderName, packageName, appType)) {
+      console.log(green, `Start creating project for ${appType} type`, normal);
+      copyFiles(templatePath, `${currentDirectory}/${folderName}`);
+      console.log(green, `Project successfully created for ${appType}`, normal);
     }
-    copyFiles(templatePath, `${currentDirectory}/${folderName}`);
-
-    if (typescript) {
-      // Remove non-typescript source files from template
+    if (typeScript) {
       fs.unlinkSync(`${currentDirectory}/${folderName}/src/main.js`);
       fs.unlinkSync(`${currentDirectory}/${folderName}/src/app.js`);
       // Copy typescript template overlay over existing template files
@@ -130,5 +204,101 @@ module.exports = argv => {
       templatePath = `${__dirname}/../template_overlay_typescript${pathSuffix}`;
       copyFiles(templatePath, `${currentDirectory}/${folderName}`);
     }
-  });
+  }).catch((err) => console.log(red, err, normal))
+    // Add this callback for testing purpose - inquirer doesn't provide functionality to reset values
+    // after every test and caches them
+    .finally(() => {
+      resetValues();
+    });
 };
+
+function preparePlatforms (destPath) {
+  let android = target.includes('ANDROID');
+  let iOS = target.includes('IOS');
+  let lumin = target.includes('LUMIN');
+  let isReact = (target.includes('IOS') || target.includes('ANDROID'));
+  if (!iOS) {
+    if (fs.existsSync(`${destPath}/reactnative/ios`)) {
+      util.removeFilesRecursively(`${destPath}/reactnative/ios`);
+    }
+  }
+  if (!android) {
+    if (fs.existsSync(`${destPath}/reactnative/android`)) {
+      util.removeFilesRecursively(`${destPath}/reactnative/android`);
+    }
+  } else {
+    util.createAndroidLocalProperties(destPath);
+  }
+  if (!isReact) {
+    if (fs.existsSync(`${destPath}/reactnative`)) {
+      util.removeFilesRecursively(`${destPath}/reactnative`);
+    }
+  }
+  if (!lumin) {
+    if (fs.existsSync(`${destPath}/lumin`)) {
+      util.removeFilesRecursively(`${destPath}/lumin`);
+    }
+  }
+}
+
+function isComponentsAndAtLeastOneTarget (appType, argTarget) {
+  return (appType === 'Components' && argTarget && argTarget.some(substring => {
+    return targetPlatforms.includes(substring);
+  }));
+}
+
+function setFolderName (name) {
+  if (name && util.isValidFolderName(name)) {
+    folderName = name;
+    if (!visibleName) {
+      visibleName = folderName;
+    }
+  }
+}
+
+function setVisibleName (name) {
+  if (name) {
+    visibleName = name;
+  }
+}
+
+function setAppType (type) {
+  if (util.isValidAppType(type)) {
+    appType = type;
+  }
+}
+
+function setPackageName (name) {
+  if (name && util.isValidPackageId(name)) {
+    packageName = name;
+  }
+}
+
+function isLandscapeOrImmersive (folderName, packageName, appType) {
+  return packageName && folderName && appType && (appType === 'Immersive' || appType === 'Landscape');
+}
+
+function isComponents (folderName, packageName, appType) {
+  return folderName && packageName && appType && appType === 'Components';
+}
+
+function setTarget (appType, argTarget) {
+  if (argTarget && Array.isArray(argTarget)) {
+    target = argTarget.map((string) => {
+      return string.toUpperCase();
+    });
+  }
+  if (!isComponentsAndAtLeastOneTarget(appType, target)) {
+    console.log(yellow, 'There is no proper target passed, project will generate Lumin files structure for Components app', normal);
+    target = ['LUMIN'];
+  }
+}
+
+function resetValues () {
+  folderName = null;
+  visibleName = null;
+  appType = null;
+  packageName = null;
+  target = null;
+  typeScript = null;
+}
