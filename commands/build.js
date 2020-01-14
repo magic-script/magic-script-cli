@@ -38,7 +38,11 @@ function buildLumin (argv) {
   } catch (err) {
     throw err;
   }
-  var buildCommand = `mabu -t device ${packagePath}`;
+
+  var buildCommand = argv.host
+    ? `mabu -t host ${packagePath}`
+    : `mabu -t device ${packagePath}`;
+
   // create bin/index.js if needed
   try {
     fs.mkdirSync('bin');
