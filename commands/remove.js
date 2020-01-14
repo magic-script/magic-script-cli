@@ -4,6 +4,12 @@ const { exec } = require('child_process');
 const util = require('../lib/util');
 
 module.exports = argv => {
+  util.navigateIfComponents(() => {
+    remove(argv);
+  });
+};
+
+function remove (argv) {
   let packageName = util.findPackageName();
   let removeCommand = 'mldb uninstall ' + packageName;
   console.log(removeCommand);
@@ -13,4 +19,4 @@ module.exports = argv => {
     }
     console.log(stdout);
   });
-};
+}

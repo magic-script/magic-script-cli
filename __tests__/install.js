@@ -7,6 +7,9 @@ jest.spyOn(child_process, 'spawn');
 const util = require('../lib/util');
 const install = require('../commands/install');
 beforeEach(() => {
+  util.navigateIfComponents = jest.fn().mockImplementationOnce((callback) => {
+    callback();
+  });
   jest.spyOn(util, 'isInstalled');
   jest.spyOn(util, 'findPackageName').mockReturnValueOnce('com.abc');
 });
