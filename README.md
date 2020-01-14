@@ -97,9 +97,9 @@ b. There are differences between MagicScript project types (more information in 
 **Problems during runtime**
 - When you're developing on multiple platforms at once, and you're often changing the deployment target (f.e. you're installing the app on MagicLeap device, next on iOS device, and after that on Android device) there can be a problem with caching intermediates from different targets. Run below commands to clean up the cache:
 
-####**IMPORTANT: Be extra cautious in which directory you are currently - below scripts are using `rm` and `del` tools, which can lead to irreparable situations!! If you are not familiar with those tools, we recommend execute commands between `&` and `&&` one after another!**
+#### **IMPORTANT: Be extra cautious in which directory you are currently - below scripts are using `rm` and `del` tools, which can lead to irreparable situations!! If you are not familiar with those tools, we recommend execute commands between `&` and `&&` one after another!**
 
-####**Execute the scripts from root directory of your project!!**
+#### **Execute the scripts from root directory of your project!!**
 * Navigate to `reactnative` directory from root directory of your project
   * General React Native cleanup:
     * Windows users: `del %appdata%\Temp\react-native-* & del node_modules/ & npm cache clean --force & npm install & npm start -- --reset-cache`
