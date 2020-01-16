@@ -153,13 +153,13 @@ Building MagicLeap project:
 If you want to add assets like [Lomino Font](https://github.com/magic-script/lomino-font) or [Lumin System Icons](https://github.com/magic-script/system-icons) you need to follow the steps below:
 
 1. Create `assets` directory in root directory of the project
-2. Add dependencies to the package.json in the root directory:
+2. Add dependencies to the package.json in the root directory:  
 a) For Lomino Font add `"lomino-font": "git+https://github.com/magic-script/lomino-font"`  
 b) For Lumin System Icons add `"lumin-system-icons": "git+https://github.com/magic-script/system-icons"`  
 3. Type `npm install` in the root directory of the project to install dependencies. Each library has functionality that copies files to the `assets` directory
-4. Create symlink for `assets` in `reactnative` directory:
-a) On MacOS/Linux type in the root directory `ln -s ../assets reactnative/assets`
-b) On Windows, by using `cmd`, type in the root directory `mklink /D "../assets" "reactnative/assets"`
+4. Create symlink for `assets` in `reactnative` directory:  
+a) On MacOS/Linux type in the root directory `ln -s ../assets reactnative/assets`  
+b) On Windows, by using `cmd`, type in the root directory `mklink /D "../assets" "reactnative/assets"`  
 5. For React Native builds, add line `path.resolve(__dirname, '../assets')` in `watchFolders` configuration in `metro.config.js` file:
 <pre>
 watchFolders: [
