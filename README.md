@@ -134,7 +134,7 @@ As you can see, there is a hard separation between Magic Script Components libra
 **src** - This is where you should put your source code of the application
 **package.json** - It contains only `magic-script-components` library, which is (like described above), a definition of the Components. If you want to add some other dependencies to your app, you should place it in this package.json
 
-####How does it work under the hood?
+#### How does it work under the hood?
 
 Building iOS & Android project:
 
@@ -147,6 +147,38 @@ Building MagicLeap project:
 1. The MagicLeap device uses the Lumin Runtime platform for rendering. In the `lumin` directory you can see that the Rollup Bundler is used to bundle the source code. It is configured the same way as the Metro Bundler. It grabs the code from `src` directory, resolves dependencies and bundles the files.
 2. The `lumin` directory (like mentioned above) has all of the configuration files and dependencies that are used to properly render the code on the device. This is where the `magic-script-components-lumin` library is set.
 3. After successful compilation, the MagicScript CLI is executing few another steps to install and run the app on the MagicLeap device.
+
+### Adding assets to multiplatform project
+
+If you want to add assets like [Lomino Font](https://github.com/magic-script/lomino-font) or [Lumin System Icons](https://github.com/magic-script/system-icons) you need to follow the steps below:
+
+1. Create `assets` directory in root directory of the project
+2. Add dependencies to the package.json in the root directory:
+a) For Lomino Font add `"lomino-font": "git+https://github.com/magic-script/lomino-font"`
+b) For Lumin System Icons add `"lumin-system-icons": "git+https://github.com/magic-script/system-icons"`
+3. Type `npm install` in the root directory of the project to install dependencies. Each library has functionality that copies files to the `assets` directory
+4. Create symlink for `assets` in `reactnative` directory:
+a) On MacOS/Linux type in the root directory `ln -s ../assets reactnative/assets`
+b) On Windows, by using `cmd`, type in the root directory `mklink /D "../assets" "reactnative/assets"`
+5. For React Native builds, add line `path.resolve(__dirname, '../assets')` in `watchFolders` configuration in `metro.config.js` file:
+<pre>
+watchFolders: [
+    path.resolve(__dirname, '../common'),
+    path.resolve(__dirname, '../src'),
+    path.resolve(__dirname, 'node_modules'),
+    path.resolve(__dirname, '../node_modules'),
+    path.resolve(__dirname, '../resources'),
+    <b>path.resolve(__dirname, '../assets')</b>
+  ],
+  </pre>
+  6. For Lumin builds, add line `"../assets/" : "assets/"` in `app.package` file:
+  <pre>
+  DATAS = "digest.sha512.signed" : "." \
+        "bin/" : "bin/"\
+        "../resources/" : "resources/"
+        <b>"../assets/" : "assets/"</b>
+  OPTIONS = package/minApiLevel/2
+  </pre>
 
 ## License
 
