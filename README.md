@@ -127,12 +127,12 @@ As you can see, there is a hard separation between Magic Script Components libra
 - src
 - package.json
 
-**common** - This directory has the source files common for both lumin and reactnative library. They're needed to write one source code that will run on all three platforms
-**lumin** - This directory has all of the configuration files needed to compile, build and deploy the app to the MagicLeap device
-**reactnative** - This directory has all of the configuration files needed to compile, build and deploy the app to the iOS and Android device
-**resources** - This directory should be used if you want to add assets to your project, like 3D model, image, video or audio.
-**src** - This is where you should put your source code of the application
-**package.json** - It contains only `magic-script-components` library, which is (like described above), a definition of the Components. If you want to add some other dependencies to your app, you should place it in this package.json
+**common** - This directory has the source files common for both lumin and reactnative library. They're needed to write one source code that will run on all three platforms  
+**lumin** - This directory has all of the configuration files needed to compile, build and deploy the app to the MagicLeap device  
+**reactnative** - This directory has all of the configuration files needed to compile, build and deploy the app to the iOS and Android device  
+**resources** - This directory should be used if you want to add assets to your project, like 3D model, image, video or audio.  
+**src** - This is where you should put your source code of the application  
+**package.json** - It contains only `magic-script-components` library, which is (like described above), a definition of the Components. If you want to add some other dependencies to your app, you should place it in this package.json  
 
 #### How does it work under the hood?
 
@@ -154,8 +154,8 @@ If you want to add assets like [Lomino Font](https://github.com/magic-script/lom
 
 1. Create `assets` directory in root directory of the project
 2. Add dependencies to the package.json in the root directory:
-a) For Lomino Font add `"lomino-font": "git+https://github.com/magic-script/lomino-font"`
-b) For Lumin System Icons add `"lumin-system-icons": "git+https://github.com/magic-script/system-icons"`
+a) For Lomino Font add `"lomino-font": "git+https://github.com/magic-script/lomino-font"`  
+b) For Lumin System Icons add `"lumin-system-icons": "git+https://github.com/magic-script/system-icons"`  
 3. Type `npm install` in the root directory of the project to install dependencies. Each library has functionality that copies files to the `assets` directory
 4. Create symlink for `assets` in `reactnative` directory:
 a) On MacOS/Linux type in the root directory `ln -s ../assets reactnative/assets`
