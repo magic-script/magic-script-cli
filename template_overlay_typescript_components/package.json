@@ -27,8 +27,8 @@
   },
   "dependencies": {
     "eslint-plugin-react": "^7.15.1",
-    "magic-script-components": "^2.0.0",
-    "magic-script-components-lumin": "^1.0.7",
-    "magic-script-polyfills": "^2.4.3"
+    "magic-script-components": "^2.0.2",
+    "magic-script-components-lumin": "^1.0.11",
+    "magic-script-polyfills": "^2.7.1"
   }
 }
