@@ -107,8 +107,8 @@ describe('Test build', () => {
       expect(chmod).toBe('755');
     });
     child_process.spawn.mockImplementationOnce((command, commandArgs) => {
-      expect(command).toBe('react-native');
-      expect(commandArgs).toStrictEqual(['run-android']);
+      expect(command).toBe('npx');
+      expect(commandArgs).toStrictEqual(['react-native', 'run-android']);
       runEmitter.on('message', () => {});
       runEmitter.on('error', (err) => { throw err; });
       runEmitter.on('exit', () => {});
@@ -123,8 +123,8 @@ describe('Test build', () => {
     const runEmitter = new events.EventEmitter();
     const podsInstallCallback = () => {
       child_process.spawn.mockImplementationOnce((command, commandArgs) => {
-        expect(command).toBe('react-native');
-        expect(commandArgs).toStrictEqual(['run-ios']);
+        expect(command).toBe('npx');
+        expect(commandArgs).toStrictEqual(['react-native', 'run-ios']);
         runEmitter.on('message', () => {});
         runEmitter.on('error', (err) => { throw err; });
         runEmitter.on('exit', () => {});
@@ -228,8 +228,8 @@ describe('Test build', () => {
     const runEmitter = new events.EventEmitter();
     const podsInstallCallback = () => {
       child_process.spawn.mockImplementationOnce((command, commandArgs) => {
-        expect(command).toBe('react-native');
-        expect(commandArgs).toStrictEqual(['run-ios']);
+        expect(command).toBe('npx');
+        expect(commandArgs).toStrictEqual(['react-native', 'run-ios']);
         runEmitter.on('message', () => {});
         runEmitter.on('error', (err) => { throw err; });
         runEmitter.on('exit', (code, signal) => {
@@ -259,8 +259,8 @@ describe('Test build', () => {
     const runEmitter = new events.EventEmitter();
     const podsInstallCallback = () => {
       child_process.spawn.mockImplementationOnce((command, commandArgs) => {
-        expect(command).toBe('react-native');
-        expect(commandArgs).toStrictEqual(['run-ios']);
+        expect(command).toBe('npx');
+        expect(commandArgs).toStrictEqual(['react-native', 'run-ios']);
         runEmitter.on('message', () => {});
         runEmitter.on('error', (err) => { throw err; });
         runEmitter.on('exit', (code, signal) => {
@@ -292,8 +292,8 @@ describe('Test build', () => {
     const runEmitter = new events.EventEmitter();
     const podsInstallCallback = () => {
       child_process.spawn.mockImplementationOnce((command, commandArgs) => {
-        expect(command).toBe('react-native');
-        expect(commandArgs).toStrictEqual(['run-ios']);
+        expect(command).toBe('npx');
+        expect(commandArgs).toStrictEqual(['react-native', 'run-ios']);
         runEmitter.on('message', () => {});
         runEmitter.on('error', (err) => { throw err; });
         runEmitter.on('exit', (code, signal) => {

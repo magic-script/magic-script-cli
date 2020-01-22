@@ -137,7 +137,7 @@ function buildAndroid () {
   var path = process.cwd();
   if (fs.existsSync(`${path}/reactnative/android`)) {
     fs.chmodSync(`${path}/reactnative/android/gradlew`, '755');
-    var runProcess = spawn('react-native', ['run-android'], {
+    var runProcess = spawn('npx', ['react-native', 'run-android'], {
       stdio: 'inherit',
       cwd: `${path}/reactnative`,
       shell: process.platform === 'win32'
@@ -204,7 +204,7 @@ function installPods (path, onInstallFinish) {
 
 function runiOS () {
   console.log('run ios app');
-  var runProcess = spawn('react-native', ['run-ios'], {
+  var runProcess = spawn('npx', ['react-native', 'run-ios'], {
     stdio: 'inherit',
     cwd: `${process.cwd()}/reactnative`,
     shell: process.platform === 'win32'
