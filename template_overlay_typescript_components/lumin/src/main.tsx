@@ -10,7 +10,7 @@ import mxs from 'magic-script-components-lumin';
 typeof process;
 
 // Load main app logic from the app class.
-import MyApp from "./app.js";
+import MyApp from "../../src/app";
 
 mxs.bootstrap(
   <MyApp

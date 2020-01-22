@@ -72,10 +72,7 @@ const askQuestions = () => {
       name: 'TYPESCRIPT',
       type: 'confirm',
       message: 'Use TypeScript?',
-      default: false,
-      when: function (answers) {
-        return (answers.APPTYPE === 'Components' && answers.TARGET && answers.TARGET.every(elem => ['Lumin'].includes(elem))) || answers.APPTYPE !== 'Components';
-      }
+      default: false
     }
   ];
   return inquirer.prompt(questions);
@@ -174,35 +171,35 @@ module.exports = argv => {
     if (isComponents(folderName, packageName, appType)) {
       setTarget(appType, target);
       console.log(green, `Start creating project for Components type, target: ${target}`, normal);
+      templatePath = path.join(__dirname, '../template_multiplatform_components');
+      copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
       if (typeScript) {
-        templatePath = path.join(__dirname, '../template_components');
+        fs.unlinkSync(`${currentDirectory}/${folderName}/lumin/src/main.js`);
+        fs.unlinkSync(`${currentDirectory}/${folderName}/src/app.js`);
+        // Copy typescript template overlay over existing template files
+        templatePath = `${__dirname}/../template_overlay_typescript_components`;
         copyFiles(templatePath, `${currentDirectory}/${folderName}`);
-        console.log(green, `Project successfully created for platforms: ${target}`, normal);
-      } else {
-        templatePath = path.join(__dirname, '../template_multiplatform_components');
-        copyComponentsFiles(templatePath, `${currentDirectory}/${folderName}`);
-        copyManifest(`${currentDirectory}/${folderName}`);
-        util.renameComponentsFiles(folderName, packageName, visibleName);
-        try {
-          fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
-        } catch (error) {
-          console.log(yellow, `Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https://magicscript.org/`);
-        }
-        preparePlatforms(`${currentDirectory}/${folderName}`);
-        console.log(green, `Project successfully created for platforms: ${target}`, normal);
       }
+      copyManifest(`${currentDirectory}/${folderName}`);
+      util.renameComponentsFiles(folderName, packageName, visibleName);
+      try {
+        fs.symlinkSync(`../resources`, `${currentDirectory}/${folderName}/reactnative/resources`, 'dir');
+      } catch (error) {
+        console.log(yellow, `Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https://magicscript.org/`);
+      }
+      preparePlatforms(`${currentDirectory}/${folderName}`);
+      console.log(green, `Project successfully created for platforms: ${target}`, normal);
     } else if (isLandscapeOrImmersive(folderName, packageName, appType)) {
       console.log(green, `Start creating project for ${appType} type`, normal);
       copyFiles(templatePath, `${currentDirectory}/${folderName}`);
+      if (typeScript) {
+        fs.unlinkSync(`${currentDirectory}/${folderName}/src/main.js`);
+        fs.unlinkSync(`${currentDirectory}/${folderName}/src/app.js`);
+        // Copy typescript template overlay over existing template files
+        templatePath = `${__dirname}/../template_overlay_typescript`;
+        copyFiles(templatePath, `${currentDirectory}/${folderName}`);
+      }
       console.log(green, `Project successfully created for ${appType}`, normal);
-    }
-    if (typeScript) {
-      fs.unlinkSync(`${currentDirectory}/${folderName}/src/main.js`);
-      fs.unlinkSync(`${currentDirectory}/${folderName}/src/app.js`);
-      // Copy typescript template overlay over existing template files
-      const pathSuffix = (appType === 'Components') ? '_components' : '';
-      templatePath = `${__dirname}/../template_overlay_typescript${pathSuffix}`;
-      copyFiles(templatePath, `${currentDirectory}/${folderName}`);
     }
   }).catch((err) => console.log(red, err, normal))
     // Add this callback for testing purpose - inquirer doesn't provide functionality to reset values
