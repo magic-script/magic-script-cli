@@ -9,10 +9,12 @@ const events = require('events');
 jest.spyOn(mockedFs, 'existsSync');
 jest.spyOn(mockedFs, 'readFileSync');
 jest.spyOn(mockedFs, 'readdirSync');
+
 // eslint-disable-next-line camelcase
 const child_process = require('child_process');
 jest.spyOn(child_process, 'exec');
 jest.spyOn(child_process, 'spawn');
+
 const util = require('../lib/util');
 const build = require('../commands/build');
 
@@ -347,6 +349,23 @@ describe('Test build', () => {
       callback(null);
     });
     build({ '_': ['build'], 'install': false, 'target': 'lumin' });
+  });
+
+  test('no error build for host', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    mockedFs.readdirSync.mockImplementationOnce(() => {
+      return ['app.package'];
+    });
+    util.createDigest = jest.fn().mockReturnValue(false);
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe('npm run build');
+      child_process.exec.mockImplementationOnce((command, callback) => {
+        expect(command).toBe('mabu -t host app.package');
+        callback(null, 'out.mpk');
+      });
+      callback(null);
+    });
+    build({ '_': ['build'], 'host': true, 'target': 'lumin' });
   });
 
   test('no error mldb install', () => {
