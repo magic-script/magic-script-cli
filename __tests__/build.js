@@ -361,7 +361,7 @@ describe('Test build', () => {
       expect(command).toBe('npm run build');
       child_process.exec.mockImplementationOnce((command, callback) => {
         expect(command).toBe('mabu -t host app.package');
-        callback(null);
+        callback(null, "'app' output in '.out/app'");
       });
       callback(null);
     });
