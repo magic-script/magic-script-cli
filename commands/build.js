@@ -83,6 +83,7 @@ function buildLumin (argv, indexContent) {
         process.stderr.write(stderr);
         throw err;
       }
+
       let mpkFile;
       let outLines = stdout.split('\n');
       for (let line of outLines) {
@@ -94,7 +95,11 @@ function buildLumin (argv, indexContent) {
           break;
         }
       }
-      console.log('built package: ' + mpkFile);
+
+      if (mpkFile !== undefined) {
+        console.log('built package: ' + mpkFile);
+      }
+
       if (argv.install) {
         argv.path = mpkFile;
         util.installPackage(argv);
