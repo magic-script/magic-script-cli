@@ -83,18 +83,19 @@ function buildLumin (argv, indexContent) {
         process.stderr.write(stderr);
         throw err;
       }
+
       let mpkFile;
       let outLines = stdout.split('\n');
-      for (let line of outLines) {
-        if (line.indexOf('mpk') > 0) {
-          mpkFile = line.substring(
-            line.indexOf("'") + 1,
-            line.lastIndexOf("'")
-          );
-          break;
-        }
+
+      let theLine = outLines.find(line => line.includes('mpk'));
+      if (theLine !== undefined) {
+        mpkFile = theLine.substring(theLine.indexOf("'") + 1, theLine.lastIndexOf("'"));
+        console.log('built package: ' + mpkFile);
+      } else {
+        theLine = outLines.find(line => line.includes('output in'));
+        console.log(theLine.substring(theLine.indexOf("'"), theLine.lastIndexOf("'") + 1));
       }
-      console.log('built package: ' + mpkFile);
+
       if (argv.install) {
         argv.path = mpkFile;
         util.installPackage(argv);
