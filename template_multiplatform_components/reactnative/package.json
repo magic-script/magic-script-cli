@@ -17,7 +17,6 @@
     "magic-script-polyfills": "2.4.2",
     "react": "16.8.3",
     "react-native": "0.60.5",
-    "react-native-fs": "2.14.1",
     "magic-script-components-react-native": "1.0.1"
   }
 }
