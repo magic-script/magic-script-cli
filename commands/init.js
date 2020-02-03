@@ -116,7 +116,7 @@ function copyFiles (srcPath, destPath) {
       var contents = fs.readFileSync(origFilePath, 'utf8');
       if (file === 'manifest.xml') {
         contents = updateManifest(contents);
-      } else if (immersive && file === 'app.js') {
+      } else if (immersive && (file === 'app.js' || file === 'app.ts')) {
         contents = contents.replace(new RegExp('LandscapeApp', 'g'), 'ImmersiveApp');
       }
       const writePath = `${destPath}/${file}`;
