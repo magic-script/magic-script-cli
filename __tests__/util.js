@@ -30,16 +30,11 @@ describe('Test Util', () => {
       expect(input).toBe('mldb start-server');
       return 'success';
     });
-    jest.spyOn(console, 'error').mockImplementationOnce((data) => {
-      expect(data).toBe('error getting installed packages:');
-    });
     child_process.exec.mockImplementationOnce((command, cb) => {
       expect(command).toBe('mldb packages -j');
       cb('error');
     });
-    util.isInstalled('com.abc', function (result) {
-      expect(result).toBeFalsy();
-    });
+    expect(() => { util.isInstalled('com.abc', (result) => {}) }).toThrow();
   });
 
   test('isInstalled no match', () => {
@@ -159,7 +154,7 @@ describe('Test Util', () => {
       expect(input).toBe('mldb start-server');
       return 'success';
     });
-    expect(util.startMLDB()).toBe(true);
+    expect(() => { util.startMLDB() }).not.toThrow();
   });
 
   test('startMLDB no error object', () => {
@@ -167,7 +162,7 @@ describe('Test Util', () => {
       expect(input).toBe('mldb start-server');
       return { 'success': true };
     });
-    expect(util.startMLDB()).toBe(true);
+    expect(() => { util.startMLDB() }).not.toThrow();
   });
 
   test('startMLDB error', () => {
@@ -175,7 +170,7 @@ describe('Test Util', () => {
       expect(input).toBe('mldb start-server');
       throw new Error('oops');
     });
-    expect(util.startMLDB()).toBe(false);
+    expect(() => { util.startMLDB() }).toThrow();
   });
 
   test('isValidPackageId success', () => {
