@@ -368,6 +368,24 @@ describe('Test build', () => {
     build({ '_': ['build'], 'host': true, 'target': 'lumin' });
   });
 
+  test('build for host valid buffer missing USES', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    mockedFs.readdirSync.mockImplementationOnce(() => {
+      return ['app.package'];
+    });
+    mockedFs.readFileSync = jest.fn().mockReturnValue('test');
+    util.createDigest = jest.fn().mockReturnValue(false);
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe('npm run build');
+      child_process.exec.mockImplementationOnce((command, callback) => {
+        expect(command).toBe('mabu -t host app.package');
+        callback(null, "'app' output in '.out/app'");
+      });
+      callback(null);
+    });
+    build({ '_': ['build'], 'host': true, 'target': 'lumin' });
+  });
+
   test('no error mldb install', () => {
     mockedFs.existsSync.mockReturnValue(true);
     mockedFs.readdirSync.mockImplementationOnce(() => {
