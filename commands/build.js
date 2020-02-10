@@ -77,6 +77,13 @@ function buildLumin (argv, indexContent) {
       throw err;
     }
     util.createDigest(argv.debug);
+    if (argv.host && fs.existsSync('app.package')) {
+      let packageFile = fs.openSync('app.package', 'a+');
+      let buffer = fs.readFileSync(packageFile, 'utf8');
+      if (buffer && !buffer.includes('USES = mxs_lumin_runtime')) {
+        fs.appendFileSync(packageFile, '\nUSES = mxs_lumin_runtime\n');
+      }
+    }
     exec(buildCommand, (err, stdout, stderr) => {
       if (err) {
         process.stdout.write(stdout);
