@@ -36,7 +36,6 @@ Verify your versions of tools with the minimum below:
 | Tool   |      Version  |
 |----------|:-------------:|
 | NodeJS     |  >=12.10      |
-| ReactNative CLI |    2.0.1   |
 | NPM | should be installed with NodeJS |
 
 **Android**:
