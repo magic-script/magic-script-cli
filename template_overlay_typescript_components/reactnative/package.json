@@ -17,13 +17,11 @@
     "metro-react-native-babel-preset": "^0.54.1",
     "react-test-renderer": "16.8.6",
     "typescript": "^3.6.3",
-    "magic-script-typings": "1.4.0"
   },
   "dependencies": {
-    "magic-script-polyfills": "2.4.2",
     "react": "16.8.3",
     "react-native": "0.60.5",
-    "magic-script-components-react-native": "1.0.1"
+    "magic-script-components-react-native": "1.0.3"
   },
   "jest": {
     "preset": "react-native",

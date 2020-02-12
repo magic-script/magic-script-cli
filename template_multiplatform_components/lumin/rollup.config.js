@@ -31,6 +31,7 @@ export default [
     external: ['uv', 'lumin', 'ssl', 'jpeg', 'png', 'gl'],
     input: 'src/main.js',
     preserveModules: true,
+    preserveSymlinks: true,
     output: {
       dir: 'bin',
       format: 'es'

@@ -10,11 +10,9 @@
     "babel-jest": "^24.8.0",
     "jest": "^24.8.0",
     "metro-react-native-babel-preset": "^0.54.1",
-    "react-test-renderer": "16.8.3",
-    "magic-script-typings": "1.4.0"
+    "react-test-renderer": "16.8.3"
   },
   "dependencies": {
-    "magic-script-polyfills": "2.4.2",
     "react": "16.8.3",
     "react-native": "0.60.5",
     "magic-script-components-react-native": "1.0.1"
