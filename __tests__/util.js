@@ -2,7 +2,7 @@
 // Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
 jest.mock('fs');
 jest.mock('glob');
-
+const events = require('events');
 const mockedFs = require('fs');
 jest.spyOn(mockedFs, 'existsSync');
 jest.spyOn(mockedFs, 'readFileSync');
@@ -10,6 +10,7 @@ const child_process = require('child_process');
 jest.spyOn(child_process, 'exec');
 jest.spyOn(child_process, 'execFile');
 jest.spyOn(child_process, 'execSync');
+jest.spyOn(child_process, 'spawn');
 const util = require('../lib/util');
 
 const consoleLog = console.log;
@@ -22,6 +23,7 @@ beforeEach(() => {
 afterEach(() => {
   console.log = consoleLog;
   console.error = consoleError;
+  jest.clearAllMocks();
 });
 
 describe('Test Util', () => {
@@ -34,7 +36,7 @@ describe('Test Util', () => {
       expect(command).toBe('mldb packages -j');
       cb('error');
     });
-    expect(() => { util.isInstalled('com.abc', (result) => {}) }).toThrow();
+    expect(() => { util.isInstalled('com.abc', (result) => {}); }).toThrow();
   });
 
   test('isInstalled no match', () => {
@@ -218,6 +220,31 @@ describe('Test Util', () => {
     util.copyComponentsFiles('test', 'test');
   });
 
+  test('copy files where stat is a directory', () => {
+    jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce(() => {
+      return ['dir1', 'dir2'];
+    }).mockImplementation(() => {
+      return [];
+    });
+    jest.spyOn(mockedFs, 'existsSync').mockImplementation(() => {
+      return true;
+    });
+    jest.spyOn(mockedFs, 'statSync').mockImplementation(() => {
+      var statObject = {};
+      statObject.isFile = function () { return false; };
+      statObject.isDirectory = function () { return true; };
+      return statObject;
+    });
+    mockedFs.readFileSync.mockImplementationOnce(() => {
+      return 'test1';
+    });
+    // mock for copy manifest
+    mockedFs.readFileSync.mockImplementationOnce(() => {
+      return 'test1';
+    });
+    util.copyComponentsFiles('test', 'test');
+  });
+
   test('remove files where stat is not directory', () => {
     jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
       return ['file1', 'file2'];
@@ -235,6 +262,24 @@ describe('Test Util', () => {
     });
     jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce((path) => {
       expect(path.endsWith('path')).toBeTruthy();
+    });
+    util.removeFilesRecursively('path');
+  });
+
+  test('remove files where stat is a directory', () => {
+    jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce(() => {
+      return ['dir1', 'dir2'];
+    }).mockImplementation(() => {
+      return [];
+    });
+    jest.spyOn(mockedFs, 'lstatSync').mockImplementation((path) => {
+      var statObject = {};
+      statObject.isFile = function () { return false; };
+      statObject.isDirectory = function () { return true; };
+      return statObject;
+    });
+    jest.spyOn(mockedFs, 'rmdirSync').mockImplementation((path) => {
+      expect(path.startsWith('path/dir') || path === 'path').toBeTruthy();
     });
     util.removeFilesRecursively('path');
   });
@@ -259,17 +304,36 @@ describe('Test Util', () => {
   test('create android local properties file if does not exist', () => {
     mockedFs.existsSync.mockReturnValueOnce(false);
     process.env.ANDROID_HOME = 'test';
-    jest.spyOn(mockedFs, 'writeFile').mockImplementationOnce((path, content) => {
+    jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, content) => {
       expect(path.endsWith('android/local.properties')).toBeTruthy();
       expect(content).toBe('sdk.dir=test');
     });
     util.createAndroidLocalProperties();
   });
 
+  test('create android local properties file if does not exist Windows', () => {
+    mockedFs.existsSync.mockReturnValueOnce(false);
+    process.env.ANDROID_HOME = 'test';
+    Object.defineProperty(process, 'platform', { value: 'win32' });
+    jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, content) => {
+      expect(path.endsWith('android/local.properties')).toBeTruthy();
+      expect(content).toBe('sdk.dir=test');
+    });
+    util.createAndroidLocalProperties();
+  });
+
+  test('android local properties and ANDROID_HOME missing', () => {
+    mockedFs.existsSync.mockReturnValueOnce(false);
+    delete process.env.ANDROID_HOME;
+    expect(mockedFs.writeFileSync).not.toHaveBeenCalled();
+    util.createAndroidLocalProperties();
+  });
+
   test('should not create android local properties file if file exists', () => {
     mockedFs.existsSync.mockReturnValueOnce(true);
+    jest.spyOn(mockedFs, 'writeFileSync');
     util.createAndroidLocalProperties();
-    expect(mockedFs.writeFile).not.toHaveBeenCalled();
+    expect(mockedFs.writeFileSync).not.toHaveBeenCalled();
   });
 
   test('should rename files of the project based on package name and project name', () => {
@@ -302,10 +366,47 @@ describe('Test Util', () => {
       expect(result).toBe('test1');
       expect(type).toBe('utf8');
     });
+    jest.spyOn(child_process, 'spawnSync').mockReturnValueOnce(true);
     util.renameComponentsFiles('name', null, 'name');
     expect(mockedFs.renameSync).toHaveBeenCalled();
     expect(mockedFs.writeFileSync).toHaveBeenCalled();
     expect(mockedFs.readFileSync).toHaveBeenCalled();
+  });
+
+  test('should rename files of the project based on project name 2', () => {
+    let manifest = 'test1';
+    process.cwd = jest.fn().mockReturnValue('cwd');
+    mockedFs.existsSync.mockReturnValueOnce(false).mockReturnValueOnce(true).mockReturnValueOnce(true).mockReturnValueOnce(true);
+    mockedFs.readFileSync.mockImplementationOnce(() => {
+      return manifest;
+    });
+    mockedFs.writeFileSync.mockImplementationOnce((path, result, type) => {
+      expect(path).toBe('cwd/name/reactnative/ios/name.xcodeproj/projectt.pbxproj');
+      // console.trace('test2 instead of test1');
+      expect(result).toBe('test1');
+      expect(type).toBe('utf8');
+    });
+    jest.spyOn(child_process, 'spawnSync').mockReturnValueOnce(true);
+    util.renameComponentsFiles('name', 'test1', 'name');
+    expect(mockedFs.writeFileSync).toHaveBeenCalled();
+    expect(mockedFs.readFileSync).toHaveBeenCalled();
+  });
+
+  test('should return early without visibleName', () => {
+    util.renameComponentsFiles('name');
+    expect(mockedFs.existsSync).not.toHaveBeenCalled();
+    expect(mockedFs.renameSync).not.toHaveBeenCalled();
+    expect(mockedFs.writeFileSync).not.toHaveBeenCalled();
+    expect(mockedFs.readFileSync).not.toHaveBeenCalled();
+  });
+
+  test('should not rename due to missing lumin and reactnative', () => {
+    process.cwd = jest.fn().mockReturnValue('cwd');
+    mockedFs.existsSync.mockReturnValueOnce(false).mockReturnValueOnce(false);
+    util.renameComponentsFiles('name', null, 'name');
+    expect(mockedFs.renameSync).not.toHaveBeenCalled();
+    expect(mockedFs.writeFileSync).not.toHaveBeenCalled();
+    expect(mockedFs.readFileSync).not.toHaveBeenCalled();
   });
 
   test('validatePackageId success', () => {
@@ -322,5 +423,45 @@ describe('Test Util', () => {
 
   test('validateFolderName fail', () => {
     expect(util.validateFolderName('com.#!@#te st')).toBe('Invalid folder name. Must match /^(?:[A-Za-z\\-_\\d])+$|^\\.$/');
+  });
+
+  test('should fail install with on error', () => {
+    jest.spyOn(util, 'findPackageName').mockReturnValueOnce('testPackage');
+    jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
+      expect(packageName).toBe('testPackage');
+      callback();
+    });
+    const emitter = new events.EventEmitter();
+    const childEmitter = new events.EventEmitter();
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('mldb');
+      expect(commandArgs).toStrictEqual(['install', 'testPath']);
+      childEmitter.stdout = emitter.on('data', () => {});
+      childEmitter.stderr = emitter.on('data', (err) => { throw err; });
+      childEmitter.on('error', () => { });
+      return childEmitter;
+    });
+    util.installPackage({ target: 'lumin', path: 'testPath' });
+    expect(() => { childEmitter.emit('error'); }).toThrow();
+  });
+
+  test('should succeed install with stdout, stderr data', () => {
+    jest.spyOn(util, 'findPackageName').mockReturnValueOnce('testPackage');
+    jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
+      expect(packageName).toBe('testPackage');
+      callback();
+    });
+    const emitter = new events.EventEmitter();
+    const childEmitter = {};
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('mldb');
+      expect(commandArgs).toStrictEqual(['install', 'testPath']);
+      childEmitter.stdout = emitter.on('data', () => {});
+      childEmitter.stderr = emitter.on('data', () => {});
+      childEmitter.on = ('error', () => { });
+      return childEmitter;
+    });
+    util.installPackage({ target: 'lumin', path: 'testPath' });
+    emitter.emit('data');
   });
 });
