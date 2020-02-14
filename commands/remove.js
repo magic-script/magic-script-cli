@@ -4,9 +4,8 @@ const { exec } = require('child_process');
 const util = require('../lib/util');
 
 module.exports = argv => {
-  util.navigateIfComponents(() => {
-    remove(argv);
-  });
+  util.navigateIfComponents();
+  remove(argv);
 };
 
 function remove (argv) {

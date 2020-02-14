@@ -131,8 +131,7 @@ function runLumin (argv) {
 
 module.exports = argv => {
   if (argv.target === 'lumin') {
-    util.navigateIfComponents(() => {
-      runLumin(argv);
-    });
+    util.navigateIfComponents();
+    runLumin(argv);
   }
 };
