@@ -11,9 +11,7 @@ const consoleLog = console.log;
 const consoleError = console.error;
 
 beforeEach(() => {
-  util.navigateIfComponents = jest.fn().mockImplementationOnce((callback) => {
-    callback();
-  });
+  util.navigateIfComponents = jest.fn().mockReturnValueOnce(true);
 });
 
 afterEach(() => {

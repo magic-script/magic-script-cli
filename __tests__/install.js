@@ -1,15 +1,16 @@
 // Copyright (c) 2019 Magic Leap, Inc. All Rights Reserved
 // Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
 // eslint-disable-next-line camelcase
+jest.mock('fs');
+const mockedFs = require('fs');
 const child_process = require('child_process');
 jest.spyOn(child_process, 'exec');
 jest.spyOn(child_process, 'spawn');
 const util = require('../lib/util');
 const install = require('../commands/install');
 beforeEach(() => {
-  util.navigateIfComponents = jest.fn().mockImplementationOnce((callback) => {
-    callback();
-  });
+  util.navigateIfComponents = jest.fn().mockReturnValueOnce(true);
+  util.findMPKPath = jest.fn().mockReturnValueOnce('testPath');
   jest.spyOn(util, 'isInstalled');
   jest.spyOn(util, 'findPackageName').mockReturnValueOnce('com.abc');
 });
@@ -25,6 +26,9 @@ afterEach(() => {
     child_process.spawn.mockReset();
   }
   util.findPackageName.mockReset();
+  if (mockedFs.existsSync.mock) {
+    mockedFs.existsSync.mockReset();
+  }
 });
 
 describe('Test install', () => {
@@ -44,6 +48,7 @@ describe('Test install', () => {
       };
       return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout }, 'on': stderr };
     });
+    jest.spyOn(mockedFs, 'existsSync').mockReturnValueOnce(true);
     install({ '_': ['install'], path: 'my/path.mpk', 'target': 'lumin' });
   });
 
@@ -59,7 +64,8 @@ describe('Test install', () => {
       } catch (err) {
         expect(err).toBe('error');
       }
-     });
+    });
+    jest.spyOn(mockedFs, 'existsSync').mockReturnValueOnce(true);
     install({ '_': ['install'], path: 'my/path.mpk', 'target': 'lumin' });
   });
 
@@ -71,6 +77,12 @@ describe('Test install', () => {
       expect(command).toBe('mldb install -u my/path.mpk');
       callback(null, 'install success');
     });
+    jest.spyOn(mockedFs, 'existsSync').mockReturnValueOnce(true);
+    install({ '_': ['install'], path: 'my/path.mpk', 'target': 'lumin' });
+  });
+
+  test('install missing MPK file', () => {
+    jest.spyOn(mockedFs, 'existsSync').mockReturnValueOnce(false);
     install({ '_': ['install'], path: 'my/path.mpk', 'target': 'lumin' });
   });
 });

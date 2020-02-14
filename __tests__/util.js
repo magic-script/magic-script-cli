@@ -24,6 +24,9 @@ afterEach(() => {
   console.log = consoleLog;
   console.error = consoleError;
   jest.clearAllMocks();
+  if (mockedFs.readFileSync.mock) {
+    mockedFs.readFileSync.mockReset();
+  }
 });
 
 describe('Test Util', () => {
@@ -286,19 +289,16 @@ describe('Test Util', () => {
 
   test('should navigate to lumin if lumin folder exists', () => {
     process.chdir = jest.fn();
-    const callback = jest.fn();
     mockedFs.existsSync.mockReturnValueOnce(true);
-    util.navigateIfComponents(callback);
+    util.navigateIfComponents();
     expect(process.chdir).toHaveBeenCalledWith('lumin');
   });
 
   test('should not navigate to lumin if lumin folder does not exist', () => {
     process.chdir = jest.fn();
-    const callback = jest.fn();
     mockedFs.existsSync.mockReturnValueOnce(false);
-    util.navigateIfComponents(callback);
+    util.navigateIfComponents();
     expect(process.chdir).not.toHaveBeenCalledWith('test');
-    expect(callback.mock.calls.length).toBe(1);
   });
 
   test('create android local properties file if does not exist', () => {
@@ -463,5 +463,31 @@ describe('Test Util', () => {
     });
     util.installPackage({ target: 'lumin', path: 'testPath' });
     emitter.emit('data');
+  });
+
+  test('findMPK missing app.package', () => {
+    mockedFs.existsSync.mockReturnValueOnce(false);
+    let path = util.findMPKPath();
+    expect(path).toStrictEqual('');
+  });
+
+  test('findMPK mpk path not found', () => {
+    mockedFs.existsSync.mockReturnValueOnce(true);
+    child_process.execSync.mockImplementationOnce((input) => {
+      expect(input).toBe('mabu -t device --print-package-outputs app.package');
+      return 'test';
+    });
+    let path = util.findMPKPath();
+    expect(path).toStrictEqual('');
+  });
+
+  test('findMPK found mpk path', () => {
+    mockedFs.existsSync.mockReturnValueOnce(true);
+    child_process.execSync.mockImplementationOnce((input) => {
+      expect(input).toBe('mabu -t device --print-package-outputs app.package');
+      return 'asd\tb.mpk';
+    });
+    let path = util.findMPKPath();
+    expect(path).toStrictEqual('b.mpk');
   });
 });
