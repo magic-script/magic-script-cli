@@ -410,11 +410,11 @@ describe('Test Util', () => {
   });
 
   test('validatePackageId success', () => {
-    expect(util.validatePackageId('testapp')).toBe(true);
+    expect(util.validatePackageId('test.app')).toBe(true);
   });
 
   test('validatePackageId fail', () => {
-    expect(util.validatePackageId('com.#!@#te st')).toBe('Invalid package ID. Must match /^[a-z0-9_]+(\\.[a-z0-9_]+)*(-[a-zA-Z0-9]*)?$/');
+    expect(util.validatePackageId('com.#!@#te st')).toBe('Invalid package ID. Must match /^(?=.{3,30}$)(?=.*[.])[a-zA-Z0-9]+(?:[.][a-zA-Z0-9]+)*$/');
   });
 
   test('validateFolderName success', () => {

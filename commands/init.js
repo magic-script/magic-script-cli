@@ -26,6 +26,7 @@ const askQuestions = () => {
       name: 'APPNAME',
       type: 'input',
       message: 'What is the name of your application?',
+      validate: util.validateAppName,
       default: visibleName
     },
     {
