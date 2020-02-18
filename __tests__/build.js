@@ -141,6 +141,148 @@ describe('Test build', () => {
     });
     build({ '_': ['build'], 'install': false, 'target': 'ios' });
     podInstallEmitter.emit('exit', (null, 0));
+    podInstallEmitter.emit('message', 'test message');
+    runEmitter.emit('exit', 0, null);
+  });
+
+  test('should install pods, build and run ios when target is ios with exit error code', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const podInstallEmitter = new events.EventEmitter();
+    const runEmitter = new events.EventEmitter();
+    const podsInstallCallback = () => {
+      child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+        expect(command).toBe('npx');
+        expect(commandArgs).toStrictEqual(['react-native', 'run-ios']);
+        runEmitter.on('message', () => {});
+        runEmitter.on('error', (err) => { throw err; });
+        runEmitter.on('exit', () => {});
+        return runEmitter;
+      });
+    };
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('pod');
+      expect(commandArgs).toStrictEqual(['install']);
+      podInstallEmitter.on('message', () => {});
+      podInstallEmitter.on('error', (err) => { throw err; });
+      podInstallEmitter.on('exit', () => { podsInstallCallback(); });
+      return podInstallEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'ios' });
+    podInstallEmitter.emit('exit', (null, 0));
+    expect(() => runEmitter.emit('exit', 42, null)).toThrow();
+  });
+
+  test('should install pods, build and run ios when target is ios with exit error signal', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const podInstallEmitter = new events.EventEmitter();
+    const runEmitter = new events.EventEmitter();
+    const podsInstallCallback = () => {
+      child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+        expect(command).toBe('npx');
+        expect(commandArgs).toStrictEqual(['react-native', 'run-ios']);
+        runEmitter.on('message', () => {});
+        runEmitter.on('error', (err) => { throw err; });
+        runEmitter.on('exit', () => {});
+        return runEmitter;
+      });
+    };
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('pod');
+      expect(commandArgs).toStrictEqual(['install']);
+      podInstallEmitter.on('message', () => {});
+      podInstallEmitter.on('error', (err) => { throw err; });
+      podInstallEmitter.on('exit', () => { podsInstallCallback(); });
+      return podInstallEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'ios' });
+    podInstallEmitter.emit('exit', (null, 0));
+    expect(() => runEmitter.emit('exit', 0, 'testSignal')).toThrow();
+  });
+
+  test('should install pods, build and run ios when target is ios with error', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const podInstallEmitter = new events.EventEmitter();
+    const runEmitter = new events.EventEmitter();
+    const podsInstallCallback = () => {
+      child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+        expect(command).toBe('npx');
+        expect(commandArgs).toStrictEqual(['react-native', 'run-ios']);
+        runEmitter.on('message', () => {});
+        runEmitter.on('exit', () => {});
+        return runEmitter;
+      });
+    };
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('pod');
+      expect(commandArgs).toStrictEqual(['install']);
+      podInstallEmitter.on('message', () => {});
+      podInstallEmitter.on('error', (err) => { throw err; });
+      podInstallEmitter.on('exit', () => { podsInstallCallback(); });
+      return podInstallEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'ios' });
+    podInstallEmitter.emit('exit', (null, 0));
+    expect(() => runEmitter.emit('error', 'testError')).toThrow();
+  });
+
+  test('should install pods, build and run ios when target is ios with message', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const podInstallEmitter = new events.EventEmitter();
+    const runEmitter = new events.EventEmitter();
+    const podsInstallCallback = () => {
+      child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+        expect(command).toBe('npx');
+        expect(commandArgs).toStrictEqual(['react-native', 'run-ios']);
+        return runEmitter;
+      });
+    };
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('pod');
+      expect(commandArgs).toStrictEqual(['install']);
+      podInstallEmitter.on('message', () => {});
+      podInstallEmitter.on('error', (err) => { throw err; });
+      podInstallEmitter.on('exit', () => { podsInstallCallback(); });
+      return podInstallEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'ios' });
+    podInstallEmitter.emit('exit', (null, 0));
+    expect(() => runEmitter.emit('message', 'test message')).not.toThrow();
+  });
+
+  test('should fail install pods wih error', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const podInstallEmitter = new events.EventEmitter();
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('pod');
+      expect(commandArgs).toStrictEqual(['install']);
+      return podInstallEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'ios' });
+    expect(() => podInstallEmitter.emit('error', 'test error')).toThrow();
+  });
+
+  test('should fail install pods wih exit signal', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const podInstallEmitter = new events.EventEmitter();
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('pod');
+      expect(commandArgs).toStrictEqual(['install']);
+      return podInstallEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'ios' });
+    expect(() => podInstallEmitter.emit('exit', 0, 'testSignal')).toThrow();
+  });
+
+  test('should fail install pods wih exit code', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const podInstallEmitter = new events.EventEmitter();
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('pod');
+      expect(commandArgs).toStrictEqual(['install']);
+      return podInstallEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'ios' });
+    expect(() => podInstallEmitter.emit('exit', 42, null)).toThrow();
   });
 
   test('should install pods and throw error if code is not 0', () => {
@@ -505,6 +647,122 @@ describe('Test build', () => {
     });
     build({ '_': ['build'], 'target': 'lumin' });
     proc.emit('exit', 0, null);
+  });
+
+  test('no error npm install with message', () => {
+    mockedFs.existsSync.mockReturnValue(false);
+    mockedFs.readdirSync.mockImplementationOnce(() => {
+      return ['app.package'];
+    });
+    util.createDigest = jest.fn().mockReturnValue(false);
+    let proc;
+    child_process.spawn.mockImplementationOnce((command, callback) => {
+      proc = new child_process.ChildProcess();
+      return proc;
+    });
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe('npm run build');
+      child_process.exec.mockImplementationOnce((command, callback) => {
+        expect(command).toBe('mabu -t device app.package');
+      });
+      callback(null);
+    });
+    build({ '_': ['build'], 'target': 'lumin' });
+    proc.emit('message', 0, null);
+  });
+
+  test('no error npm install android with message', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const runEmitter = new events.EventEmitter();
+    jest.spyOn(mockedFs, 'chmodSync').mockImplementationOnce((path, chmod) => {
+      expect(path.endsWith('android/gradlew')).toBeTruthy();
+      expect(chmod).toBe('755');
+    });
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('npx');
+      expect(commandArgs).toStrictEqual(['react-native', 'run-android']);
+      runEmitter.on('message', () => {});
+      return runEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'android' });
+    runEmitter.emit('message', 'test');
+  });
+
+  test('no error npm install android with error', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const runEmitter = new events.EventEmitter();
+    jest.spyOn(mockedFs, 'chmodSync').mockImplementationOnce((path, chmod) => {
+      expect(path.endsWith('android/gradlew')).toBeTruthy();
+      expect(chmod).toBe('755');
+    });
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('npx');
+      expect(commandArgs).toStrictEqual(['react-native', 'run-android']);
+      return runEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'android' });
+    expect(() => runEmitter.emit('error', 42)).toThrow();
+  });
+
+  test('no error npm install android with exit error code', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const runEmitter = new events.EventEmitter();
+    jest.spyOn(mockedFs, 'chmodSync').mockImplementationOnce((path, chmod) => {
+      expect(path.endsWith('android/gradlew')).toBeTruthy();
+      expect(chmod).toBe('755');
+    });
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('npx');
+      expect(commandArgs).toStrictEqual(['react-native', 'run-android']);
+      return runEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'android' });
+    expect(() => runEmitter.emit('exit', 'testCode', null)).toThrow();
+  });
+
+  test('no error npm install android with exit error signal', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const runEmitter = new events.EventEmitter();
+    jest.spyOn(mockedFs, 'chmodSync').mockImplementationOnce((path, chmod) => {
+      expect(path.endsWith('android/gradlew')).toBeTruthy();
+      expect(chmod).toBe('755');
+    });
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('npx');
+      expect(commandArgs).toStrictEqual(['react-native', 'run-android']);
+      return runEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'android' });
+    expect(() => runEmitter.emit('exit', null, 'testSignal')).toThrow();
+  });
+
+  test('no error npm install android with exit no error', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    const runEmitter = new events.EventEmitter();
+    jest.spyOn(mockedFs, 'chmodSync').mockImplementationOnce((path, chmod) => {
+      expect(path.endsWith('android/gradlew')).toBeTruthy();
+      expect(chmod).toBe('755');
+    });
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('npx');
+      expect(commandArgs).toStrictEqual(['react-native', 'run-android']);
+      return runEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'android' });
+    expect(() => runEmitter.emit('exit', 0, null)).not.toThrow();
+  });
+
+  test('ios missing folder', () => {
+    mockedFs.existsSync.mockReturnValueOnce(true).mockReturnValueOnce(true).mockReturnValueOnce(false);
+    const runEmitter = new events.EventEmitter();
+    child_process.spawn.mockImplementationOnce((command, commandArgs) => {
+      expect(command).toBe('npx');
+      expect(commandArgs).toStrictEqual(['react-native', 'run-android']);
+      runEmitter.on('message', () => {});
+      return runEmitter;
+    });
+    build({ '_': ['build'], 'install': false, 'target': 'ios' });
+    runEmitter.emit('message', 'test');
   });
 
   test('readdir no package', () => {
