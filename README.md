@@ -63,7 +63,19 @@ Please be aware, that it is recommended to use the latest stable versions of bel
 
 **Creating a project**
 
-1. Open terminal window, navigate to directory where you want to create the project and type `magic-script init`
+1. Open terminal window, navigate to directory where you want to create the project and type `magic-script init`. Below you will find table with definitions for `Landscape`, `Immersive` and `Components` app types and `Lumin`, `iOS` and `Android` platforms.
+
+| App Type / Platform | Lumin  |  Android  |  iOS  |
+|---------------------|:-------|:----------|:-------:|
+| Landscape  |  :heavy_check_mark: | :x: | :x: |
+| Immersive  |  :heavy_check_mark: | :x: | :x: |
+| Components | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+
+
+**Landscape** - Only available on Lumin, uses vanilla MagicScript to develop apps, more info on [Magic Script Explained](https://www.magicscript.org/docs/magic-script-explained)
+**Immersive** - Only available on Lumin, uses vanilla MagicScript to develop apps, more info on [Magic Script Explained](https://www.magicscript.org/docs/magic-script-explained)
+**Components** - Built on top of MagicScript, React & ReactNative; UI framework that simplifies developing 3D apps. When choosing `Components` app type during initialization, you can choose which platform the project is going to be built on. You can choose any combination of those three platforms: Lumin, Android & iOS.
+
 2. Answer three questions about the Project Name, app ID (f.e. com.example.project) and Folder Name of the project
 3. Using arrows choose what type of project do you want to create. For developing on multiple platforms choose `Components`
 4. When you select `Components` type, you will be asked with 4th question. Using arrows and space bar, choose which platform you want to develop to
@@ -179,6 +191,27 @@ watchFolders: [
   OPTIONS = package/minApiLevel/2
   </pre>
 
+### Working on local dependencies
+
+When you are working on local dependencies in multiplatform project, you can use symlinks in your `node_modules` to get instance updates in your dependency:
+1. Put `<dependency-path>` to your dependency in `package.json` in `lumin`, `reactnative` or root directory
+2. If you haven't done it yet, create symlink for `<dependency>` in `node_modules` directory (example shows symlink for lumin platform, you can do exactly the same for react native). Dependency path should be the same as the one from `package.json`:
+a) On MacOS/Linux type in the root directory `ln -s <dependency_path> lumin/node_modules/<dependency-name>`  
+b) On Windows, by using `cmd`, type in the root directory `mklink /D "<dependency_path>" "lumin/node_modules/<dependency-name>"`
+3. If you created symlink for `lumin`, add this line to `rollup.config.js` file in `lumin` directory:
+<pre>
+  export default [
+  // Build for MagicScript on LuminOS
+  {
+    ...common,
+    external: ['uv', 'lumin', 'ssl', 'jpeg', 'png', 'gl'],
+    input: 'src/main.js',
+    preserveModules: true,
+    <b>preserveSymlinks: true,</b>
+    output: {
+      dir: 'bin',
+      ...
+  </pre>
 ## License
 
 This project is licensed under the Apache License, Version 2.0 - see the [LICENSE](LICENSE) file for details

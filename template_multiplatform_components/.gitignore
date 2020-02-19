@@ -24,12 +24,17 @@ DerivedData
 *.hmap
 *.ipa
 *.xcuserstate
-project.xcworkspace
+*.xcworkspace
+
+# Cocoapods
+Pods/
+Podfile.lock
 
 # Android/IntelliJ
 #
-build/
+android/build/
 .idea
+.gradle
 local.properties
 *.iml
 
@@ -38,10 +43,12 @@ local.properties
 node_modules/
 npm-debug.log
 yarn-error.log
+package-lock.json
 
 # BUCK
 buck-out/
 \.buckd/
+*.keystore
 
 # fastlane
 #
@@ -50,19 +57,22 @@ buck-out/
 # For more information about the recommended setup visit:
 # https://docs.fastlane.tools/best-practices/source-control/
 
-*/fastlane/report.xmlreac
+*/fastlane/report.xml
 */fastlane/Preview.html
 */fastlane/screenshots
 
 # Bundle artifact
 *.jsbundle
 
-# CocoaPods
-/ios/Pods/
-
-# MagicScript
-.out
-digest.sha512.signed
-package-lock.json
+# Yarn
 yarn.lock
-/bin/
+
+# magic-script
+lumin/bin/
+lumin/.out/
+lumin/digest.sha512.signed
+
+# assets
+assets/fonts/
+assets/lumin_system_icons/
+reactnative/android/app/src/main/assets/

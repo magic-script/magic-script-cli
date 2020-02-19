@@ -30,7 +30,7 @@
   "dependencies": {
     "eslint-plugin-react": "^7.15.1",
     "magic-script-components": "^2.0.2",
-    "magic-script-components-lumin": "^1.0.11",
+    "magic-script-components-lumin": "^1.0.13",
     "magic-script-polyfills": "^2.7.1"
   }
 }
