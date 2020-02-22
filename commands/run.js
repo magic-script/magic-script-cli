@@ -3,10 +3,13 @@
 let { exec, spawn } = require('child_process');
 let util = require('../lib/util');
 let hash = require('hash-index');
+let path = require('path');
+let fs = require('fs');
 
 let packageName;
 let debug;
 let port;
+let host;
 
 function getPortFromPackageName () {
   return hash(packageName, 65535 - 1024) + 1024;
@@ -42,6 +45,9 @@ function launchFunction (callback) {
   let portArg = '-v INSPECTOR_PORT=' + portNumber;
   let launchCommand = `mldb launch${autoPrivilege} ${portArg} ${packageName}`;
   console.info(`Launching: ${packageName} at port: ${portNumber}`);
+  function cb (result) {
+    callback(result);
+  }
   exec(launchCommand, (err, stdout, stderr) => {
     if (err) {
       console.error(`exec error: ${err}`);
@@ -49,9 +55,6 @@ function launchFunction (callback) {
       return;
     }
     if (stdout.includes('Success')) {
-      function cb (result) {
-        callback(result);
-      }
       isRunning(cb);
     }
   });
@@ -65,36 +68,61 @@ function terminateFunction (callback) {
   });
 }
 
+function callCommand (command, parameters, shouldForward, pid) {
+  let spawnCommand = spawn(command, parameters);
+  spawnCommand.stdout.on('data', (rawData) => {
+    if (rawData !== undefined) {
+      let data = `${rawData}`;
+      if ((data.includes(pid) || pid === undefined) && data.includes('chrome')) {
+        if (shouldForward) {
+          spawnCommand.kill();
+        }
+        let pattern = /chrome.+:(\d{3,5})/;
+        let matches = data.match(pattern);
+        if (matches && matches.length > 1) {
+          let port = matches[1];
+          if (shouldForward) {
+            let forwardCommand = 'mldb forward tcp:' + port + ' tcp:' + port;
+            exec(forwardCommand, (err, stdout, stderr) => {
+              if (!err && stdout.length === 0 && stderr.length === 0) {
+                console.info('Success: port forwarded', port);
+                console.log('Please open in chrome:', matches[0]);
+              }
+            });
+          } else {
+            console.log('Please open in chrome:', matches[0]);
+          }
+        }
+      }
+    }
+  });
+  spawnCommand.stderr.on('data', (rawData) => {
+    if (rawData !== undefined) {
+      let data = `${rawData}`;
+      let debugPattern = /chrome.+:(\d{3,5})/;
+      let matches = data.match(debugPattern);
+      if (matches && matches.length > 1) {
+        console.log('Please open in chrome:', matches[0]);
+      }
+      let pattern = /MagicScript: [debug:|info:].*/g;
+      data = data.replace(pattern, '').trim();
+      data = data.replace(/(\r\n|\r|\n){2,}/g, '$1\n');
+      if (data.length > 0) {
+        console.log(data);
+      }
+    }
+  });
+}
+
 function launchCallback (pid) {
-  if (pid == null) {
+  if (pid === null) {
     console.error('Failed to launch:', packageName);
     return;
   }
   if (!debug) {
     return;
   }
-  const mldbCommand = spawn('mldb', ['log']);
-  mldbCommand.stdout.on('data', (data) => {
-    if (data.includes(pid) && data.includes('chrome')) {
-      mldbCommand.kill();
-      let dataString = `${data}`;
-      let pattern = /chrome.+:(\d{3,5})/;
-      let matches = dataString.match(pattern);
-      if (matches.length > 1) {
-        let port = matches[1];
-        let forwardCommand = 'mldb forward tcp:' + port + ' tcp:' + port;
-        exec(forwardCommand, (err, stdout, stderr) => {
-          if (!err && stdout.length == 0 && stderr.length == 0) {
-            console.info('Success: port forwarded', port);
-            console.log('Please open in chrome:', matches[0]);
-          }
-        });
-      }
-    }
-  });
-  mldbCommand.stderr.on('data', (data) => {
-    console.error(`mldbCommand stderr:\n${data}`);
-  });
+  callCommand('mldb', ['log'], true, pid);
   console.info(packageName, 'launched with PID:', pid);
 }
 
@@ -102,30 +130,39 @@ function runLumin (argv) {
   let localArguments = argv._;
   debug = argv.debug;
   port = argv.port;
-  if (localArguments.length > 1) {
-    packageName = localArguments[1];
+  host = argv.host;
+  if (host) {
+    let mpkPath = util.findMPKPath();
+    let hostPath = path.dirname(mpkPath);
+    let result = fs.existsSync(hostPath);
+    console.log(mpkPath, hostPath, result);
+    if (result) {
+      process.chdir(hostPath);
+    }
+    callCommand('mxs', [path.join('bin', 'index.js')], false);
   } else {
-    packageName = util.findPackageName();
-  }
-  if (packageName) {
-    function installedCallback (installed) {
-      if (installed) {
-        isRunning(runningCallback);
-      } else {
-        console.warn(`Package: ${packageName} is not installed.  Please install it.`);
-      }
+    if (localArguments.length > 1) {
+      packageName = localArguments[1];
+    } else {
+      packageName = util.findPackageName();
     }
-    function runningCallback (pid) {
-      if (pid == null) {
-        launchFunction(launchCallback);
-      } else {
-        function launchMe () {
-          launchFunction(launchCallback);
+    if (packageName) {
+      util.isInstalled(packageName, (installed) => {
+        if (installed) {
+          isRunning((pid) => {
+            if (pid === null) {
+              launchFunction(launchCallback);
+            } else {
+              terminateFunction(() => {
+                launchFunction(launchCallback);
+              });
+            }
+          });
+        } else {
+          console.warn(`Package: ${packageName} is not installed.  Please install it.`);
         }
-        terminateFunction(launchMe);
-      }
+      });
     }
-    util.isInstalled(packageName, installedCallback);
   }
 }
 

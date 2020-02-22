@@ -1,5 +1,7 @@
 // Copyright (c) 2019 Magic Leap, Inc. All Rights Reserved
 // Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
+const path = require('path');
+// eslint-disable-next-line camelcase
 const child_process = require('child_process');
 jest.spyOn(child_process, 'exec');
 jest.spyOn(child_process, 'spawn');
@@ -20,7 +22,7 @@ afterEach(() => {
 describe('Test Run', () => {
   test('not installed "com.abc"', () => {
     jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(false);
     });
     jest.spyOn(console, 'warn').mockImplementationOnce((data) => {
@@ -31,7 +33,7 @@ describe('Test Run', () => {
 
   test('not installed "com.abc" running', () => {
     jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(false);
     });
     jest.spyOn(console, 'warn').mockImplementationOnce((data) => {
@@ -48,7 +50,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc"', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     child_process.exec.mockImplementationOnce((command, cb) => {
@@ -61,7 +63,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -81,7 +83,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running error', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -104,7 +106,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running error launch', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -138,7 +140,7 @@ describe('Test Run', () => {
       return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout } };
     });
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -177,7 +179,7 @@ describe('Test Run', () => {
       return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout }, 'kill': kill };
     });
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -220,7 +222,7 @@ describe('Test Run', () => {
       return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout }, 'kill': kill };
     });
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -263,7 +265,7 @@ describe('Test Run', () => {
       return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout }, 'kill': kill };
     });
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -291,7 +293,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running launch log exec success no debug', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -319,7 +321,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running launch with port specified success no debug', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -347,7 +349,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running terminated', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -366,5 +368,28 @@ describe('Test Run', () => {
     run({ '_': ['run', 'com.abc'], target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
+  });
+
+  test('run on host', () => {
+    child_process.spawn.mockImplementationOnce((command, params) => {
+      let stdout = function (data, callback) {
+        expect(data).toBe('data');
+        callback('1440 chrome://asdf:12345');
+      };
+      let stderr = function (data, callback) {
+        expect(data).toBe('data');
+        callback('1440 chrome://asdf:12345');
+      };
+      expect(command).toBe('mxs');
+      expect(params.length).toBe(1);
+      expect(params[0]).toBe('bin/index.js');
+      return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout } };
+    });
+    jest.spyOn(util, 'findMPKPath').mockReturnValueOnce('myPath');
+    process.chdir = jest.fn();
+    jest.spyOn(path, 'join');
+    run({ '_': ['run', 'com.abc'], 'host': true, target: 'lumin' });
+    expect(child_process.spawn).toHaveBeenCalled();
+    expect(path.join).toHaveBeenCalledWith('bin', 'index.js');
   });
 });
