@@ -53,10 +53,10 @@ function mockCopyComponentsFiles () {
 }
 
 function mockNonComponentsFiles () {
-  jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
+  jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce(() => {
     return ['file1', 'file2'];
   });
-  jest.spyOn(mockedFs, 'statSync').mockImplementation((path) => {
+  jest.spyOn(mockedFs, 'statSync').mockImplementation(() => {
     var statObject = {};
     statObject.isFile = function () { return true; };
     statObject.isDirectory = function () { return false; };
@@ -67,12 +67,10 @@ function mockNonComponentsFiles () {
   }).mockImplementationOnce(() => {
     return 'test2';
   });
-  jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
-    // expect(type).toBe('utf8');
+  jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents) => {
     expect(contents).toBe('test1');
     expect(path.endsWith('file1')).toBeTruthy();
-  }).mockImplementationOnce((path, contents, type) => {
-    // expect(type).toBe('utf8');
+  }).mockImplementationOnce((path, contents) => {
     expect(contents).toBe('test2');
     expect(path.endsWith('file2')).toBeTruthy();
   });
@@ -93,10 +91,30 @@ describe('Test Components configurations', () => {
         expect(renameSpy).toHaveBeenCalled();
       });
       mockCopyComponentsFiles();
-      // remove react files
-      jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
-        expect(file.endsWith('react')).toBeTruthy();
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.resolve({
+        APPTYPE: 'Components',
+        FOLDERNAME: 'ComponentsLumin',
+        APPID: 'com.test.0'
       });
+      init({ '_': ['init'] });
+    });
+    test('create components project for lumin if target is not specified and apptype is Components symlink error', () => {
+      mockedFs.existsSync.mockReturnValue(true);
+      util.renameComponentsFiles = jest.fn('folder', 'path', 'name');
+      // remove packages not specified by target
+      jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
+        expect(path.endsWith('ios')).toBeTruthy();
+      }).mockImplementationOnce(path => {
+        expect(path.endsWith('android')).toBeTruthy();
+      });
+      const renameSpy = jest.spyOn(util, 'renameComponentsFiles').mockImplementation((folder, path) => {
+        expect(renameSpy).toHaveBeenCalled();
+      });
+      jest.spyOn(mockedFs, 'symlinkSync').mockImplementationOnce(() => {
+        throw new Error('mock Error');
+      });
+      mockCopyComponentsFiles();
       backup = inquirer.prompt;
       inquirer.prompt = () => Promise.resolve({
         APPTYPE: 'Components',
@@ -120,10 +138,6 @@ describe('Test Components configurations', () => {
       });
 
       mockCopyComponentsFiles();
-      // remove react files
-      jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
-        expect(file.endsWith('react')).toBeTruthy();
-      });
       backup = inquirer.prompt;
       inquirer.prompt = () => Promise.resolve({
         APPTYPE: 'Components',
@@ -153,10 +167,6 @@ describe('Test Components configurations', () => {
       const renameSpy = jest.spyOn(util, 'renameComponentsFiles').mockImplementation((folder, path) => {
         expect(renameSpy).toHaveBeenCalled();
       });
-      // remove lumin files
-      jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
-        expect(file.endsWith('lumin')).toBeTruthy();
-      });
       backup = inquirer.prompt;
       inquirer.prompt = () => Promise.resolve({
         APPTYPE: 'Components',
@@ -181,10 +191,6 @@ describe('Test Components configurations', () => {
         expect(path.endsWith('lumin')).toBeTruthy();
       });
       mockCopyComponentsFiles();
-      // remove lumin files
-      jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
-        expect(file.endsWith('lumin')).toBeTruthy();
-      });
       backup = inquirer.prompt;
       inquirer.prompt = () => Promise.resolve({
         APPTYPE: 'Components',
@@ -208,10 +214,6 @@ describe('Test Components configurations', () => {
       });
       const renameSpy = jest.spyOn(util, 'renameComponentsFiles').mockImplementationOnce((folder, path) => {
         expect(renameSpy).toHaveBeenCalled();
-      });
-      // remove lumin files
-      jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
-        expect(file.endsWith('lumin')).toBeTruthy();
       });
       backup = inquirer.prompt;
       inquirer.prompt = () => Promise.resolve({
@@ -241,7 +243,6 @@ describe('Test Components configurations', () => {
     });
     test('create components project for android and lumin if target is android and lumin and apptype is Components', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      // util.createAndroidLocalProperties = jest.fn('path');
 
       // remove packages not specified by target
       jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
@@ -266,7 +267,6 @@ describe('Test Components configurations', () => {
     });
     test('create components project for android, ios and lumin if target is android, ios and lumin and apptype is Components', () => {
       mockedFs.existsSync.mockReturnValue(true);
-      // util.createAndroidLocalProperties = jest.fn('path');
 
       mockCopyComponentsFiles();
       // create android local.properties file
@@ -291,7 +291,6 @@ describe('Test Components configurations', () => {
     test('command line', () => {
       mockedFs.existsSync.mockReturnValue(true);
       util.renameComponentsFiles = jest.fn('folder', 'path', 'name');
-      // util.createAndroidLocalProperties = jest.fn('path');
 
       mockCopyComponentsFiles();
       // create android local.properties file
@@ -319,6 +318,55 @@ describe('Test Components configurations', () => {
       inquirer.prompt = () => Promise.resolve({});
       init({ '_': ['init'], folderName: 'visible', appType: 'Immersive', target: ['lumin', 'android', 'ios'], packageName: 'com.package.name' });
     });
+
+    test('create immersive project with app.ts and app.js files', () => {
+      mockedFs.existsSync.mockReturnValueOnce(true);
+      jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce(() => {
+        return ['app.ts', 'app.js'];
+      });
+      jest.spyOn(mockedFs, 'statSync').mockImplementation(() => {
+        var statObject = {};
+        statObject.isFile = function () { return true; };
+        statObject.isDirectory = function () { return false; };
+        return statObject;
+      });
+      mockedFs.readFileSync.mockImplementationOnce(() => {
+        return 'test1';
+      }).mockImplementationOnce(() => {
+        return 'test2';
+      });
+      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
+        expect(type).toBe('utf8');
+        expect(contents).toBe('test1');
+        expect(path.endsWith('app.ts')).toBeTruthy();
+      }).mockImplementationOnce((path, contents, type) => {
+        expect(type).toBe('utf8');
+        expect(contents).toBe('test2');
+        expect(path.endsWith('app.js')).toBeTruthy();
+      });
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.resolve({});
+      init({ '_': ['init'], folderName: 'visible', appType: 'Immersive', target: ['lumin'], packageName: 'com.package.name' });
+    });
+
+    test('create immersive project with folder', () => {
+      mockedFs.existsSync.mockReturnValueOnce(true);
+      jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce(() => {
+        return ['folder'];
+      }).mockImplementationOnce(() => {
+        return [];
+      });
+      jest.spyOn(mockedFs, 'statSync').mockImplementation(() => {
+        var statObject = {};
+        statObject.isFile = function () { return false; };
+        statObject.isDirectory = function () { return true; };
+        return statObject;
+      });
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.resolve({});
+      init({ '_': ['init'], folderName: 'visible', appType: 'Immersive', target: ['lumin'], packageName: 'com.package.name' });
+    });
+
     test('command line no target and components app type passed should create lumin project', () => {
       mockedFs.existsSync.mockReturnValue(true);
       // remove packages not specified by target
@@ -327,22 +375,39 @@ describe('Test Components configurations', () => {
       }).mockImplementationOnce((path) => {
         expect(path.endsWith('android')).toBeTruthy();
       });
-      // jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
-      //   expect(path.endsWith('ios')).toBeTruthy();
-      // }).mockImplementationOnce(path => {
-      //   expect(path.endsWith('android')).toBeTruthy();
-      // });
       const renameSpy = jest.spyOn(util, 'renameComponentsFiles').mockImplementationOnce((folder, path) => {
         expect(renameSpy).toHaveBeenCalled();
       });
       mockCopyComponentsFiles();
-      // remove react files
-      jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
-        expect(file.endsWith('react')).toBeTruthy();
-      });
       backup = inquirer.prompt;
       inquirer.prompt = () => Promise.resolve({});
       init({ '_': ['init'], folderName: 'visible', appType: 'Components', packageName: 'com.package.name' });
+    });
+
+    test('command line no target and components app type passed should create lumin project with symlink error', () => {
+      mockedFs.existsSync.mockReturnValue(true);
+      // remove packages not specified by target
+      jest.spyOn(util, 'removeFilesRecursively').mockImplementationOnce((path) => {
+        expect(path.endsWith('ios')).toBeTruthy();
+      }).mockImplementationOnce((path) => {
+        expect(path.endsWith('android')).toBeTruthy();
+      });
+      const renameSpy = jest.spyOn(util, 'renameComponentsFiles').mockImplementationOnce((folder, path) => {
+        expect(renameSpy).toHaveBeenCalled();
+      });
+      jest.spyOn(mockedFs, 'symlinkSync').mockImplementationOnce(() => {
+        throw new Error('mock Error');
+      });
+      mockCopyComponentsFiles();
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.resolve({});
+      init({ '_': ['init'], folderName: 'visible', appType: 'Components', packageName: 'com.package.name' });
+    });
+
+    test('command line no target and components app type passed should create lumin project with inquirer reject', () => {
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.reject('rejected');
+      init({ '_': ['init'] });
     });
     test('command line wrong target passed and components app type should create lumin project', () => {
       mockedFs.existsSync.mockReturnValue(true);
@@ -355,16 +420,8 @@ describe('Test Components configurations', () => {
       }).mockImplementationOnce((path) => {
         expect(path.endsWith('android')).toBeTruthy();
       });
-      // jest.spyOn(mockedFs, 'rmdirSync').mockImplementationOnce(path => {
-      //   expect(path.endsWith('ios')).toBeTruthy();
-      // }).mockImplementationOnce(path => {
-      //   expect(path.endsWith('android')).toBeTruthy();
-      // });
       mockCopyComponentsFiles();
       // remove react files
-      jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
-        expect(file.endsWith('react')).toBeTruthy();
-      });
       backup = inquirer.prompt;
       inquirer.prompt = () => Promise.resolve({});
       init({ '_': ['init'], folderName: 'visible', appType: 'Components', packageName: 'com.package.name', target: 'nonarraypassed' });
@@ -398,12 +455,10 @@ describe('Test Components configurations', () => {
       }).mockImplementationOnce(() => {
         return 'test2';
       });
-      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test1');
         expect(path.endsWith('file1')).toBeTruthy();
-      }).mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      }).mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test2');
         expect(path.endsWith('file2')).toBeTruthy();
       });
@@ -413,7 +468,7 @@ describe('Test Components configurations', () => {
       });
       init({ '_': ['init'] });
     });
-  
+
     test('project exists immersive no manifest', () => {
       mockedFs.existsSync.mockReturnValueOnce(true);
       jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
@@ -430,12 +485,10 @@ describe('Test Components configurations', () => {
       }).mockImplementationOnce(() => {
         return 'test2';
       });
-      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test1');
         expect(path.endsWith('file1')).toBeTruthy();
-      }).mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      }).mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test2');
         expect(path.endsWith('app.js')).toBeTruthy();
       });
@@ -447,7 +500,7 @@ describe('Test Components configurations', () => {
       });
       init({ '_': ['init'] });
     });
-  
+
     test('project exists not immersive', () => {
       mockedFs.existsSync.mockReturnValueOnce(true);
       jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
@@ -464,12 +517,10 @@ describe('Test Components configurations', () => {
       }).mockImplementationOnce(() => {
         return 'test2';
       });
-      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test1');
         expect(path.endsWith('manifest.xml')).toBeTruthy();
-      }).mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      }).mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test2');
         expect(path.endsWith('file2')).toBeTruthy();
       });
@@ -481,7 +532,7 @@ describe('Test Components configurations', () => {
       });
       init({ '_': ['init'] });
     });
-  
+
     test('project exists immersive', () => {
       mockedFs.existsSync.mockReturnValueOnce(true);
       jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
@@ -498,12 +549,10 @@ describe('Test Components configurations', () => {
       }).mockImplementationOnce(() => {
         return 'test2';
       });
-      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test1');
         expect(path.endsWith('manifest.xml')).toBeTruthy();
-      }).mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      }).mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test2');
         expect(path.endsWith('file2')).toBeTruthy();
       });
@@ -515,7 +564,7 @@ describe('Test Components configurations', () => {
       });
       init({ '_': ['init'] });
     });
-  
+
     test('no project exists', () => {
       mockedFs.existsSync.mockReturnValueOnce(false);
       jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
@@ -533,12 +582,10 @@ describe('Test Components configurations', () => {
       }).mockImplementationOnce(() => {
         return 'test2';
       });
-      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test1');
         expect(path.endsWith('manifest.xml')).toBeTruthy();
-      }).mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      }).mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test2');
         expect(path.endsWith('file2')).toBeTruthy();
       });
@@ -547,6 +594,88 @@ describe('Test Components configurations', () => {
         APPTYPE: 'Landscape',
         FOLDERNAME: 'Test5',
         APPID: 'com.test.suite5'
+      });
+      init({ '_': ['init'] });
+    });
+
+    test('create Landscape typescript project', () => {
+      mockedFs.existsSync.mockReturnValueOnce(false);
+      jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce(() => {
+        expect(mockedFs.mkdirSync).toHaveBeenCalled();
+        return ['manifest.xml', 'file2'];
+      }).mockImplementationOnce(() => {
+        return [];
+      });
+      jest.spyOn(mockedFs, 'statSync').mockImplementation(() => {
+        var statObject = {};
+        statObject.isFile = function () { return true; };
+        statObject.isDirectory = function () { return false; };
+        return statObject;
+      });
+      mockedFs.readFileSync.mockImplementationOnce(() => {
+        return 'test1';
+      }).mockImplementationOnce(() => {
+        return 'test2';
+      });
+      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents) => {
+        expect(contents).toBe('test1');
+        expect(path.endsWith('manifest.xml')).toBeTruthy();
+      }).mockImplementationOnce((path, contents) => {
+        expect(contents).toBe('test2');
+        expect(path.endsWith('file2')).toBeTruthy();
+      });
+      jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
+        expect(file.endsWith('main.js')).toBeTruthy();
+      }).mockImplementationOnce((file) => {
+        expect(file.endsWith('app.js')).toBeTruthy();
+      });
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.resolve({
+        APPTYPE: 'Landscape',
+        FOLDERNAME: 'Test5',
+        APPID: 'com.test.suite5',
+        TYPESCRIPT: true
+      });
+      init({ '_': ['init'] });
+    });
+
+    test('create Components typescript project', () => {
+      mockedFs.existsSync.mockReturnValueOnce(false);
+      jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce(() => {
+        expect(mockedFs.mkdirSync).toHaveBeenCalled();
+        return ['manifest.xml', 'file2'];
+      }).mockImplementationOnce(() => {
+        return [];
+      });
+      jest.spyOn(mockedFs, 'statSync').mockImplementation(() => {
+        var statObject = {};
+        statObject.isFile = function () { return true; };
+        statObject.isDirectory = function () { return false; };
+        return statObject;
+      });
+      mockedFs.readFileSync.mockImplementationOnce(() => {
+        return 'test1';
+      }).mockImplementationOnce(() => {
+        return 'test2';
+      });
+      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents) => {
+        expect(contents).toBe('test1');
+        expect(path.endsWith('manifest.xml')).toBeTruthy();
+      }).mockImplementationOnce((path, contents) => {
+        expect(contents).toBe('test2');
+        expect(path.endsWith('file2')).toBeTruthy();
+      });
+      jest.spyOn(mockedFs, 'unlinkSync').mockImplementationOnce((file) => {
+        expect(file.endsWith('main.js')).toBeTruthy();
+      }).mockImplementationOnce((file) => {
+        expect(file.endsWith('app.js')).toBeTruthy();
+      });
+      backup = inquirer.prompt;
+      inquirer.prompt = () => Promise.resolve({
+        APPTYPE: 'Components',
+        FOLDERNAME: 'Test5',
+        APPID: 'com.test.suite5',
+        TYPESCRIPT: true
       });
       init({ '_': ['init'] });
     });
@@ -633,12 +762,10 @@ describe('Test Components configurations', () => {
       }).mockImplementationOnce(() => {
         return 'test2';
       });
-      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test1');
         expect(path.endsWith('manifest.xml')).toBeTruthy();
-      }).mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      }).mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test2');
         expect(path.endsWith('file1')).toBeTruthy();
       });
@@ -676,12 +803,10 @@ describe('Test Components configurations', () => {
       }).mockImplementationOnce(() => {
         return 'test2';
       });
-      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test1');
         expect(path.endsWith('manifest.xml')).toBeTruthy();
-      }).mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      }).mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test2');
         expect(path.endsWith('file1')).toBeTruthy();
       });
@@ -719,12 +844,10 @@ describe('Test Components configurations', () => {
       }).mockImplementationOnce(() => {
         return 'test2';
       });
-      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test1');
         expect(path.endsWith('manifest.xml')).toBeTruthy();
-      }).mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      }).mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test2');
         expect(path.endsWith('file1')).toBeTruthy();
       });
@@ -761,12 +884,10 @@ describe('Test Components configurations', () => {
       }).mockImplementationOnce(() => {
         return 'test2';
       });
-      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      jest.spyOn(mockedFs, 'writeFileSync').mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test1');
         expect(path.endsWith('manifest.xml')).toBeTruthy();
-      }).mockImplementationOnce((path, contents, type) => {
-        // expect(type).toBe('utf8');
+      }).mockImplementationOnce((path, contents) => {
         expect(contents).toBe('test2');
         expect(path.endsWith('file1')).toBeTruthy();
       });
