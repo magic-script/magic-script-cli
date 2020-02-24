@@ -349,9 +349,6 @@ describe('Test Util', () => {
       expect(type).toBe('utf8');
     });
     util.renameComponentsFiles('name', 'package', 'visiblename');
-    expect(mockedFs.renameSync).toHaveBeenCalled();
-    expect(mockedFs.writeFileSync).toHaveBeenCalled();
-    expect(mockedFs.readFileSync).toHaveBeenCalled();
   });
 
   test('should rename files of the project based on project name', () => {
@@ -368,9 +365,6 @@ describe('Test Util', () => {
     });
     jest.spyOn(child_process, 'spawnSync').mockReturnValueOnce(true);
     util.renameComponentsFiles('name', null, 'name');
-    expect(mockedFs.renameSync).toHaveBeenCalled();
-    expect(mockedFs.writeFileSync).toHaveBeenCalled();
-    expect(mockedFs.readFileSync).toHaveBeenCalled();
   });
 
   test('should rename files of the project based on project name 2', () => {
@@ -388,8 +382,6 @@ describe('Test Util', () => {
     });
     jest.spyOn(child_process, 'spawnSync').mockReturnValueOnce(true);
     util.renameComponentsFiles('name', 'test1', 'name');
-    expect(mockedFs.writeFileSync).toHaveBeenCalled();
-    expect(mockedFs.readFileSync).toHaveBeenCalled();
   });
 
   test('should return early without visibleName', () => {
