@@ -76,6 +76,10 @@ require('yargs') // eslint-disable-line
       alias: 'p',
       default: 0
     });
+    yargs.option('host', {
+      alias: 'h',
+      default: false
+    });
     yargs.positional('target', {
       describe: 'target(s) to build for',
       default: 'lumin'
