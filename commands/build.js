@@ -57,8 +57,8 @@ function buildLumin (argv, indexContent) {
   } catch (err) {
     throw err;
   }
-
-  var buildCommand = `mabu -t ${argv.host ? 'host' : 'device'} ${packagePath}`;
+  var device = argv.debug ? 'device' : 'release_device';
+  var buildCommand = `mabu -t ${argv.host ? 'host' : device} ${packagePath}`;
 
   // create bin/index.js if needed
   try {
