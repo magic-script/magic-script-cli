@@ -476,6 +476,23 @@ describe('Test build', () => {
     build({ '_': ['build'], 'install': false, 'target': 'lumin' });
   });
 
+  test('mabu uses release_device when not debuggable', () => {
+    mockedFs.existsSync.mockReturnValue(true);
+    mockedFs.readdirSync.mockImplementationOnce(() => {
+      return ['app.package'];
+    });
+    util.createDigest = jest.fn().mockReturnValue(false);
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe('npm run build');
+      child_process.exec.mockImplementationOnce((command, callback) => {
+        expect(command).toBe('mabu -t release_device app.package');
+        callback(null, 'out.mpk');
+      });
+      callback(null);
+    });
+    build({ '_': ['build'], 'install': false, 'debug': false, 'target': 'lumin' });
+  });
+
   test('no error no install', () => {
     mockedFs.existsSync.mockReturnValue(true);
     mockedFs.readdirSync.mockImplementationOnce(() => {
