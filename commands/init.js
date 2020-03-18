@@ -65,9 +65,7 @@ const askQuestions = () => {
           name: 'Android'
         }],
       default: ['Lumin'],
-      when: function (answers) {
-        return answers.APPTYPE === 'Components';
-      }
+      when: isComponentsAppType
     },
     {
       name: 'TYPESCRIPT',
@@ -300,3 +298,11 @@ function resetValues () {
   target = null;
   typeScript = null;
 }
+
+function isComponentsAppType (answers) {
+  return answers.APPTYPE === 'Components';
+}
+
+module.exports.testIsComponentsAppType = function (answers) {
+  return isComponentsAppType(answers);
+};

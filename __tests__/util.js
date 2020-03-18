@@ -194,6 +194,14 @@ describe('Test Util', () => {
     expect(util.isValidFolderName('com.#!@#te st')).toBe(false);
   });
 
+  test('isValidAppName success', () => {
+    expect(util.isValidAppName('testapp')).toBe(true);
+  });
+
+  test('isValidAppName fail', () => {
+    expect(util.isValidAppName('com.#!@#te st')).toBe(false);
+  });
+
   test('copy files where stat is not directory', () => {
     jest.spyOn(mockedFs, 'readdirSync').mockImplementationOnce((path) => {
       return ['file1', 'file2'];
@@ -415,6 +423,14 @@ describe('Test Util', () => {
 
   test('validateFolderName fail', () => {
     expect(util.validateFolderName('com.#!@#te st')).toBe('Invalid folder name. Must match /^(?:[A-Za-z\\-_\\d])+$|^\\.$/');
+  });
+
+  test('validateAppName success', () => {
+    expect(util.validateAppName('testapp')).toBe(true);
+  });
+
+  test('validateAppName fail', () => {
+    expect(util.validateAppName('com.#!@#te st')).toBe('Invalid app name. Must match /^(?=.{3,30}$)[a-zA-Z0-9]+(?:[-_][a-zA-Z0-9]+)*$/');
   });
 
   test('should fail install with on error', () => {

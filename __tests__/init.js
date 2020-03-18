@@ -902,4 +902,8 @@ describe('Test Components configurations', () => {
     init({ '_': ['init'], packageName: 'packageid', folderName: 'project' });
     inquirer.prompt = backup;
   });
+  test('testcompo', () => {
+    let result = init.testIsComponentsAppType({ APPTYPE: 'Components' });
+    expect(result).toBe(true);
+  });
 });
