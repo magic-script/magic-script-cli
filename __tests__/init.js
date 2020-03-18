@@ -904,12 +904,12 @@ describe('Test Components configurations', () => {
   });
   
   test('isComponentsAppType success when APPTYPE is Components ', () => {
-    let result = init.testIsComponentsAppType({ APPTYPE: 'Components' });
+    let result = util.isComponentsAppType({ APPTYPE: 'Components' });
     expect(result).toBe(true);
   });
 
   test('isComponentsAppType failure when APPTYPE is not Components ', () => {
-    let result = init.testIsComponentsAppType({ APPTYPE: 'Landscape' });
+    let result = util.isComponentsAppType({ APPTYPE: 'Landscape' });
     expect(result).toBe(false);
   });
 });
