@@ -93,7 +93,7 @@ Please be aware, that it is recommended to use the latest stable versions of bel
 - If you have information that Android SDK environment variable doesn't exist, it means that local.properties file wasn't created under `<project>/reactnative/android`. 
 a. If you have Android Studio installed, open `<project>/reactnative/android` as an Android project. The local.properties file should be created automatically
 b. If not, create `local.properties` file in `<project>/reactnative/android` with one line: `sdk.dir=<Location of your Android SDK>`
-- If you have information that CLI couldn't create symlink for resources directory and you want to use resources on Android or iOS (like images, video, sounds, 3D model), you have to create a directory symlink in `<project>/reactnative/` pointing to `<project>/resources`. 
+- If you have information that CLI couldn't create symlink for assets directory and you want to use assets on Android or iOS (like images, video, sounds, 3D model), you have to create a directory symlink in `<project>/reactnative/` pointing to `<project>/assets`. 
 a. If you're Windows user, you can find more information here: https://docs.microsoft.com/en-us/windows-server/administration/windows-commands/mklink
 b. If you're MacOS or Linux user, you can use `ln` tool for that
 - If you have information that the project couldn't be renamed to the specified by the user, the project will be called `Template` and package id will be set to `com.magicscript.template`. If you want to change the name of the project and package id:
@@ -131,17 +131,16 @@ The architecture of the multiplatform MagicScript Components project template is
 
 As you can see, there is a hard separation between Magic Script Components library, which is just an interface/definition of the Components, and platform specific libraries, which are engines that are in charge of compiling, building and rendering the app on desired platform. This short explanation leads us to the main idea behind the 'monorepo' type project structure. If you choose to develop on all three platforms (MagicLeap, iOS and Android), your newly created project will have structure like this:
 
-- common
 - lumin
 - reactnative
-- resources
+- assets
 - src
 - package.json
 
-**common** - This directory has the source files common for both lumin and reactnative library. They're needed to write one source code that will run on all three platforms  
+**reactnative/common** - This directory has the config files for reactnative library. They're needed to write one source code that will run on all three platforms  
 **lumin** - This directory has all of the configuration files needed to compile, build and deploy the app to the MagicLeap device  
 **reactnative** - This directory has all of the configuration files needed to compile, build and deploy the app to the iOS and Android device  
-**resources** - This directory should be used if you want to add assets to your project, like 3D model, image, video or audio.  
+**assets** - This directory should be used if you want to add assets to your project, like 3D model, image, video or audio.  
 **src** - This is where you should put your source code of the application  
 **package.json** - It contains only `magic-script-components` library, which is (like described above), a definition of the Components. If you want to add some other dependencies to your app, you should place it in this package.json  
 
@@ -163,6 +162,8 @@ Building MagicLeap project:
 
 If you want to add assets like [Lomino Font](https://github.com/magic-script/lomino-font) or [Lumin System Icons](https://github.com/magic-script/system-icons) you need to follow the steps below:
 
+Check if the `assets` directory already exists in the root of the project. If so, please check if you have symlink created for `reactnative/assets` directory. If everything is set properly, put your assets in `assets` directory in the root of the project. Otherwise, follow the steps below:
+
 1. Create `assets` directory in root directory of the project
 2. Add dependencies to the package.json in the root directory:  
 a) For Lomino Font add `"lomino-font": "git+https://github.com/magic-script/lomino-font"`  
@@ -178,7 +179,6 @@ watchFolders: [
     path.resolve(__dirname, '../src'),
     path.resolve(__dirname, 'node_modules'),
     path.resolve(__dirname, '../node_modules'),
-    path.resolve(__dirname, '../resources'),
     <b>path.resolve(__dirname, '../assets')</b>
   ],
   </pre>
@@ -186,7 +186,6 @@ watchFolders: [
   <pre>
   DATAS = "digest.sha512.signed" : "." \
         "bin/" : "bin/"\
-        "../resources/" : "resources/"
         <b>"../assets/" : "assets/"</b>
   OPTIONS = package/minApiLevel/2
   </pre>
