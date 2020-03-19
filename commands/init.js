@@ -26,6 +26,7 @@ const askQuestions = () => {
       name: 'APPNAME',
       type: 'input',
       message: 'What is the name of your application?',
+      validate: util.validateAppName,
       default: visibleName
     },
     {
@@ -64,9 +65,7 @@ const askQuestions = () => {
           name: 'Android'
         }],
       default: ['Lumin'],
-      when: function (answers) {
-        return answers.APPTYPE === 'Components';
-      }
+      when: util.isComponentsAppType
     },
     {
       name: 'TYPESCRIPT',

@@ -902,4 +902,14 @@ describe('Test Components configurations', () => {
     init({ '_': ['init'], packageName: 'packageid', folderName: 'project' });
     inquirer.prompt = backup;
   });
+  
+  test('isComponentsAppType success when APPTYPE is Components ', () => {
+    let result = util.isComponentsAppType({ APPTYPE: 'Components' });
+    expect(result).toBe(true);
+  });
+
+  test('isComponentsAppType failure when APPTYPE is not Components ', () => {
+    let result = util.isComponentsAppType({ APPTYPE: 'Landscape' });
+    expect(result).toBe(false);
+  });
 });
