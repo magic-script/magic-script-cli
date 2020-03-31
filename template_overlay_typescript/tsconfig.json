@@ -3,6 +3,7 @@
     "allowJs": true,
     "noEmit": true,
     "strict": true,
+    "strictNullChecks": true,
     "target": "esnext",
     "jsx": "react",
     "moduleResolution": "node",
