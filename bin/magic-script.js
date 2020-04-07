@@ -17,6 +17,10 @@ require('yargs') // eslint-disable-line
       describe: 'The visible name of the project (optional)',
       type: 'string'
     });
+    yargs.positional('isComponents', {
+      describe: 'Choose if the app should be the Components app or the Vanilla MagicScript app',
+      boolean: true
+    });
     yargs.positional('appType', {
       describe: 'The type of the app. Can be either Landscape, Immersive or Components',
       type: 'string'
@@ -30,6 +34,11 @@ require('yargs') // eslint-disable-line
     yargs.option('immersive', {
       alias: 'i',
       describe: 'Generate Immersive app Template',
+      boolean: true,
+      default: false
+    });
+    yargs.option('typeScript', {
+      describe: 'Should create typescript app',
       boolean: true,
       default: false
     });
