@@ -210,7 +210,7 @@ describe('Test init utils methods', () => {
 
   test('should remove files recursively for lumin if lumin is not specified', () => {
     let path = 'path';
-    mockedFs.existsSync.mockReturnValueOnce(true);
+    mockedFs.existsSync.mockReturnValueOnce(true).mockReturnValueOnce(true);
     
     initUtil.preparePlatforms(path, ['ANDROID', 'IOS']);
     
@@ -224,7 +224,7 @@ describe('Test init utils methods', () => {
     
     initUtil.preparePlatforms(path, ['ANDROID', 'IOS']);
     
-    expect(util.createAndroidLocalProperties).toHaveBeenCalledWith(path);
+    expect(mockedFs.existsSync).toHaveBeenCalledWith('path/reactnative/android/local.properties');
   });
 
   test('should remove whole reactnative directory is neither android nor ios is specified ', () => {
