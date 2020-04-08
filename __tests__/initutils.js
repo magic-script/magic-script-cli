@@ -78,7 +78,7 @@ describe('Test init utils methods', () => {
     mockedFs.existsSync.mockReturnValueOnce(false);
     mockedFs.readdirSync.mockReturnValueOnce([]);
     
-    initUtil.copyComponentFiles('srcPath', 'dstPath', false);
+    initUtil.copyComponentFiles('srcPath', 'dstPath', false, '');
 
     expect(mockedFs.existsSync).toHaveBeenCalledWith('dstPath');
     expect(mockedFs.mkdirSync).toHaveBeenCalledWith('dstPath');
@@ -90,7 +90,7 @@ describe('Test init utils methods', () => {
     mockedFs.statSync.mockReturnValueOnce(createStat(true, false)).mockReturnValueOnce(createStat(true, false));
     mockedFs.readFileSync.mockReturnValueOnce('<uses-privilege ml:name="MagicScript"/>').mockReturnValueOnce('fileContent');
     
-    initUtil.copyComponentFiles('srcPath', 'dstPath', true);
+    initUtil.copyComponentFiles('srcPath', 'dstPath', true, '');
 
     expect(mockedFs.readdirSync).toHaveBeenCalledWith('srcPath');
     expect(mockedFs.statSync).toHaveBeenNthCalledWith(1, 'srcPath/manifest.xml');
@@ -109,7 +109,7 @@ describe('Test init utils methods', () => {
     mockedFs.statSync.mockReturnValueOnce(createStat(true, false)).mockReturnValueOnce(createStat(true, false));
     mockedFs.readFileSync.mockReturnValueOnce('landscape').mockReturnValueOnce('landscape');
     
-    initUtil.copyComponentFiles('srcPath', 'dstPath', true);
+    initUtil.copyComponentFiles('srcPath', 'dstPath', true, '');
 
     expect(mockedFs.readdirSync).toHaveBeenCalledWith('srcPath');
     expect(mockedFs.statSync).toHaveBeenNthCalledWith(1, 'srcPath/main.js');
@@ -122,12 +122,88 @@ describe('Test init utils methods', () => {
     expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(2, 'dstPath/main.tsx', 'immersive', 'utf8');
   });
 
+  test('should change lumin icon portal package name when copying component files', () => {
+    mockedFs.existsSync.mockReturnValueOnce(true);
+    mockedFs.readdirSync.mockReturnValueOnce(['portal.kmat', 'portal.fbx']);
+    mockedFs.statSync.mockReturnValueOnce(createStat(true, false)).mockReturnValueOnce(createStat(true, false));
+    mockedFs.readFileSync.mockReturnValueOnce('com_magicscript_template').mockReturnValueOnce('com_magicscript_template');
+    
+    initUtil.copyComponentFiles('srcPath', 'dstPath', true, 'org.test.package');
+
+    expect(mockedFs.readdirSync).toHaveBeenCalledWith('srcPath');
+    expect(mockedFs.statSync).toHaveBeenNthCalledWith(1, 'srcPath/portal.kmat');
+    expect(mockedFs.statSync).toHaveBeenNthCalledWith(2, 'srcPath/portal.fbx');
+    
+    expect(mockedFs.readFileSync).toHaveBeenNthCalledWith(1, 'srcPath/portal.kmat', 'utf8');
+    expect(mockedFs.readFileSync).toHaveBeenNthCalledWith(2, 'srcPath/portal.fbx', 'utf8');
+
+    expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(1, 'dstPath/portal.kmat', 'org_test_package', 'utf8');
+    expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(2, 'dstPath/portal.fbx', 'org_test_package', 'utf8');
+  });
+
+  test('should change lumin icon model package name when copying component files', () => {
+    mockedFs.existsSync.mockReturnValueOnce(true);
+    mockedFs.readdirSync.mockReturnValueOnce(['model.kmat', 'model.fbx']);
+    mockedFs.statSync.mockReturnValueOnce(createStat(true, false)).mockReturnValueOnce(createStat(true, false));
+    mockedFs.readFileSync.mockReturnValueOnce('com_magicscript_template').mockReturnValueOnce('com_magicscript_template');
+    
+    initUtil.copyComponentFiles('srcPath', 'dstPath', true, 'org.test.package');
+
+    expect(mockedFs.readdirSync).toHaveBeenCalledWith('srcPath');
+    expect(mockedFs.statSync).toHaveBeenNthCalledWith(1, 'srcPath/model.kmat');
+    expect(mockedFs.statSync).toHaveBeenNthCalledWith(2, 'srcPath/model.fbx');
+    
+    expect(mockedFs.readFileSync).toHaveBeenNthCalledWith(1, 'srcPath/model.kmat', 'utf8');
+    expect(mockedFs.readFileSync).toHaveBeenNthCalledWith(2, 'srcPath/model.fbx', 'utf8');
+
+    expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(1, 'dstPath/model.kmat', 'org_test_package', 'utf8');
+    expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(2, 'dstPath/model.fbx', 'org_test_package', 'utf8');
+  });
+
+  test('should change lumin icon portal package name when copying vanilla files', () => {
+    mockedFs.existsSync.mockReturnValueOnce(true);
+    mockedFs.readdirSync.mockReturnValueOnce(['portal.kmat', 'portal.fbx']);
+    mockedFs.statSync.mockReturnValueOnce(createStat(true, false)).mockReturnValueOnce(createStat(true, false));
+    mockedFs.readFileSync.mockReturnValueOnce('com_magicleap_magicscript_hello-sample').mockReturnValueOnce('com_magicleap_magicscript_hello-sample');
+    
+    initUtil.copyVanillaFiles('srcPath', 'dstPath', false, 'com.test.app', 'visibleName');
+
+    expect(mockedFs.readdirSync).toHaveBeenCalledWith('srcPath');
+    expect(mockedFs.statSync).toHaveBeenNthCalledWith(1, 'srcPath/portal.kmat');
+    expect(mockedFs.statSync).toHaveBeenNthCalledWith(2, 'srcPath/portal.fbx');
+    
+    expect(mockedFs.readFileSync).toHaveBeenNthCalledWith(1, 'srcPath/portal.kmat', 'utf8');
+    expect(mockedFs.readFileSync).toHaveBeenNthCalledWith(2, 'srcPath/portal.fbx', 'utf8');
+
+    expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(1, 'dstPath/portal.kmat', 'com_test_app', 'utf8');
+    expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(2, 'dstPath/portal.fbx', 'com_test_app', 'utf8');
+  });
+
+  test('should change lumin icon model package name when copying vanilla files', () => {
+    mockedFs.existsSync.mockReturnValueOnce(true);
+    mockedFs.readdirSync.mockReturnValueOnce(['model.kmat', 'model.fbx']);
+    mockedFs.statSync.mockReturnValueOnce(createStat(true, false)).mockReturnValueOnce(createStat(true, false));
+    mockedFs.readFileSync.mockReturnValueOnce('com_magicleap_magicscript_hello-sample').mockReturnValueOnce('com_magicleap_magicscript_hello-sample');
+    
+    initUtil.copyVanillaFiles('srcPath', 'dstPath', false, 'com.test.app', 'visibleName');
+
+    expect(mockedFs.readdirSync).toHaveBeenCalledWith('srcPath');
+    expect(mockedFs.statSync).toHaveBeenNthCalledWith(1, 'srcPath/model.kmat');
+    expect(mockedFs.statSync).toHaveBeenNthCalledWith(2, 'srcPath/model.fbx');
+    
+    expect(mockedFs.readFileSync).toHaveBeenNthCalledWith(1, 'srcPath/model.kmat', 'utf8');
+    expect(mockedFs.readFileSync).toHaveBeenNthCalledWith(2, 'srcPath/model.fbx', 'utf8');
+
+    expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(1, 'dstPath/model.kmat', 'com_test_app', 'utf8');
+    expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(2, 'dstPath/model.fbx', 'com_test_app', 'utf8');
+  });
+
   test('should run recursively when its directory when copying components files', () => {
     mockedFs.existsSync.mockReturnValueOnce(true).mockReturnValueOnce(true);
     mockedFs.readdirSync.mockReturnValueOnce(['directory']).mockReturnValueOnce([]);
     mockedFs.statSync.mockReturnValueOnce(createStat(false, true));
     
-    initUtil.copyComponentFiles('srcPath', 'dstPath', true);
+    initUtil.copyComponentFiles('srcPath', 'dstPath', true, '');
 
     expect(mockedFs.readdirSync).toHaveBeenCalledWith('srcPath');
     expect(mockedFs.statSync).toHaveBeenCalledWith('srcPath/directory');

@@ -1,0 +1,19 @@
+{
+  "global": {
+    "color": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "blendmode": "Opaque"
+  },
+  "materials": [
+    {
+      "shaderName": "UnlitTextured",
+      "name": "org_magicscript_catalog_portal",
+      "blendmode": "Opaque",
+      "albedo": "res/Icon/portal/portal.png"
+    }
+  ]
+}

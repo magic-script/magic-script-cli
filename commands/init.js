@@ -89,7 +89,7 @@ module.exports = (argv) => {
   const currentDirectory = process.cwd();
   let destDirectory;
   immersive = argv.appType === 'Immersive' || argv.immersive;
-  isComponents = argv.isComponents
+  isComponents = argv.isComponents;
   if ((typeof isComponents !== 'undefined') && isComponents === false) {
     logger.green(`Start creating Vanilla Magic Script project for ${appType} app type`);
     destDirectory = path.join(currentDirectory, folderName);
@@ -109,15 +109,15 @@ module.exports = (argv) => {
     setTarget(argv.target);
     logger.green(`Start creating project for Components type, target: ${target}`);
       templatePath = path.join(__dirname, '../template_multiplatform_components');
-      initUtil.copyComponentFiles(templatePath, destDirectory, immersive);
+      initUtil.copyComponentFiles(templatePath, destDirectory, immersive, packageName);
       if (argv.typeScript) {
         initUtil.prepareComponentsTypescript(currentDirectory, folderName);
         // Copy typescript template overlay over existing template files
         templatePath = path.join(__dirname, '../template_overlay_typescript_components');
-        initUtil.copyComponentFiles(templatePath, destDirectory, immersive);
+        initUtil.copyComponentFiles(templatePath, destDirectory, immersive, packageName);
       }
       initUtil.renameComponentsFiles(folderName, packageName, visibleName, target);
-      let symlinkSuccess = initUtil.createSymlink(currentDirectory, folderName)
+      let symlinkSuccess = initUtil.createSymlink(currentDirectory, folderName);
       if (!symlinkSuccess) {
         logger.yellow('Couldn\'t create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https:///magicscript.org/');
       }
@@ -142,12 +142,12 @@ module.exports = (argv) => {
         setTarget(target);
         logger.green(`Start creating project for Components type, target: ${target}`);
         templatePath = path.join(__dirname, '../template_multiplatform_components');
-        initUtil.copyComponentFiles(templatePath, destDirectory, immersive);
+        initUtil.copyComponentFiles(templatePath, destDirectory, immersive, packageName);
         if (typeScript) {
           initUtil.prepareComponentsTypescript(currentDirectory, folderName);
           // Copy typescript template overlay over existing template files
           templatePath = path.join(__dirname, '../template_overlay_typescript_components');
-          initUtil.copyComponentFiles(templatePath, destDirectory, immersive);
+          initUtil.copyComponentFiles(templatePath, destDirectory, immersive, packageName);
         }
         initUtil.renameComponentsFiles(folderName, packageName, visibleName, target);
         if (!initUtil.createSymlink(currentDirectory, folderName)) {
