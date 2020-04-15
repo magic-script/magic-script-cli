@@ -1,0 +1,18 @@
+{
+  "global": {
+    "color": [
+      1,
+      1,
+      1,
+      1
+    ],
+    "blendmode": "Opaque"
+  },
+  "materials": [
+    {
+      "shaderName": "UnlitTextured",
+      "name": "com_magicleap_magicscript_hello-sample_model",
+      "albedo": "res/Icon/model/model.png"
+    }
+  ]
+}
