@@ -15,6 +15,6 @@
   "dependencies": {
     "react": "16.8.3",
     "react-native": "0.60.5",
-    "magic-script-components-react-native": "^1.0.3"
+    "magic-script-components-react-native": "^1.0.5"
   }
 }
