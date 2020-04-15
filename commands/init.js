@@ -43,7 +43,7 @@ const askQuestions = () => {
       name: 'ISCOMPONENTS',
       type: 'confirm',
       message: 'Do you want to create Components app?',
-      default: isComponents,
+      default: isComponents
     },
     {
       name: 'APPTYPE',

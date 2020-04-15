@@ -63,23 +63,32 @@ Please be aware, that it is recommended to use the latest stable versions of bel
 
 **Creating a project**
 
-1. Open terminal window, navigate to directory where you want to create the project and type `magic-script init`. Below you will find table with definitions for `Landscape`, `Immersive` and `Components` app types and `Lumin`, `iOS` and `Android` platforms.
+1. Open terminal window, navigate to directory where you want to create the project and type `magic-script init`. You will be asked few questions regarding the configuration of the project you want to choose:
+1. **What is the name of your application?** The name displayed on Magic Leap Launcher (60 character limit).
+1. **What is the app ID of your application?** The unique, lower-case, alpha-numeric ID for your app. No spaces or special characters. Suggested format: **com.&lt;yourcompany>.&lt;appname>**
+1. **In which folder do you want to save this project?** Specifies the name for the new folder created in your current directory. This folder contains the project's files
+1. **Do you want to create Components app?** Options for the prompt are Y (Yes) or N (No). You can choose between Components project type (built on top of vanilla MagicScript, React & React Native) and vanilla MagicScript project type.
+1. **What app type do you want?** You can choose between Landscape and Immersive. It is related only to the Lumin platform. For more information check below or at [Magic Script Explained](https://www.magicscript.org/docs/magic-script-explained)
+1. **What platform do you want develop on?** This prompt is only for the Components app type. Multiple options can be selected. Options are Lumin, iOS, and Android. Using arrows and space bar, choose which platform you want to develop for.
+1. **Use TypeScript?** [TypeScript](https://www.typescriptlang.org/index.html) is a strict syntactical superset of JavaScript that adds optional static typing to the language. Options for the prompt are Y (Yes) or N (No)
 
-| App Type / Platform | Lumin  |  Android  |  iOS  |
-|---------------------|:-------|:----------|:-------:|
-| Landscape  |  :heavy_check_mark: | :x: | :x: |
-| Immersive  |  :heavy_check_mark: | :x: | :x: |
-| Components | :heavy_check_mark: | :heavy_check_mark: | :heavy_check_mark: |
+**Possible configurations:**
+Components:
+- Yes:
+  - Landscape:
+    - Lumin || Android || iOS
+  - Immersive:
+    - Lumin || Android || iOS
+- No:
+  - Landscape:
+    - vanilla MagicScript
+  - Immersive:
+    - vanilla MagicScript
 
-
-**Landscape** - Only available on Lumin, uses vanilla MagicScript to develop apps, more info on [Magic Script Explained](https://www.magicscript.org/docs/magic-script-explained)
-**Immersive** - Only available on Lumin, uses vanilla MagicScript to develop apps, more info on [Magic Script Explained](https://www.magicscript.org/docs/magic-script-explained)
+**Lumin** - The OS which is running on MagicLeap device, more info at [Magic Script Explained](https://www.magicscript.org/docs/magic-script-explained)
+**Landscape** - Only available on Lumin, uses vanilla MagicScript to develop apps, more info at [Magic Script Explained](https://www.magicscript.org/docs/magic-script-explained)
+**Immersive** - Only available on Lumin, uses vanilla MagicScript to develop apps, more info at [Magic Script Explained](https://www.magicscript.org/docs/magic-script-explained)
 **Components** - Built on top of MagicScript, React & ReactNative; UI framework that simplifies developing 3D apps. When choosing `Components` app type during initialization, you can choose which platform the project is going to be built on. You can choose any combination of those three platforms: Lumin, Android & iOS.
-
-2. Answer three questions about the Project Name, app ID (f.e. com.example.project) and Folder Name of the project
-3. Using arrows choose what type of project do you want to create. For developing on multiple platforms choose `Components`
-4. When you select `Components` type, you will be asked with 4th question. Using arrows and space bar, choose which platform you want to develop to
-5. Done! Now you can navigate to the project and build the sample app on desired device!
 
 **Building & running the project**
 
