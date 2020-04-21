@@ -24,7 +24,7 @@
     "semistandard": "^13.0.1"
   },
   "dependencies": {
-    "magic-script-components-lumin": "^1.0.11",
+    "magic-script-components-lumin": "github:magic-script/magic-script-components-lumin#feature/#128_file_system_access_interface",
     "magic-script-polyfills": "^2.7.1"
   }
 }

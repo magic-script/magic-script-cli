@@ -13,7 +13,6 @@
     "react-test-renderer": "16.8.3"
   },
   "dependencies": {
-    "react": "16.8.3",
     "react-native": "0.60.5",
     "react-native-fs": "^2.16.6",
     "magic-script-components-react-native": "github:magic-script/magic-script-components-react-native#feature/#543_filesystem_access"

@@ -15,8 +15,7 @@ const common = {
     resolve({
       customResolveOptions: {
         moduleDirectory: '../node_modules'
-      },
-      dedupe: ['react']
+      }
     }),
     commonjs()
   ]
