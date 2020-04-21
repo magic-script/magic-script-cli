@@ -12,5 +12,5 @@ export default {
     dir: 'bin',
     format: 'es'
   },
-  plugins: [polyfill(), resolve(), commonjs()]
+  plugins: [polyfill(), resolve({browser: true}), commonjs()]
 };
