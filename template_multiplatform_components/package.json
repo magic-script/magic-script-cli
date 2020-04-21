@@ -1,5 +1,5 @@
 {
     "dependencies": {
-        "magic-script-components": "2.0.2"
+        "magic-script-components": "github:magic-script/magic-script-components#feature/#187_filesystem_access"
     }
 }
