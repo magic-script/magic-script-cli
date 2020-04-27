@@ -15,6 +15,6 @@
   "dependencies": {
     "react-native": "0.60.5",
     "react-native-fs": "^2.16.6",
-    "magic-script-components-react-native": "github:magic-script/magic-script-components-react-native#feature/#543_filesystem_access"
+    "magic-script-components-react-native": "github:magic-script/magic-script-components-react-native#release-2.0.0"
   }
 }
