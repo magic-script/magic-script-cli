@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'magic-script-components';
+import { Prism, Scene, Text } from 'magic-script-components';
 
 export default class MyApp extends React.Component {
   constructor (props) {
@@ -12,11 +12,13 @@ export default class MyApp extends React.Component {
 
   render () {
     return (
-      <View name="main-view">
-        <Text textSize={0.1} localPosition={[-0.3, 0, 0]}>
-          Hello Magic Script
-        </Text>
-      </View>
+      <Scene>
+        <Prism size={[1.0, 1.0, 1.0]}>
+          <Text textSize={0.1} localPosition={[-0.3, 0, 0]}>
+            Hello Magic Script
+          </Text>
+        </Prism>
+      </Scene>
     );
   }
 }
