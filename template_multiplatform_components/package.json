@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "magic-script-components": "github:magic-script/magic-script-components#release-3.0.0",
+        "magic-script-components": "^3.0.0",
         "react": "16.8.3"
     }
 }
