@@ -1,6 +1,6 @@
 {
     "dependencies": {
-        "magic-script-components": "^2.0.2"
+        "magic-script-components": "^3.0.0"
     },
     "devDependencies": {
         "@types/react": "16.8.24"

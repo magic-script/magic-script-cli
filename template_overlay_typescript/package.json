@@ -21,6 +21,6 @@
     "typescript": "^3.6.4"
   },
   "dependencies": {
-    "magic-script-polyfills": "^2.0.0"
+    "magic-script-polyfills": "^2.10.2"
   }
 }
