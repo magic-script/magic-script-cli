@@ -13,4 +13,4 @@ Platform.setPlatformInformation(new mxs.PlatformInformation());
 Platform.setLinking(new mxs.NativeLinking());
 PlaneDetector.setNativePlaneDetector(new mxs.NativePlaneDetector());
 FileSystem.setNativeFileSystem(new mxs.NativeFileSystem());
-mxs.bootstrap(<MyApp type='landscape' volumeSize={[1, 1, 1]} />);
+mxs.bootstrap(<MyApp type='landscape'/>);
