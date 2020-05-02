@@ -11,7 +11,7 @@
   "materials": [
     {
       "shaderName": "UnlitTextured",
-      "name": "com_magicleap_magicscript_hello-sample_model",
+      "name": "com_mxs_cmplandscape_model",
       "albedo": "res/Icon/model/model.png"
     }
   ]

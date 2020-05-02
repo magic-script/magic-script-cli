@@ -11,7 +11,7 @@
   "materials": [
     {
       "shaderName": "UnlitTextured",
-      "name": "com_magicleap_magicscript_hello-sample_portal",
+      "name": "com_mxs_cmplandscape_portal",
       "blendmode": "Opaque",
       "albedo": "res/Icon/portal/portal.png"
     }

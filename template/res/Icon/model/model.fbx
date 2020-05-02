@@ -3233,7 +3233,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 2255614452896, "Material::com_magicleap_magicscript_hello-sample_model", "" {
+	Material: 2255614452896, "Material::com_mxs_cmplandscape_model", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -3354,139 +3354,139 @@ Connections:  {
 	;Geometry::, Model::Torus001
 	C: "OO",2254822987744,2255826007536
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Torus001
+	;Material::com_mxs_cmplandscape_model, Model::Torus001
 	C: "OO",2255614452896,2255826007536
 	
 	;Geometry::, Model::GeoSphere001
 	C: "OO",2254822977888,2255826005344
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::GeoSphere001
+	;Material::com_mxs_cmplandscape_model, Model::GeoSphere001
 	C: "OO",2255614452896,2255826005344
 	
 	;Geometry::, Model::Box001
 	C: "OO",2254823002528,2255826009728
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box001
+	;Material::com_mxs_cmplandscape_model, Model::Box001
 	C: "OO",2255614452896,2255826009728
 	
 	;Geometry::, Model::Box002
 	C: "OO",2254822988640,2255826016304
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box002
+	;Material::com_mxs_cmplandscape_model, Model::Box002
 	C: "OO",2255614452896,2255826016304
 	
 	;Geometry::, Model::Box003
 	C: "OO",2254823002080,2255825987808
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box003
+	;Material::com_mxs_cmplandscape_model, Model::Box003
 	C: "OO",2255614452896,2255825987808
 	
 	;Geometry::, Model::Box004
 	C: "OO",2254823003424,2255826036032
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box004
+	;Material::com_mxs_cmplandscape_model, Model::Box004
 	C: "OO",2255614452896,2255826036032
 	
 	;Geometry::, Model::Box005
 	C: "OO",2254823003872,2255826020688
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box005
+	;Material::com_mxs_cmplandscape_model, Model::Box005
 	C: "OO",2255614452896,2255826020688
 	
 	;Geometry::, Model::Box006
 	C: "OO",2254823004320,2255826025072
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box006
+	;Material::com_mxs_cmplandscape_model, Model::Box006
 	C: "OO",2255614452896,2255826025072
 	
 	;Geometry::, Model::Box007
 	C: "OO",2254822993120,2255826033840
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box007
+	;Material::com_mxs_cmplandscape_model, Model::Box007
 	C: "OO",2255614452896,2255826033840
 	
 	;Geometry::, Model::Box008
 	C: "OO",2254823004768,2255826038224
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box008
+	;Material::com_mxs_cmplandscape_model, Model::Box008
 	C: "OO",2255614452896,2255826038224
 	
 	;Geometry::, Model::Box009
 	C: "OO",2254822978784,2255826040416
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box009
+	;Material::com_mxs_cmplandscape_model, Model::Box009
 	C: "OO",2255614452896,2255826040416
 	
 	;Geometry::, Model::Box010
 	C: "OO",2254822992672,2255826042608
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box010
+	;Material::com_mxs_cmplandscape_model, Model::Box010
 	C: "OO",2255614452896,2255826042608
 	
 	;Geometry::, Model::Cylinder001
 	C: "OO",2254822994912,2255826022880
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Cylinder001
+	;Material::com_mxs_cmplandscape_model, Model::Cylinder001
 	C: "OO",2255614452896,2255826022880
 	
 	;Geometry::, Model::Cylinder002
 	C: "OO",2254822989536,2255826046992
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Cylinder002
+	;Material::com_mxs_cmplandscape_model, Model::Cylinder002
 	C: "OO",2255614452896,2255826046992
 	
 	;Geometry::, Model::Cylinder003
 	C: "OO",2254822979232,2255826044800
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Cylinder003
+	;Material::com_mxs_cmplandscape_model, Model::Cylinder003
 	C: "OO",2255614452896,2255826044800
 	
 	;Geometry::, Model::Cylinder004
 	C: "OO",2254822980128,2255826018496
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Cylinder004
+	;Material::com_mxs_cmplandscape_model, Model::Cylinder004
 	C: "OO",2255614452896,2255826018496
 	
 	;Geometry::, Model::Box011
 	C: "OO",2254822982368,2255826049184
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box011
+	;Material::com_mxs_cmplandscape_model, Model::Box011
 	C: "OO",2255614452896,2255826049184
 	
 	;Geometry::, Model::Box012
 	C: "OO",2254822981024,2255826053568
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box012
+	;Material::com_mxs_cmplandscape_model, Model::Box012
 	C: "OO",2255614452896,2255826053568
 	
 	;Geometry::, Model::Box013
 	C: "OO",2254822990432,2255826051376
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box013
+	;Material::com_mxs_cmplandscape_model, Model::Box013
 	C: "OO",2255614452896,2255826051376
 	
 	;Geometry::, Model::Box014
 	C: "OO",2254822991328,2255826055760
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Box014
+	;Material::com_mxs_cmplandscape_model, Model::Box014
 	C: "OO",2255614452896,2255826055760
 	
 	;Geometry::, Model::Rectangle001
 	C: "OO",2254822989536,2255826027264
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Rectangle001
+	;Material::com_mxs_cmplandscape_model, Model::Rectangle001
 	C: "OO",2255614452896,2255826027264
 	
 	;Geometry::, Model::Rectangle002
 	C: "OO",2254822980128,2255826057952
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Rectangle002
+	;Material::com_mxs_cmplandscape_model, Model::Rectangle002
 	C: "OO",2255614452896,2255826057952
 	
 	;Geometry::, Model::Rectangle005
 	C: "OO",2254822995360,2255826060144
 	
-	;Material::com_magicleap_magicscript_hello-sample_model, Model::Rectangle005
+	;Material::com_mxs_cmplandscape_model, Model::Rectangle005
 	C: "OO",2255614452896,2255826060144
 	
 	;Model::Rectangle005, DisplayLayer::Mesh_LP

@@ -513,7 +513,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 2255614460096, "Material::com_magicleap_magicscript_hello-sample_portal", "" {
+	Material: 2255614460096, "Material::com_mxs_cmplandscape_portal", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -568,6 +568,6 @@ Connections:  {
 	;Geometry::, Model::MS_bounds_portal_opening
 	C: "OO",2254823002080,2256758533568
 	
-	;Material::com_magicleap_magicscript_hello-sample_portal, Model::MS_bounds_portal_opening
+	;Material::com_mxs_cmplandscape_portal, Model::MS_bounds_portal_opening
 	C: "OO",2255614460096,2256758533568
 }
