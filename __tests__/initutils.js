@@ -215,8 +215,14 @@ describe('Test init utils methods', () => {
   test('should copy manifest file with new package id', () => {
     mockedFs.existsSync.mockReturnValueOnce(true);
     mockedFs.readdirSync.mockReturnValueOnce(['manifest.xml', 'file']);
-    mockedFs.statSync.mockReturnValueOnce(createStat(true, false)).mockReturnValueOnce(createStat(true, false));
-    mockedFs.readFileSync.mockReturnValueOnce('com.magicleap.magicscript.hello-sample').mockReturnValueOnce('fileContent');
+    mockedFs.statSync
+      .mockReturnValueOnce(createStat(true, false))
+      .mockReturnValueOnce(createStat(true, false));
+    mockedFs.readFileSync
+      .mockReturnValueOnce('com.magicleap.magicscript.hello-sample')
+      .mockReturnValueOnce('srcPath/manifest.xml', 'utf8')
+      .mockReturnValueOnce('fileContent', 'utf8')
+      .mockReturnValueOnce('fileContent');
     
     initUtil.copyVanillaFiles('srcPath', 'dstPath', false, 'com.test.app', 'visibleName');
 
@@ -226,16 +232,22 @@ describe('Test init utils methods', () => {
     
     expect(mockedFs.readFileSync).toHaveBeenNthCalledWith(1, 'srcPath/manifest.xml', 'utf8');
     expect(mockedFs.readFileSync).toHaveBeenNthCalledWith(2, 'srcPath/file', 'utf8');
+    expect(mockedFs.readFileSync).toHaveBeenNthCalledWith(3, 'srcPath/file');
 
     expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(1, 'dstPath/manifest.xml', 'com.test.app', 'utf8');
-    expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(2, 'dstPath/file', 'fileContent', 'utf8');
+    expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(2, 'dstPath/file', 'fileContent');
   });
 
   test('should replace app content file when is immersive', () => {
     mockedFs.existsSync.mockReturnValueOnce(true);
     mockedFs.readdirSync.mockReturnValueOnce(['app.js', 'file']);
-    mockedFs.statSync.mockReturnValueOnce(createStat(true, false)).mockReturnValueOnce(createStat(true, false));
-    mockedFs.readFileSync.mockReturnValueOnce('LandscapeApp').mockReturnValueOnce('fileContent');
+    mockedFs.statSync
+      .mockReturnValueOnce(createStat(true, false))
+      .mockReturnValueOnce(createStat(true, false));
+    mockedFs.readFileSync
+      .mockReturnValueOnce('LandscapeApp')
+      .mockReturnValueOnce('fileContent')
+      .mockReturnValueOnce('fileContent');
     
     initUtil.copyVanillaFiles('srcPath', 'dstPath', true, 'com.test.app', 'visibleName');
 
@@ -247,7 +259,8 @@ describe('Test init utils methods', () => {
     expect(mockedFs.readFileSync).toHaveBeenNthCalledWith(2, 'srcPath/file', 'utf8');
 
     expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(1, 'dstPath/app.js', 'ImmersiveApp', 'utf8');
-    expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(2, 'dstPath/file', 'fileContent', 'utf8');
+    expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(2, 'dstPath/file', 'fileContent');
+    // expect(mockedFs.writeFileSync).toHaveBeenNthCalledWith(1, 'dstPath/file', 'fileContent', 'utf8');
   });
 
   test('should run recursively when its directory', () => {
