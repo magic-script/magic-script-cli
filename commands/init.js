@@ -15,6 +15,7 @@ var appType;
 var isComponents;
 var typeScript;
 var target = [];
+var gitRepository;
 
 const askQuestions = () => {
   const questions = [
@@ -74,6 +75,12 @@ const askQuestions = () => {
       name: 'TYPESCRIPT',
       type: 'confirm',
       message: 'Use TypeScript?',
+      default: false
+    },
+    {
+      name: 'GIT',
+      type: 'confirm',
+      message: 'Initialize git repository for project?',
       default: false
     }
   ];
@@ -137,6 +144,7 @@ module.exports = (argv) => {
       typeScript = answers['TYPESCRIPT'];
       isComponents = answers['ISCOMPONENTS'];
       immersive = appType === 'Immersive';
+      gitRepository = answers['GIT'];
       destDirectory = path.join(currentDirectory, folderName);
       if (isComponents) {
         setTarget(target);
@@ -165,6 +173,9 @@ module.exports = (argv) => {
           initUtil.copyVanillaFiles(templatePath, destDirectory, immersive, packageName, visibleName);
         }
         logger.green(`Vanilla Magic Script project successfully created for ${appType} app type`);
+      }
+      if (gitRepository) {
+        initUtil.createGitRepository(folderName);
       }
     })
     .catch(err => logger.red(err))
