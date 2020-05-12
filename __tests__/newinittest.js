@@ -397,6 +397,10 @@ describe('Test Components configurations', () => {
           expectComponentsCreation();
           expectComponentsTypescript();
 
+          expect(initUtil.createGitRepository).toHaveBeenCalledWith(
+            'FolderName1'
+          );
+
           expect(path.join).toHaveBeenCalledWith(
             expect.anything(),
             'FolderName1'
@@ -432,6 +436,10 @@ describe('Test Components configurations', () => {
 
           expectComponentsCreation();
           expectComponentsTypescript();
+
+          expect(initUtil.createGitRepository).toHaveBeenCalledWith(
+            'FolderName1'
+          );
 
           expect(path.join).toHaveBeenCalledWith(
             expect.anything(),
@@ -470,6 +478,10 @@ describe('Test Components configurations', () => {
           expectComponentsCreation();
           expectComponentsTypescript();
 
+          expect(initUtil.createGitRepository).toHaveBeenCalledWith(
+            'FolderName2'
+          );
+
           expect(path.join).toHaveBeenCalledWith(
             expect.anything(),
             'FolderName2'
@@ -506,6 +518,10 @@ describe('Test Components configurations', () => {
 
           expectComponentsCreation();
           expectComponentsTypescript();
+
+          expect(initUtil.createGitRepository).toHaveBeenCalledWith(
+            'FolderName2'
+          );
 
           expect(path.join).toHaveBeenCalledWith(
             expect.anything(),
@@ -547,6 +563,10 @@ describe('Test Components configurations', () => {
           expect(initUtil.copyVanillaFiles).toHaveBeenCalled();
 
           notExpectVanillaTypescript();
+          
+          expect(initUtil.createGitRepository).not.toHaveBeenCalledWith(
+            'FolderName1'
+          );
 
           expect(path.join).toHaveBeenCalledWith(
             expect.anything(),
