@@ -363,6 +363,157 @@ describe('Test Components configurations', () => {
           );
         });
       });
+
+      describe('Git repository', () => {
+        test('Create Landscape Components with no target specified', async () => {
+          //given
+          mockInquirer({
+            APPNAME: 'TestApp',
+            APPTYPE: 'Landscape',
+            ISCOMPONENTS: true,
+            FOLDERNAME: 'FolderName1',
+            APPID: 'com.test.0',
+            TYPESCRIPT: true, 
+            GIT: true
+          });
+
+          //when
+          init({ _: ['init'] });
+          await nextTick();
+
+          //then
+          expect(logger.green).toHaveBeenNthCalledWith(
+            1,
+            'Start creating project for Components type, target: LUMIN'
+          );
+          expect(logger.yellow).toHaveBeenCalledWith(
+            'There is no proper target passed, project will generate Lumin files structure for Components app'
+          );
+          expect(logger.green).toHaveBeenNthCalledWith(
+            2,
+            'Project successfully created for platforms: LUMIN'
+          );
+
+          expectComponentsCreation();
+          expectComponentsTypescript();
+
+          expect(path.join).toHaveBeenCalledWith(
+            expect.anything(),
+            'FolderName1'
+          );
+        });
+
+        test('Create Immersive Components with no target specified', async () => {
+          //given
+          mockInquirer({
+            APPNAME: 'TestApp',
+            APPTYPE: 'Immersive',
+            ISCOMPONENTS: true,
+            FOLDERNAME: 'FolderName1',
+            APPID: 'com.test.0',
+            TYPESCRIPT: true,
+            GIT: true
+          });
+
+          //when
+          init({ _: ['init'] });
+          await nextTick();
+
+          //then
+          expect(logger.green).toHaveBeenCalledWith(
+            'Start creating project for Components type, target: LUMIN'
+          );
+          expect(logger.yellow).toHaveBeenCalledWith(
+            'There is no proper target passed, project will generate Lumin files structure for Components app'
+          );
+          expect(logger.green).toHaveBeenCalledWith(
+            'Project successfully created for platforms: LUMIN'
+          );
+
+          expectComponentsCreation();
+          expectComponentsTypescript();
+
+          expect(path.join).toHaveBeenCalledWith(
+            expect.anything(),
+            'FolderName1'
+          );
+        });
+
+        test('Create Immersive Components with Android & iOS target specified', async () => {
+          //given
+          mockInquirer({
+            APPNAME: 'TestApp',
+            APPTYPE: 'Immersive',
+            ISCOMPONENTS: true,
+            TARGET: ['Android', 'iOS'],
+            FOLDERNAME: 'FolderName2',
+            APPID: 'com.test.0',
+            TYPESCRIPT: true,
+            GIT: true
+          });
+
+          //when
+          init({ _: ['init'] });
+          await nextTick();
+
+          //then
+          expect(logger.green).toHaveBeenCalledWith(
+            'Start creating project for Components type, target: ANDROID,IOS'
+          );
+          expect(logger.yellow).not.toHaveBeenCalledWith(
+            'There is no proper target passed, project will generate Lumin files structure for Components app'
+          );
+          expect(logger.green).toHaveBeenCalledWith(
+            'Project successfully created for platforms: ANDROID,IOS'
+          );
+
+          expectComponentsCreation();
+          expectComponentsTypescript();
+
+          expect(path.join).toHaveBeenCalledWith(
+            expect.anything(),
+            'FolderName2'
+          );
+        });
+
+        test('Create Landscape Components with Android & iOS target specified', async () => {
+          //given
+          mockInquirer({
+            APPNAME: 'TestApp',
+            APPTYPE: 'Landscape',
+            ISCOMPONENTS: true,
+            TARGET: ['Android', 'iOS'],
+            FOLDERNAME: 'FolderName2',
+            APPID: 'com.test.0',
+            TYPESCRIPT: true,
+            GIT: true
+          });
+
+          //when
+          init({ _: ['init'] });
+          await nextTick();
+
+          //then
+          expect(logger.green).toHaveBeenCalledWith(
+            'Start creating project for Components type, target: ANDROID,IOS'
+          );
+          expect(logger.yellow).not.toHaveBeenCalledWith(
+            'There is no proper target passed, project will generate Lumin files structure for Components app'
+          );
+          expect(logger.green).toHaveBeenCalledWith(
+            'Project successfully created for platforms: ANDROID,IOS'
+          );
+
+          expectComponentsCreation();
+          expectComponentsTypescript();
+
+          expect(path.join).toHaveBeenCalledWith(
+            expect.anything(),
+            'FolderName2'
+          );
+        });
+      });
+
     });
 
     describe('Vanilla Magic Script', () => {
