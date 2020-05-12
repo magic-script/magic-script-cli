@@ -476,6 +476,7 @@ describe('Test init utils methods', () => {
       const expectedCommand = `cd ${pathToAppFolder} && git init && git add . && git commit -am"Initial commit."`;
       expect(command).toStrictEqual(expectedCommand);
       logger.red(logFailure);
+      throw 'error';
     });
     initUtil.createGitRepository(pathToAppFolder);
     expect(logger.red).toHaveBeenCalledWith(logFailure);
