@@ -5,6 +5,7 @@ jest.mock('child_process');
 
 const child_process = require('child_process');
 jest.spyOn(child_process, 'spawnSync');
+jest.spyOn(child_process, 'execSync');
 
 const mockedFs = require('fs');
 const util = require('../lib/util');
@@ -454,5 +455,29 @@ describe('Test init utils methods', () => {
     initUtil.renameComponentsFiles(null, null, 'visibleName', ['ANDROID']);
 
     expect(logger.yellow).toHaveBeenCalledWith('Renaming of the project could not be processed because the path does not exist!');
+  });
+
+  test('should create repository when git is installed/configured', () => {
+    const pathToAppFolder = "pathToAppFolder";
+    const logSuccess = "Correct log line";
+    child_process.execSync.mockImplementationOnce((command) => {
+      const expectedCommand = `cd ${pathToAppFolder} && git init && git add . && git commit -am"Initial commit."`;
+      expect(command).toStrictEqual(expectedCommand);
+      logger.green(logSuccess);
+    });
+    initUtil.createGitRepository(pathToAppFolder);
+    expect(logger.green).toHaveBeenCalledWith(logSuccess);
+  });
+
+  test('should not create repository when git is not installed/configured', () => {
+    const pathToAppFolder = "pathToAppFolder";
+    const logFailure = "Correct log line";
+    child_process.execSync.mockImplementationOnce((command) => {
+      const expectedCommand = `cd ${pathToAppFolder} && git init && git add . && git commit -am"Initial commit."`;
+      expect(command).toStrictEqual(expectedCommand);
+      logger.red(logFailure);
+    });
+    initUtil.createGitRepository(pathToAppFolder);
+    expect(logger.red).toHaveBeenCalledWith(logFailure);
   });
 });
