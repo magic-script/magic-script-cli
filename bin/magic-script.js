@@ -3,7 +3,7 @@
 // Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
 'use strict';
 
-require('yargs') // eslint-disable-line
+require('yargs').usage('\n\n! Usage: Type magic-script <command> --help for detailed help !\n\n') // eslint-disable-line
   .command('init [folderName] [packageName] [appType] [target] [visibleName]', 'Create a new project', yargs => {
     yargs.positional('folderName', {
       describe: 'Local folder to create project in.',
@@ -56,16 +56,19 @@ require('yargs') // eslint-disable-line
   .command('build [target]', 'Compile project', yargs => {
     yargs.option('debug', {
       alias: 'd',
+      describe: 'build debug version of the app',
       boolean: true,
       default: true
     });
     yargs.option('install', {
       alias: 'i',
+      describe: 'install on the device after build',
       boolean: true,
       default: false
     });
     yargs.option('host', {
       alias: 'h',
+      describe: 'host to build on',
       boolean: true,
       default: false
     });
@@ -76,18 +79,19 @@ require('yargs') // eslint-disable-line
   }, argv => require('../commands/build')(argv))
   .command('remove', 'Remove project from device', argv => require('../commands/remove')(argv.argv))
   .command('run [target]', 'Compile and run project', yargs => {
+    yargs.positional('target', {
+      describe: 'target(s) to build for',
+      default: 'lumin'
+    });
     yargs.option('debug', {
       alias: 'd',
+      description: 'run in debug mode',
       boolean: true,
       default: true
     });
     yargs.option('port', {
       alias: 'p',
       default: 0
-    });
-    yargs.positional('target', {
-      describe: 'target(s) to build for',
-      default: 'lumin'
     });
   }, argv => require('../commands/run')(argv))
   .option('verbose', {
