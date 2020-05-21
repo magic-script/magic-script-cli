@@ -39,8 +39,8 @@ function isRunning (callback) {
 function launchFunction (callback) {
   let autoPrivilege = debug ? ' --auto-net-privs' : '';
   let portNumber = port > 0 && port < 65536 ? port : getPortFromPackageName();
-  let portArg = '-v INSPECTOR_PORT=' + portNumber;
-  let launchCommand = `mldb launch${autoPrivilege} ${portArg} ${packageName}`;
+  let portArg = !debug ? ' -v INSPECTOR_PORT=' + portNumber : '';
+  let launchCommand = `mldb launch${autoPrivilege}${portArg} ${packageName}`;
   console.info(`Launching: ${packageName} at port: ${portNumber}`);
   exec(launchCommand, (err, stdout, stderr) => {
     if (err) {
