@@ -154,7 +154,8 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
+        // expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -193,7 +194,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -236,7 +237,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -279,7 +280,8 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
+        // expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
