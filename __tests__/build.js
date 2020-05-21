@@ -46,12 +46,15 @@ describe('Test build', () => {
       callback();
     });
     buildUtils.isTargetSpecified.mockReturnValueOnce(true);
+    buildUtils.isReactNativeTarget.mockReturnValueOnce(true);
 
     build({ _: ['build'], install: false, target: 'android' });
     await nextTick();
 
     expect(buildUtils.npmInstallIfNeeded).toHaveBeenCalledTimes(2);
     expect(buildUtils.isMultiplatformStructure).not.toHaveBeenCalled();
+    expect(buildUtils.buildLumin).not.toHaveBeenCalled();
+    expect(buildUtils.isReactNativeTarget).toHaveBeenCalled();
     expect(buildUtils.buildAndroid).toHaveBeenCalled();
   });
 
@@ -60,11 +63,14 @@ describe('Test build', () => {
       callback();
     });
     buildUtils.isTargetSpecified.mockReturnValueOnce(true);
+    buildUtils.isReactNativeTarget.mockReturnValueOnce(true);
 
     build({ _: ['build'], install: false, target: 'ios' });
     await nextTick();
     expect(buildUtils.npmInstallIfNeeded).toHaveBeenCalledTimes(2);
     expect(buildUtils.isMultiplatformStructure).not.toHaveBeenCalled();
+    expect(buildUtils.buildLumin).not.toHaveBeenCalled();
+    expect(buildUtils.isReactNativeTarget).toHaveBeenCalled();
     expect(buildUtils.buildiOS).toHaveBeenCalled();
   });
 

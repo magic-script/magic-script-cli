@@ -68,7 +68,7 @@ require('yargs').usage('\n\n! Usage: Type magic-script <command> --help for deta
     });
     yargs.option('host', {
       alias: 'h',
-      describe: 'host to build on',
+      describe: 'should build for Lumin on desktop',
       boolean: true,
       default: false
     });
