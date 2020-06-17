@@ -2,12 +2,22 @@
 // Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
 // ESLint config for magic-script-cli project.
 module.exports = {
-    "env": {
-        "es6": true,
-        "node": true
-    },
-    "parserOptions": {
-        "ecmaVersion": 2018
-    },
-    "extends": "semistandard"
+  env: {
+    es6: true,
+    node: true
+  },
+  parserOptions: {
+    ecmaVersion: 2018
+  },
+  rules: {
+    'space-before-function-paren': [
+      'error',
+      {
+        anonymous: 'always',
+        named: 'never',
+        asyncArrow: 'always'
+      }
+    ]
+  },
+  extends: 'semistandard'
 };

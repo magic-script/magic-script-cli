@@ -1,3 +1,4 @@
+/* eslint-disable no-inner-declarations */
 // Copyright (c) 2019 Magic Leap, Inc. All Rights Reserved
 // Distributed under Apache 2.0 License. See LICENSE file in the project root for full license information.
 let { exec, spawn } = require('child_process');
@@ -8,11 +9,11 @@ let packageName;
 let debug;
 let port;
 
-function getPortFromPackageName () {
+function getPortFromPackageName() {
   return hash(packageName, 65535 - 1024) + 1024;
 }
 
-function isRunning (callback) {
+function isRunning(callback) {
   exec('mldb ps', (err, stdout, stderr) => {
     var running = null;
     if (err) {
@@ -36,7 +37,7 @@ function isRunning (callback) {
   });
 }
 
-function launchFunction (callback) {
+function launchFunction(callback) {
   let autoPrivilege = debug ? ' --auto-net-privs' : '';
   let portNumber = port > 0 && port < 65536 ? port : getPortFromPackageName();
   let portArg = '-v INSPECTOR_PORT=' + portNumber;
@@ -49,7 +50,7 @@ function launchFunction (callback) {
       return;
     }
     if (stdout.includes('Success')) {
-      function cb (result) {
+      function cb(result) {
         callback(result);
       }
       isRunning(cb);
@@ -57,7 +58,7 @@ function launchFunction (callback) {
   });
 }
 
-function terminateFunction (callback) {
+function terminateFunction(callback) {
   let launchCommand = 'mldb terminate ' + packageName;
   console.info('Terminating:', packageName);
   exec(launchCommand, (err, stdout, stderr) => {
@@ -65,7 +66,7 @@ function terminateFunction (callback) {
   });
 }
 
-function launchCallback (pid) {
+function launchCallback(pid) {
   if (pid == null) {
     console.error('Failed to launch:', packageName);
     return;
@@ -98,7 +99,7 @@ function launchCallback (pid) {
   console.info(packageName, 'launched with PID:', pid);
 }
 
-function runLumin (argv) {
+function runLumin(argv) {
   let localArguments = argv._;
   debug = argv.debug;
   port = argv.port;
@@ -108,18 +109,20 @@ function runLumin (argv) {
     packageName = util.findPackageName();
   }
   if (packageName) {
-    function installedCallback (installed) {
+    function installedCallback(installed) {
       if (installed) {
         isRunning(runningCallback);
       } else {
-        console.warn(`Package: ${packageName} is not installed.  Please install it.`);
+        console.warn(
+          `Package: ${packageName} is not installed.  Please install it.`
+        );
       }
     }
-    function runningCallback (pid) {
+    function runningCallback(pid) {
       if (pid == null) {
         launchFunction(launchCallback);
       } else {
-        function launchMe () {
+        function launchMe() {
           launchFunction(launchCallback);
         }
         terminateFunction(launchMe);
@@ -129,7 +132,7 @@ function runLumin (argv) {
   }
 }
 
-module.exports = argv => {
+module.exports = (argv) => {
   if (argv.target === 'lumin') {
     util.navigateIfComponents();
     runLumin(argv);

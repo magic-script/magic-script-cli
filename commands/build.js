@@ -4,7 +4,7 @@ const { exec, spawn } = require('child_process');
 const fs = require('fs');
 const util = require('../lib/util');
 
-function npmInstallIfNeeded (path, callback) {
+function npmInstallIfNeeded(path, callback) {
   if (fs.existsSync(`${path}/node_modules`)) {
     callback();
   } else {
@@ -34,7 +34,7 @@ function npmInstallIfNeeded (path, callback) {
   }
 }
 
-function buildLuminComponents (argv) {
+function buildLuminComponents(argv) {
   let path = process.cwd();
   if (fs.existsSync(`${path}/lumin`)) {
     process.chdir('lumin/');
@@ -45,7 +45,7 @@ function buildLuminComponents (argv) {
   }
 }
 
-function buildLumin (argv, indexContent) {
+function buildLumin(argv, indexContent) {
   let packagePath = 'app.package';
   try {
     for (let name of fs.readdirSync('.')) {
@@ -95,13 +95,18 @@ function buildLumin (argv, indexContent) {
       let mpkFile;
       let outLines = stdout.split('\n');
 
-      let theLine = outLines.find(line => line.includes('mpk'));
+      let theLine = outLines.find((line) => line.includes('mpk'));
       if (theLine !== undefined) {
-        mpkFile = theLine.substring(theLine.indexOf("'") + 1, theLine.lastIndexOf("'"));
+        mpkFile = theLine.substring(
+          theLine.indexOf("'") + 1,
+          theLine.lastIndexOf("'")
+        );
         console.log('built package: ' + mpkFile);
       } else {
-        theLine = outLines.find(line => line.includes('output in'));
-        console.log(theLine.substring(theLine.indexOf("'"), theLine.lastIndexOf("'") + 1));
+        theLine = outLines.find((line) => line.includes('output in'));
+        console.log(
+          theLine.substring(theLine.indexOf("'"), theLine.lastIndexOf("'") + 1)
+        );
       }
 
       if (argv.install) {
@@ -112,7 +117,7 @@ function buildLumin (argv, indexContent) {
   });
 }
 
-module.exports = argv => {
+module.exports = (argv) => {
   npmInstallIfNeeded(`${process.cwd()}`, () => {
     if (argv.target === 'lumin') {
       if (isMultiplatformStructure()) {
@@ -136,12 +141,12 @@ module.exports = argv => {
   });
 };
 
-function isMultiplatformStructure () {
+function isMultiplatformStructure() {
   let path = process.cwd();
   return fs.existsSync(`${path}/lumin/rollup.config.js`);
 }
 
-function buildAndroid () {
+function buildAndroid() {
   var path = process.cwd();
   if (fs.existsSync(`${path}/reactnative/android`)) {
     fs.chmodSync(`${path}/reactnative/android/gradlew`, '755');
@@ -150,7 +155,7 @@ function buildAndroid () {
       cwd: `${path}/reactnative`,
       shell: process.platform === 'win32'
     });
-    runProcess.on('message', message => {
+    runProcess.on('message', (message) => {
       console.log(message);
     });
     runProcess.on('error', function (err) {
@@ -171,7 +176,7 @@ function buildAndroid () {
   }
 }
 
-function buildiOS () {
+function buildiOS() {
   var path = process.cwd();
   if (fs.existsSync(`${path}/reactnative/ios`)) {
     installPods(path, () => {
@@ -184,7 +189,7 @@ function buildiOS () {
   }
 }
 
-function installPods (path, onInstallFinish) {
+function installPods(path, onInstallFinish) {
   console.log('start installing pods');
 
   var podProcess = spawn('pod', ['install'], {
@@ -210,14 +215,14 @@ function installPods (path, onInstallFinish) {
   });
 }
 
-function runiOS () {
+function runiOS() {
   console.log('run ios app');
   var runProcess = spawn('npx', ['react-native', 'run-ios'], {
     stdio: 'inherit',
     cwd: `${process.cwd()}/reactnative`,
     shell: process.platform === 'win32'
   });
-  runProcess.on('message', message => {
+  runProcess.on('message', (message) => {
     console.log(message);
   });
   runProcess.on('error', function (err) {
