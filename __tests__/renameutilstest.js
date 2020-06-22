@@ -1,7 +1,9 @@
 jest.mock('fs');
 jest.mock('../lib/logger');
 jest.mock('node-replace');
+jest.mock('path');
 
+const mockedPath = require('path');
 const mockedFs = require('fs');
 const renameUtils = require('../lib/rename/renameutils');
 const logger = require('../lib/logger');
@@ -193,8 +195,20 @@ describe('Test init utils methods', () => {
     expect(mockedFs.existsSync).toHaveBeenCalledWith('path/innerPath');
   });
 
+  it('should not clean builds if unlink throws error', async () => {
+    mockedPath.join.mockReturnValueOnce('filePath');
+    mockedFs.unlinkSync.mockImplementationOnce((path) => {
+      throw new Error('clean build error');
+    });
+
+    expect.assertions(1);
+    return expect(renameUtils.cleanBuilds('filePath')).rejects.toBeTruthy();
+  });
+
   it('should clean builds', async () => {
-    let result = renameUtils.cleanBuilds();
-    console.log(result);
+    mockedPath.join.mockReturnValue('filePath');
+
+    expect.assertions(1);
+    return expect(renameUtils.cleanBuilds('filePath')).resolves.toBeTruthy();
   });
 });
