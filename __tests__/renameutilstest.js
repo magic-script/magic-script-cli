@@ -3,7 +3,6 @@ jest.mock('../lib/logger');
 jest.mock('node-replace');
 jest.mock('path');
 
-const mockedPath = require('path');
 const mockedFs = require('fs');
 const renameUtils = require('../lib/rename/renameutils');
 const logger = require('../lib/logger');
@@ -88,51 +87,36 @@ describe('Test init utils methods', () => {
     expect(renameUtils.copyFiles).toHaveBeenCalled();
   });
 
-  it('should not delete directory if bundle was not changed', async () => {
+  it('should not delete directory if bundle was not changed', () => {
     const oldBundleNameDir = 'oldBundleName';
     const shouldDelete = false;
     const payload = {
       oldBundleNameDir,
       shouldDelete
     };
-    expect.assertions(1);
-    return expect(
-      renameUtils.deletePreviousBundleDirectory(payload)
-    ).resolves.toBe();
+
+    renameUtils.deletePreviousBundleDirectory(payload);
+
+    expect(mockedFs.unlinkSync).not.toHaveBeenCalled();
+    expect(logger.yellow).toHaveBeenCalledWith(
+      'Bundle directory was not changed. Keeping...'
+    );
   });
 
-  it('should delete directory if bundle was changed', async () => {
+  it('should delete directory if bundle was changed', () => {
     const oldBundleNameDir = 'oldBundleName';
     const shouldDelete = true;
     const payload = {
       oldBundleNameDir,
       shouldDelete
     };
-    mockedFs.unlinkSync.mockReturnValueOnce(true);
-    expect.assertions(1);
-    return expect(
-      renameUtils.deletePreviousBundleDirectory(payload)
-    ).resolves.toBeTruthy();
-  });
 
-  it('should read file successfully', async () => {
-    const filePath = 'filePath';
+    renameUtils.deletePreviousBundleDirectory(payload);
 
-    mockedFs.readFile.mockImplementationOnce((path, callback) => {
-      callback(null, 'data');
-    });
-    expect.assertions(1);
-    return expect(renameUtils.readFile(filePath)).resolves.toBeTruthy();
-  });
-
-  it('should read file unsuccessfully', async () => {
-    const filePath = 'filePath';
-
-    mockedFs.readFile.mockImplementationOnce((path, callback) => {
-      callback(new Error('error'), null);
-    });
-    expect.assertions(1);
-    return expect(renameUtils.readFile(filePath)).rejects.toBeTruthy();
+    expect(mockedFs.unlinkSync).toHaveBeenCalledWith(oldBundleNameDir);
+    expect(logger.green).toHaveBeenCalledWith(
+      'Done removing previous bundle directory.'
+    );
   });
 
   it('should replace content', () => {
@@ -143,8 +127,6 @@ describe('Test init utils methods', () => {
     renameUtils.replaceContent(regex, replacement, paths);
 
     expect(mockedReplace).toHaveBeenCalled();
-    expect(logger.green).toHaveBeenNthCalledWith(1, 'path1 MODIFIED');
-    expect(logger.green).toHaveBeenNthCalledWith(2, 'path2 MODIFIED');
   });
 
   it('should unlink if is file', () => {
@@ -193,22 +175,5 @@ describe('Test init utils methods', () => {
     expect(mockedFs.readdirSync).toHaveBeenCalledWith(path);
     expect(mockedFs.rmdirSync).toHaveBeenCalledWith(path);
     expect(mockedFs.existsSync).toHaveBeenCalledWith('path/innerPath');
-  });
-
-  it('should not clean builds if unlink throws error', async () => {
-    mockedPath.join.mockReturnValueOnce('filePath');
-    mockedFs.unlinkSync.mockImplementationOnce((path) => {
-      throw new Error('clean build error');
-    });
-
-    expect.assertions(1);
-    return expect(renameUtils.cleanBuilds('filePath')).rejects.toBeTruthy();
-  });
-
-  it('should clean builds', async () => {
-    mockedPath.join.mockReturnValue('filePath');
-
-    expect.assertions(1);
-    return expect(renameUtils.cleanBuilds('filePath')).resolves.toBeTruthy();
   });
 });
