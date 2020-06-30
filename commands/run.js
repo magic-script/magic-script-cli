@@ -3,6 +3,8 @@
 let { exec, spawn } = require('child_process');
 let util = require('../lib/util');
 let hash = require('hash-index');
+const build = require('./build');
+const logger = require('../lib/logger');
 
 let packageName;
 let debug;
@@ -133,5 +135,11 @@ module.exports = argv => {
   if (argv.target === 'lumin') {
     util.navigateIfComponents();
     runLumin(argv);
+  } else if (argv.target === 'android') {
+    logger.yellow('You should use \'magic-script build android\' method instead');
+    build(argv);
+  } else if (argv.target === 'ios') {
+    logger.yellow('You should use \'magic-script build ios\' method instead');
+    build(argv);
   }
 };
