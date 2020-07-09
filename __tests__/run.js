@@ -5,7 +5,11 @@ jest.spyOn(child_process, 'exec');
 jest.spyOn(child_process, 'spawn');
 const util = require('../lib/util');
 const run = require('../commands/run');
+jest.mock('../lib/logger');
+jest.mock('../commands/build');
 
+const logger = require('../lib/logger');
+const build = require('../commands/build');
 const consoleInfo = console.info;
 const consoleError = console.error;
 const consoleWarn = console.warn;
@@ -150,7 +154,8 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
+        // expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -189,7 +194,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -232,7 +237,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -275,7 +280,8 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
+        // expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -366,5 +372,19 @@ describe('Test Run', () => {
     run({ '_': ['run', 'com.abc'], target: 'lumin' });
     expect(mockIsInstalled).toHaveBeenCalled();
     expect(child_process.exec).toHaveBeenCalled();
+  });
+
+  test('build and run android when android target is specified', () => {
+    let args = { '_': ['run'], target: 'android' };
+    run(args);
+    expect(logger.yellow).toHaveBeenCalledWith('You should use \'magic-script build android\' method instead');
+    expect(build).toHaveBeenCalledWith(args);
+  });
+
+  test('build and run ios when ios target is specified', () => {
+    let args = { '_': ['run'], target: 'ios' };
+    run(args);
+    expect(logger.yellow).toHaveBeenCalledWith('You should use \'magic-script build ios\' method instead');
+    expect(build).toHaveBeenCalledWith(args);
   });
 });

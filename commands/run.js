@@ -4,6 +4,8 @@
 let { exec, spawn } = require('child_process');
 let util = require('../lib/util');
 let hash = require('hash-index');
+const build = require('./build');
+const logger = require('../lib/logger');
 
 let packageName;
 let debug;
@@ -40,8 +42,8 @@ function isRunning(callback) {
 function launchFunction(callback) {
   let autoPrivilege = debug ? ' --auto-net-privs' : '';
   let portNumber = port > 0 && port < 65536 ? port : getPortFromPackageName();
-  let portArg = '-v INSPECTOR_PORT=' + portNumber;
-  let launchCommand = `mldb launch${autoPrivilege} ${portArg} ${packageName}`;
+  let portArg = !debug ? ' -v INSPECTOR_PORT=' + portNumber : '';
+  let launchCommand = `mldb launch${autoPrivilege}${portArg} ${packageName}`;
   console.info(`Launching: ${packageName} at port: ${portNumber}`);
   exec(launchCommand, (err, stdout, stderr) => {
     if (err) {
@@ -136,5 +138,11 @@ module.exports = (argv) => {
   if (argv.target === 'lumin') {
     util.navigateIfComponents();
     runLumin(argv);
+  } else if (argv.target === 'android') {
+    logger.yellow('You should use \'magic-script build android\' method instead');
+    build(argv);
+  } else if (argv.target === 'ios') {
+    logger.yellow('You should use \'magic-script build ios\' method instead');
+    build(argv);
   }
 };

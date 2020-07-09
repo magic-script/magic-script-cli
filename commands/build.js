@@ -124,8 +124,6 @@ module.exports = (argv) => {
         npmInstallIfNeeded(`${process.cwd()}/lumin`, () => {
           buildLuminComponents(argv);
         });
-      } else {
-        buildLumin(argv, "#!/system/bin/script/mxs\nimport './src/main.js';\n");
       }
     } else if (argv.target === 'android') {
       npmInstallIfNeeded(`${process.cwd()}/reactnative`, () => {
@@ -183,9 +181,7 @@ function buildiOS() {
       runiOS();
     });
   } else {
-    console.error(
-      "Cannot build the app for iOS because the project project wasn't set up to support this platform!"
-    );
+    logger.red('The target must be either lumin, ios or android!');
   }
 }
 
