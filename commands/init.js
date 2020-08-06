@@ -56,7 +56,7 @@ const askQuestions = () => {
     {
       name: 'TARGET',
       type: 'checkbox',
-      message: 'What platform do you want develop on?',
+      message: 'What platform do you want to develop on?',
       choices: [
         {
           name: 'Lumin'

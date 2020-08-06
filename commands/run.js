@@ -77,18 +77,18 @@ function launchCallback (pid) {
   }
   const mldbCommand = spawn('mldb', ['log']);
   mldbCommand.stdout.on('data', (data) => {
-    if (data.includes(pid) && data.includes('chrome')) {
-      mldbCommand.kill();
+    if (data.includes(pid) && (data.includes('localhost') || data.includes('chrome'))) {
       let dataString = `${data}`;
-      let pattern = /chrome.+:(\d{3,5})/;
+      let pattern = /((chrome.+)|localhost):(\d{3,5})/;
       let matches = dataString.match(pattern);
       if (matches.length > 1) {
-        let port = matches[1];
+        mldbCommand.kill();
+        let port = matches[3];
         let forwardCommand = 'mldb forward tcp:' + port + ' tcp:' + port;
         exec(forwardCommand, (err, stdout, stderr) => {
           if (!err && stdout.length == 0 && stderr.length == 0) {
             console.info('Success: port forwarded', port);
-            console.log('Please open in chrome:', matches[0]);
+            console.log(`Please open chrome://inspect in Google Chrome and \nopen "Open dedicated DevTools for Node" and add the following connection:\n${matches[0]}`);
           }
         });
       }
