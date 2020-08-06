@@ -387,4 +387,47 @@ describe('Test Run', () => {
     expect(logger.yellow).toHaveBeenCalledWith('You should use \'magic-script build ios\' method instead');
     expect(build).toHaveBeenCalledWith(args);
   });
+
+  test('Installed "com.abc" running launch log exec success localhost', () => {
+    child_process.spawn.mockImplementationOnce(() => {
+      let stdout = function (data, callback) {
+        expect(data).toBe('data');
+        child_process.exec.mockImplementationOnce((command, callback) => {
+          expect(command).toBe('mldb forward tcp:12345 tcp:12345');
+          callback(null, '', '');
+        });
+        callback('1440 localhost:12345');
+      };
+      let stderr = function (data, callback) {
+        expect(data).toBe('data');
+      };
+      let kill = function () { };
+      return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout }, 'kill': kill };
+    });
+    const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
+      expect(packageName == 'com.abc').toBeTruthy();
+      callback(true);
+    });
+    jest.spyOn(console, 'info').mockImplementationOnce((data) => {
+      expect(data).toBe('Launching: com.abc at port: 56965');
+    });
+    jest.spyOn(console, 'error').mockImplementationOnce((data) => {
+      expect(data).toBe('exec error: error');
+    });
+    child_process.exec.mockImplementationOnce((command, callback) => {
+      expect(command).toBe('mldb ps');
+      child_process.exec.mockImplementationOnce((command, callback) => {
+        expect(command).toBe('mldb launch --auto-net-privs com.abc');
+        child_process.exec.mockImplementationOnce((command, callback) => {
+          expect(command).toBe('mldb ps');
+          callback(null, '1440 110011 Running com.abc .universe');
+        });
+        callback(null, 'Success');
+      });
+      callback('error');
+    });
+    run({ '_': ['run', 'com.abc'], 'debug': true, target: 'lumin' });
+    expect(mockIsInstalled).toHaveBeenCalled();
+    expect(child_process.exec).toHaveBeenCalled();
+  });
 });
