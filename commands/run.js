@@ -41,7 +41,7 @@ function isRunning (callback) {
 function launchFunction (callback) {
   let autoPrivilege = debug ? ' --auto-net-privs' : '';
   let portNumber = port > 0 && port < 65536 ? port : getPortFromPackageName();
-  let portArg = !debug ? ' -v INSPECTOR_PORT=' + portNumber : '';
+  let portArg = debug ? ' -v INSPECTOR_PORT=' + portNumber : '';
   let launchCommand = `mldb launch${autoPrivilege}${portArg} ${packageName}`;
   console.info(`Launching: ${packageName} at port: ${portNumber}`);
   exec(launchCommand, (err, stdout, stderr) => {
@@ -86,7 +86,7 @@ function launchCallback (pid) {
         let port = matches[3];
         let forwardCommand = 'mldb forward tcp:' + port + ' tcp:' + port;
         exec(forwardCommand, (err, stdout, stderr) => {
-          if (!err && stdout.length == 0 && stderr.length == 0) {
+          if (!err && stdout.length === 0 && stderr.length === 0) {
             console.info('Success: port forwarded', port);
             console.log(`Please open chrome://inspect in Google Chrome and \nopen "Open dedicated DevTools for Node" and add the following connection:\n${matches[0]}`);
           }

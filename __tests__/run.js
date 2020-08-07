@@ -24,7 +24,7 @@ afterEach(() => {
 describe('Test Run', () => {
   test('not installed "com.abc"', () => {
     jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(false);
     });
     jest.spyOn(console, 'warn').mockImplementationOnce((data) => {
@@ -35,7 +35,7 @@ describe('Test Run', () => {
 
   test('not installed "com.abc" running', () => {
     jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(false);
     });
     jest.spyOn(console, 'warn').mockImplementationOnce((data) => {
@@ -52,7 +52,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc"', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     child_process.exec.mockImplementationOnce((command, cb) => {
@@ -65,7 +65,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -73,7 +73,7 @@ describe('Test Run', () => {
     });
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
-      child_process.exec.mockImplementationOnce((command, callback) => {
+      child_process.exec.mockImplementationOnce((command) => {
         expect(command).toBe('mldb terminate com.abc');
       });
       callback(null, '1440 110011 Running com.abc .universe');
@@ -85,7 +85,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running error', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -96,8 +96,8 @@ describe('Test Run', () => {
     });
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
-      child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch -v INSPECTOR_PORT=56965 com.abc');
+      child_process.exec.mockImplementationOnce((command) => {
+        expect(command).toBe('mldb launch com.abc');
       });
       callback('error');
     });
@@ -108,7 +108,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running error launch', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -120,7 +120,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch -v INSPECTOR_PORT=56965 com.abc');
+        expect(command).toBe('mldb launch com.abc');
         callback('error');
       });
       callback('error');
@@ -132,7 +132,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running launch log error', () => {
     child_process.spawn.mockImplementationOnce(() => {
-      let stdout = function (data, callback) {
+      let stdout = function (data) {
         expect(data).toBe('data');
       };
       let stderr = function (data, callback) {
@@ -142,7 +142,7 @@ describe('Test Run', () => {
       return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout } };
     });
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -154,8 +154,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        // expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
-        expect(command).toBe('mldb launch --auto-net-privs com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -175,14 +174,14 @@ describe('Test Run', () => {
         expect(data).toBe('data');
         callback('1440 chrome://asdf:12345');
       };
-      let stderr = function (data, callback) {
+      let stderr = function (data) {
         expect(data).toBe('data');
       };
       let kill = function () { };
       return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout }, 'kill': kill };
     });
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -194,7 +193,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch --auto-net-privs com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -218,14 +217,14 @@ describe('Test Run', () => {
         });
         callback('1440 chrome://asdf:12345');
       };
-      let stderr = function (data, callback) {
+      let stderr = function (data) {
         expect(data).toBe('data');
       };
       let kill = function () { };
       return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout }, 'kill': kill };
     });
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -237,7 +236,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch --auto-net-privs com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -268,7 +267,7 @@ describe('Test Run', () => {
       return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout }, 'kill': kill };
     });
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -280,8 +279,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        // expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
-        expect(command).toBe('mldb launch --auto-net-privs com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -297,7 +295,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running launch log exec success no debug', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -309,7 +307,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch -v INSPECTOR_PORT=56965 com.abc');
+        expect(command).toBe('mldb launch com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -325,7 +323,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running launch with port specified success no debug', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -337,7 +335,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch -v INSPECTOR_PORT=12345 com.abc');
+        expect(command).toBe('mldb launch com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
@@ -353,7 +351,7 @@ describe('Test Run', () => {
 
   test('Installed "com.abc" running terminated', () => {
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -405,7 +403,7 @@ describe('Test Run', () => {
       return { 'stderr': { 'on': stderr }, 'stdout': { 'on': stdout }, 'kill': kill };
     });
     const mockIsInstalled = jest.spyOn(util, 'isInstalled').mockImplementationOnce((packageName, callback) => {
-      expect(packageName == 'com.abc').toBeTruthy();
+      expect(packageName === 'com.abc').toBeTruthy();
       callback(true);
     });
     jest.spyOn(console, 'info').mockImplementationOnce((data) => {
@@ -417,7 +415,7 @@ describe('Test Run', () => {
     child_process.exec.mockImplementationOnce((command, callback) => {
       expect(command).toBe('mldb ps');
       child_process.exec.mockImplementationOnce((command, callback) => {
-        expect(command).toBe('mldb launch --auto-net-privs com.abc');
+        expect(command).toBe('mldb launch --auto-net-privs -v INSPECTOR_PORT=56965 com.abc');
         child_process.exec.mockImplementationOnce((command, callback) => {
           expect(command).toBe('mldb ps');
           callback(null, '1440 110011 Running com.abc .universe');
