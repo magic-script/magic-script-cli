@@ -3,7 +3,7 @@
 const util = require('../lib/util');
 const fs = require('fs');
 
-module.exports = argv => {
+module.exports = (argv) => {
   util.navigateIfComponents();
   let mpkPath = util.findMPKPath();
   if (mpkPath && mpkPath !== '') {
@@ -12,6 +12,8 @@ module.exports = argv => {
   if (fs.existsSync(argv.path)) {
     util.installPackage(argv);
   } else {
-    console.log(`MPK doesn't exist at ${argv.path}, please build it and try again.`);
+    console.log(
+      `MPK doesn't exist at ${argv.path}, please build it and try again.`
+    );
   }
 };

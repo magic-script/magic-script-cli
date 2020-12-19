@@ -97,45 +97,83 @@ module.exports = (argv) => {
   let destDirectory;
   immersive = argv.appType === 'Immersive' || argv.immersive;
   isComponents = argv.isComponents;
-  if ((typeof isComponents !== 'undefined') && isComponents === false) {
-    logger.green(`Start creating Vanilla Magic Script project for ${appType} app type`);
+  if (typeof isComponents !== 'undefined' && isComponents === false) {
+    logger.green(
+      `Start creating Vanilla Magic Script project for ${appType} app type`
+    );
     destDirectory = path.join(currentDirectory, folderName);
-    initUtil.copyVanillaFiles(templatePath, destDirectory, immersive, packageName, visibleName);
+    initUtil.copyVanillaFiles(
+      templatePath,
+      destDirectory,
+      immersive,
+      packageName,
+      visibleName
+    );
     if (argv.typeScript) {
       initUtil.prepareTypescript(currentDirectory, folderName);
       // Copy typescript template overlay over existing template files
       templatePath = path.join(__dirname, '../template_overlay_typescript');
-      initUtil.copyVanillaFiles(templatePath, destDirectory, immersive, packageName, visibleName);
+      initUtil.copyVanillaFiles(
+        templatePath,
+        destDirectory,
+        immersive,
+        packageName,
+        visibleName
+      );
     }
-    logger.green(`Vanilla Magic Script project successfully created for ${appType} app type`);
+    logger.green(
+      `Vanilla Magic Script project successfully created for ${appType} app type`
+    );
     resetValues();
     return;
   }
-  if ((typeof isComponents !== 'undefined') && isComponents === true) {
+  if (typeof isComponents !== 'undefined' && isComponents === true) {
     destDirectory = path.join(currentDirectory, folderName);
     setTarget(argv.target);
-    logger.green(`Start creating project for Components type, target: ${target}`);
-      templatePath = path.join(__dirname, '../template_multiplatform_components');
-      initUtil.copyComponentFiles(templatePath, destDirectory, immersive, packageName);
-      if (argv.typeScript) {
-        initUtil.prepareComponentsTypescript(currentDirectory, folderName);
-        // Copy typescript template overlay over existing template files
-        templatePath = path.join(__dirname, '../template_overlay_typescript_components');
-        initUtil.copyComponentFiles(templatePath, destDirectory, immersive, packageName);
-      }
-      initUtil.renameComponentsFiles(folderName, packageName, visibleName, target);
-      let symlinkSuccess = initUtil.createSymlink(currentDirectory, folderName);
-      if (!symlinkSuccess) {
-        logger.yellow('Couldn\'t create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https:///magicscript.org/');
-      }
-      initUtil.preparePlatforms(destDirectory, target);
-      logger.green(`Project successfully created for platforms: ${target}`);
-      resetValues();
-      return;
+    logger.green(
+      `Start creating project for Components type, target: ${target}`
+    );
+    templatePath = path.join(__dirname, '../template_multiplatform_components');
+    initUtil.copyComponentFiles(
+      templatePath,
+      destDirectory,
+      immersive,
+      packageName
+    );
+    if (argv.typeScript) {
+      initUtil.prepareComponentsTypescript(currentDirectory, folderName);
+      // Copy typescript template overlay over existing template files
+      templatePath = path.join(
+        __dirname,
+        '../template_overlay_typescript_components'
+      );
+      initUtil.copyComponentFiles(
+        templatePath,
+        destDirectory,
+        immersive,
+        packageName
+      );
+    }
+    initUtil.renameComponentsFiles(
+      folderName,
+      packageName,
+      visibleName,
+      target
+    );
+    let symlinkSuccess = initUtil.createSymlink(currentDirectory, folderName);
+    if (!symlinkSuccess) {
+      logger.yellow(
+        "Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https:///magicscript.org/"
+      );
+    }
+    initUtil.preparePlatforms(destDirectory, target);
+    logger.green(`Project successfully created for platforms: ${target}`);
+    resetValues();
+    return;
   }
   let answerPromise = askQuestions();
   answerPromise
-    .then(answers => {
+    .then((answers) => {
       packageName = answers['APPID'];
       folderName = answers['FOLDERNAME'];
       visibleName = answers['APPNAME'];
@@ -148,37 +186,78 @@ module.exports = (argv) => {
       destDirectory = path.join(currentDirectory, folderName);
       if (isComponents) {
         setTarget(target);
-        logger.green(`Start creating project for Components type, target: ${target}`);
-        templatePath = path.join(__dirname, '../template_multiplatform_components');
-        initUtil.copyComponentFiles(templatePath, destDirectory, immersive, packageName);
+        logger.green(
+          `Start creating project for Components type, target: ${target}`
+        );
+        templatePath = path.join(
+          __dirname,
+          '../template_multiplatform_components'
+        );
+        initUtil.copyComponentFiles(
+          templatePath,
+          destDirectory,
+          immersive,
+          packageName
+        );
         if (typeScript) {
           initUtil.prepareComponentsTypescript(currentDirectory, folderName);
           // Copy typescript template overlay over existing template files
-          templatePath = path.join(__dirname, '../template_overlay_typescript_components');
-          initUtil.copyComponentFiles(templatePath, destDirectory, immersive, packageName);
+          templatePath = path.join(
+            __dirname,
+            '../template_overlay_typescript_components'
+          );
+          initUtil.copyComponentFiles(
+            templatePath,
+            destDirectory,
+            immersive,
+            packageName
+          );
         }
-        initUtil.renameComponentsFiles(folderName, packageName, visibleName, target);
+        initUtil.renameComponentsFiles(
+          folderName,
+          packageName,
+          visibleName,
+          target
+        );
         if (!initUtil.createSymlink(currentDirectory, folderName)) {
-          logger.yellow('Couldn\'t create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https:///magicscript.org/');
+          logger.yellow(
+            "Couldn't create symlink for resources directory. Please do it manually if you want to use resources in your project. For more information check: https:///magicscript.org/"
+          );
         }
         initUtil.preparePlatforms(destDirectory, target);
         logger.green(`Project successfully created for platforms: ${target}`);
       } else {
-        logger.green(`Start creating Vanilla Magic Script project for ${appType} app type`);
-        initUtil.copyVanillaFiles(templatePath, destDirectory, immersive, packageName, visibleName);
+        logger.green(
+          `Start creating Vanilla Magic Script project for ${appType} app type`
+        );
+        initUtil.copyVanillaFiles(
+          templatePath,
+          destDirectory,
+          immersive,
+          packageName,
+          visibleName
+        );
         if (typeScript) {
           initUtil.prepareTypescript(currentDirectory, folderName);
           // Copy typescript template overlay over existing template files
           templatePath = path.join(__dirname, '../template_overlay_typescript');
-          initUtil.copyVanillaFiles(templatePath, destDirectory, immersive, packageName, visibleName);
+          initUtil.copyVanillaFiles(
+            templatePath,
+            destDirectory,
+            immersive,
+            packageName,
+            visibleName
+          );
         }
-        logger.green(`Vanilla Magic Script project successfully created for ${appType} app type`);
+        logger.green(
+          `Vanilla Magic Script project successfully created for ${appType} app type`
+        );
       }
       if (gitRepository) {
         initUtil.createGitRepository(folderName);
       }
     })
-    .catch(err => logger.red(err))
+    .catch((err) => logger.red(err))
     // Add this callback for testing purpose - inquirer doesn't provide functionality to reset values
     // after every test and caches them
     .finally(() => {
@@ -215,11 +294,13 @@ function setPackageName(name) {
 
 function setTarget(argTarget) {
   if (argTarget && Array.isArray(argTarget)) {
-    target = argTarget.map(string => {
+    target = argTarget.map((string) => {
       return string.toUpperCase();
     });
   } else {
-    logger.yellow('There is no proper target passed, project will generate Lumin files structure for Components app');
+    logger.yellow(
+      'There is no proper target passed, project will generate Lumin files structure for Components app'
+    );
     target = ['LUMIN'];
   }
 }

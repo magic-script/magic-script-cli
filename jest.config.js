@@ -10,6 +10,7 @@ module.exports = {
   collectCoverageFrom: [
     'commands/*.js',
     'lib/*.js',
+    'lib/rename/*.js',
     'util/*.js'
   ],
   testEnvironment: 'node',
